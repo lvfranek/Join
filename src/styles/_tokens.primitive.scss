@@ -1,0 +1,49 @@
+/* ============================================================================
+   Design Tokens – Primitive layer
+   Raw brand values. Do NOT consume these directly in components.
+   Use the semantic tokens in _tokens.semantic.scss instead.
+   ============================================================================ */
+:root {
+  /* -- Brand -- */
+  --brand-primary-50: #e6e9ee;
+  --brand-primary-100: #b0b8c6;
+  --brand-primary-200: #8a94a8;
+  --brand-primary-300: #545f78;
+  --brand-primary-400: #2e3b56;
+  --brand-primary-500: #091931; /* base */
+  --brand-primary-600: #081629;
+  --brand-primary-700: #061120;
+  --brand-primary-800: #040c17;
+  --brand-primary-900: #02070e;
+
+  --brand-secondary-50: #e9f6fc;
+  --brand-secondary-100: #bce4f5;
+  --brand-secondary-200: #9bd7ef;
+  --brand-secondary-300: #6ec5e9;
+  --brand-secondary-400: #4cbce8;
+  --brand-secondary-500: #29abe2; /* base */
+  --brand-secondary-600: #259cce;
+  --brand-secondary-700: #1f8ab7;
+  --brand-secondary-800: #196f93;
+  --brand-secondary-900: #12506a;
+
+  /* -- Neutral (grayscale) -- */
+  --neutral-0: #ffffff;
+  --neutral-50: #f8f9fb;
+  --neutral-100: #f1f3f7;
+  --neutral-200: #e4e7ee;
+  --neutral-300: #cdd2dd;
+  --neutral-400: #a0a8b8;
+  --neutral-500: #747d90;
+  --neutral-600: #525a6b;
+  --neutral-700: #3a4152;
+  --neutral-800: #232836;
+  --neutral-900: #12151e;
+  --neutral-1000: #000000;
+
+  /* -- Functional -- */
+  --success-500: #2ecc71;
+  --warning-500: #f4b942;
+  --danger-500: #ff3d3d;
+  --info-500: var(--brand-secondary-500);
+}

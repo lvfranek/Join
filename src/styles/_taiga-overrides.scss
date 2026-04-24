@@ -1,0 +1,53 @@
+/* ============================================================================
+   Taiga UI overrides – maps our semantic tokens onto Taiga's CSS variables.
+   Reference: node_modules/@taiga-ui/styles/theme/palette.less
+   ============================================================================ */
+:root {
+  /* -- Accents -- */
+  --tui-background-accent-1: var(--color-accent-primary);
+  --tui-background-accent-1-hover: var(--color-accent-primary-hover);
+  --tui-background-accent-1-pressed: var(--color-accent-primary-pressed);
+  --tui-text-primary-on-accent-1: var(--color-text-on-primary);
+
+  --tui-background-accent-2: var(--color-accent-secondary);
+  --tui-background-accent-2-hover: var(--color-accent-secondary-hover);
+  --tui-background-accent-2-pressed: var(--color-accent-secondary-pressed);
+  --tui-text-primary-on-accent-2: var(--color-text-on-secondary);
+
+  /* -- Text -- */
+  --tui-text-primary: var(--color-text-primary);
+  --tui-text-secondary: var(--color-text-secondary);
+  --tui-text-tertiary: var(--color-text-tertiary);
+  --tui-text-action: var(--color-text-link);
+  --tui-text-action-hover: var(--color-text-link-hover);
+
+  /* -- Surfaces -- */
+  --tui-background-base: var(--color-bg-base);
+  --tui-background-base-alt: var(--color-bg-surface-alt);
+  --tui-background-neutral-1: var(--color-bg-muted);
+
+  /* -- Borders -- */
+  --tui-border-normal: var(--color-border-subtle);
+  --tui-border-hover: var(--color-border-normal);
+  --tui-border-focus: var(--color-border-focus);
+
+  /* -- Status -- */
+  --tui-status-positive: var(--color-status-success);
+  --tui-status-warning: var(--color-status-warning);
+  --tui-status-negative: var(--color-status-danger);
+  --tui-status-info: var(--color-status-info);
+
+  /* -- Radii -- */
+  --tui-radius-xs: var(--radius-xs);
+  --tui-radius-s: var(--radius-sm);
+  --tui-radius-m: var(--radius-md);
+  --tui-radius-l: var(--radius-lg);
+  --tui-radius-xl: var(--radius-xl);
+
+  /* -- Typography -- */
+  --tui-typography-family-text: var(--font-family-base);
+  --tui-typography-family-display: var(--font-family-display);
+
+  /* -- Motion -- */
+  --tui-duration: var(--motion-duration-base);
+}
