@@ -1,1 +1,13 @@
-/* You can add global styles to this file, and also import other style files */
+/* ============================================================================
+   Global stylesheet entry point
+   Load order:
+     1. Primitive brand tokens
+     2. Semantic tokens (consume primitives)
+     3. Taiga UI overrides (consume semantic tokens)
+     4. Base element styles
+   ============================================================================ */
+@use 'styles/tokens.primitive' as *;
+@use 'styles/tokens.semantic' as *;
+@use 'styles/taiga-overrides' as *;
+@use 'styles/base' as *;
+
