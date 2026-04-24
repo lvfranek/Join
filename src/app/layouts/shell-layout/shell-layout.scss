@@ -23,12 +23,19 @@
   font-weight: 700;
   padding-inline: 0.75rem;
   color: var(--tui-text-primary);
+  text-decoration: none;
 }
 
 .nav {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+
+  &--secondary {
+    margin-block-start: auto;
+    padding-block-start: 1rem;
+    border-block-start: 1px solid var(--tui-border-normal);
+  }
 }
 
 .nav-item {
@@ -40,7 +47,9 @@
   color: var(--tui-text-secondary);
   text-decoration: none;
   font-weight: 500;
-  transition: background 0.15s ease, color 0.15s ease;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
 
   &:hover {
     background: var(--tui-background-neutral-1-hover);
@@ -89,6 +98,17 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
+  }
+
+  &__link {
+    color: var(--tui-text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+
+    &:hover,
+    &:focus-visible {
+      color: var(--tui-text-primary);
+    }
   }
 }
 

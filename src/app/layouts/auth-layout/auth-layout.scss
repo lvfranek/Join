@@ -1,0 +1,47 @@
+:host {
+  display: block;
+  min-block-size: 100dvh;
+}
+
+.auth-shell {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-block-size: 100dvh;
+  background: var(--tui-background-neutral-1);
+
+  &__header {
+    padding: 1rem 1.5rem;
+  }
+
+  &__content {
+    display: grid;
+    place-items: center;
+    padding: 1.5rem;
+  }
+
+  &__footer {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    padding: 1rem 1.5rem;
+    font-size: 0.875rem;
+
+    a {
+      color: var(--tui-text-secondary);
+      text-decoration: none;
+
+      &:hover,
+      &:focus-visible {
+        color: var(--tui-text-primary);
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+.brand {
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--tui-text-primary);
+}
