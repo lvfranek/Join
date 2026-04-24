@@ -1,0 +1,30 @@
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand">Join</div>
+    <nav class="nav" aria-label="Main navigation">
+      @for (item of navItems; track item.path) {
+        <a class="nav-item" [routerLink]="item.path" routerLinkActive="nav-item--active">
+          <tui-icon [icon]="item.icon" />
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+  </aside>
+
+  <div class="main">
+    <header class="header">
+      <h1 class="header__title">Kanban Project Management Tool</h1>
+      <div class="header__actions">
+        <span tuiAvatar="LB" size="m" aria-label="User avatar" role="img"></span>
+      </div>
+    </header>
+
+    <main class="content">
+      <router-outlet />
+    </main>
+
+    <footer class="footer">
+      <span>© {{ 2026 }} Join</span>
+    </footer>
+  </div>
+</div>
