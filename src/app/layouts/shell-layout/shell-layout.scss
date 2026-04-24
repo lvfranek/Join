@@ -1,0 +1,127 @@
+:host {
+  display: block;
+  block-size: 100dvh;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 16rem 1fr;
+  block-size: 100%;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem 1rem;
+  background: var(--tui-background-neutral-1);
+  border-inline-end: 1px solid var(--tui-border-normal);
+}
+
+.brand {
+  font-size: 1.5rem;
+  font-weight: 700;
+  padding-inline: 0.75rem;
+  color: var(--tui-text-primary);
+  text-decoration: none;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  &--secondary {
+    margin-block-start: auto;
+    padding-block-start: 1rem;
+    border-block-start: 1px solid var(--tui-border-normal);
+  }
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.75rem;
+  border-radius: 0.5rem;
+  color: var(--tui-text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+
+  &:hover {
+    background: var(--tui-background-neutral-1-hover);
+    color: var(--tui-text-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--tui-background-accent-1);
+    outline-offset: 2px;
+  }
+
+  &--active {
+    background: var(--tui-background-accent-1);
+    color: var(--tui-background-accent-1-foreground);
+
+    &:hover {
+      background: var(--tui-background-accent-1-hover);
+      color: var(--tui-background-accent-1-foreground);
+    }
+  }
+}
+
+.main {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-inline-size: 0;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-block-end: 1px solid var(--tui-border-normal);
+  background: var(--tui-background-base);
+
+  &__title {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--tui-text-primary);
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  &__link {
+    color: var(--tui-text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+
+    &:hover,
+    &:focus-visible {
+      color: var(--tui-text-primary);
+    }
+  }
+}
+
+.content {
+  padding: 1.5rem;
+  overflow: auto;
+  background: var(--tui-background-base);
+}
+
+.footer {
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  color: var(--tui-text-secondary);
+  border-block-start: 1px solid var(--tui-border-normal);
+  background: var(--tui-background-neutral-1);
+}
