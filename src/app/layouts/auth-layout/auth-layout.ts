@@ -1,12 +1,11 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
-import { AppFooter } from '../../shared/components/app-footer/app-footer';
 import { Brand } from '../../shared/components/brand/brand';
 
 @Component({
   selector: 'app-auth-layout',
-  imports: [RouterOutlet, AppFooter, Brand],
+  imports: [RouterOutlet, Brand],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './auth-layout.html',
   styleUrl: './auth-layout.scss',
