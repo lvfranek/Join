@@ -44,7 +44,7 @@ export const routes: Routes = [
       // Authenticated pages
       {
         path: 'app',
-        canMatch: [authGuard],
+        // canMatch: [authGuard],
         children: [
           { path: '', redirectTo: 'summary', pathMatch: 'full' },
           {
