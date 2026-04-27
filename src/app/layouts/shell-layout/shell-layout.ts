@@ -1,42 +1,15 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { TuiAvatar } from '@taiga-ui/kit';
-import { TuiIcon } from '@taiga-ui/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 
-import { AuthService } from '../../core/services/auth.service';
-
-interface NavItem {
-  readonly label: string;
-  readonly path: string;
-  readonly icon: string;
-}
+import { AppFooter } from '../../shared/components/app-footer/app-footer';
+import { AppHeader } from '../../shared/components/app-header/app-header';
+import { Sidebar } from '../../shared/components/sidebar/sidebar';
 
 @Component({
   selector: 'app-shell-layout',
-  imports: [RouterLink, RouterLinkActive, RouterOutlet, TuiAvatar, TuiIcon],
+  imports: [RouterOutlet, AppHeader, AppFooter, Sidebar],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './shell-layout.html',
   styleUrl: './shell-layout.scss',
 })
-export class ShellLayout {
-  private readonly auth = inject(AuthService);
-
-  protected readonly isAuthenticated = this.auth.isAuthenticated;
-
-  protected readonly navItems = computed<readonly NavItem[]>(() =>
-    this.isAuthenticated()
-      ? [
-          { label: 'Summary', path: '/app/summary', icon: '@tui.layout-dashboard' },
-          { label: 'Add Task', path: '/app/add-task', icon: '@tui.plus' },
-          { label: 'Board', path: '/app/board', icon: '@tui.kanban' },
-          { label: 'Contacts', path: '/app/contacts', icon: '@tui.users' },
-        ]
-      : [],
-  );
-
-  protected readonly publicItems: readonly NavItem[] = [
-    { label: 'Hilfe', path: '/help', icon: '@tui.circle-help' },
-    { label: 'Datenschutz', path: '/privacy', icon: '@tui.shield' },
-    { label: 'Impressum', path: '/legal-notice', icon: '@tui.info' },
-  ];
-}
+export class ShellLayout {}
