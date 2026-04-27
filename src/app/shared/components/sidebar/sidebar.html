@@ -1,16 +1,14 @@
 <aside class="sidebar">
   <app-brand></app-brand>
 
-  @if (navItems().length) {
-    <nav class="nav" aria-label="Main navigation">
-      @for (item of navItems(); track item.path) {
-        <a class="nav-item" [routerLink]="item.path" routerLinkActive="nav-item--active">
-          <tui-icon [icon]="item.icon" />
-          <span>{{ item.label }}</span>
-        </a>
-      }
-    </nav>
-  }
+  <nav class="nav" aria-label="Main navigation">
+    @for (item of navItems; track item.path) {
+      <a class="nav-item" [routerLink]="item.path" routerLinkActive="nav-item--active">
+        <img class="nav-item__icon" [src]="item.icon" alt="" aria-hidden="true" />
+        <span>{{ item.label }}</span>
+      </a>
+    }
+  </nav>
 
   <nav class="legal-nav" aria-label="Legal navigation">
     <a class="legal-link" routerLink="/privacy" routerLinkActive="legal-link--active">
