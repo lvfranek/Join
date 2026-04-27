@@ -31,10 +31,28 @@
   --color-accent-secondary-hover: var(--brand-secondary-400);
   --color-accent-secondary-pressed: var(--brand-secondary-700);
 
+  --color-accent-tertiary: var(--brand-tertiary-500);
+  --color-accent-tertiary-hover: var(--brand-tertiary-400);
+  --color-accent-tertiary-pressed: var(--brand-tertiary-700);
+
   --color-status-success: var(--success-500);
   --color-status-warning: var(--warning-500);
   --color-status-danger: var(--danger-500);
   --color-status-info: var(--info-500);
+
+  /* -------- Category / kanban accents --------
+     Indexed accent roles for tasks, labels, avatars. Map by index in code. */
+  --color-category-1: var(--accent-1);
+  --color-category-2: var(--accent-2);
+  --color-category-3: var(--accent-3);
+  --color-category-4: var(--accent-4);
+  --color-category-5: var(--accent-5);
+  --color-category-6: var(--accent-6);
+  --color-category-7: var(--accent-7);
+  --color-category-8: var(--accent-8);
+  --color-category-9: var(--accent-9);
+  --color-category-10: var(--accent-10);
+  --color-category-11: var(--accent-11);
 
   /* -------- Spacing (4px base, rem) -------- */
   --space-0: 0;
