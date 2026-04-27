@@ -2,6 +2,8 @@
    Design Tokens – Semantic layer
    Role-based tokens. Use these in components (e.g. var(--color-bg-surface)).
    ============================================================================ */
+
+   /* Note: This file should only contain tokens that are derived from the primitive*/
 :root {
   /* -------- Color roles -------- */
   --color-bg-base: var(--neutral-0);
