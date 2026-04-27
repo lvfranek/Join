@@ -37,8 +37,8 @@ export const routes: Routes = [
           import('./features/public/legal-notice/legal-notice').then((m) => m.LegalNotice),
       },
       {
-        path: 'help',
-        loadComponent: () => import('./features/public/help/help').then((m) => m.Help),
+        path: 'help-site',
+        loadComponent: () => import('./features/public/help-site/help-site').then((m) => m.HelpSite),
       },
 
       // Authenticated pages

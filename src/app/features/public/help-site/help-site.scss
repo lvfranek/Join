@@ -1,4 +1,4 @@
-.privacy-policy {
+.help-site {
     padding: 120px;
 }
 
@@ -25,6 +25,7 @@
         }
     }
 }
+
 h1 {
     font-size: 61px;
     color: black;
@@ -35,6 +36,7 @@ h2 {
     font-size: 27px;
     color: black;
     font-weight: 700;
+    margin-top: 30px;
 }
 
 h3 {
@@ -44,13 +46,41 @@ h3 {
     margin-bottom: 0px;
 }
 
-p,li {
+p {
     font-size: 16px;
     color: black;
 }
 
+.how-to-use {
+    display: flex;
+    justify-content: start;
+}
+
+.number-list {
+    display: flex;
+    font-size: 27px;
+    color: black;
+    font-weight: 700;
+
+    &-1 {
+        margin-right: 3px;
+    }
+}
+
+.number-list-1 {
+    display: flex;
+    font-size: 27px;
+    color: black;
+    font-weight: 700;
+    margin-right: 6px;
+}
+
+.bullet-point {
+    margin-left: 26px;
+}
+
 @media (max-width: 1000px) {
-    .privacy-policy {
+    .help-site {
         padding: 0px;
     }
 }
