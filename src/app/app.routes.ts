@@ -29,7 +29,7 @@ export const routes: Routes = [
       // Public pages – always accessible
       {
         path: 'privacy',
-        loadComponent: () => import('./features/public/privacy/privacy').then((m) => m.Privacy),
+        loadComponent: () => import('./features/public/privacy-policy/privacy-policy').then((m) => m.PrivacyPolicy),
       },
       {
         path: 'legal-notice',

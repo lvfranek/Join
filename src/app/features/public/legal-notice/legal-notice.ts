@@ -1,11 +1,9 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-legal-notice',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    <h1>Impressum</h1>
-    <p>Hier kommt das Impressum.</p>
-  `,
+  imports: [],
+  templateUrl: './legal-notice.html',
+  styleUrl: './legal-notice.scss',
 })
 export class LegalNotice {}
