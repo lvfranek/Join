@@ -8,12 +8,14 @@
   grid-template-columns: 16rem 1fr;
   block-size: 100%;
   // background: var(--color-bg-base);
+  max-height: 100vh;
 }
 
 .main {
   display: grid;
   grid-template-rows: auto 1fr auto;
   min-inline-size: 0;
+  max-height: 100vh;
 }
 
 .content {
