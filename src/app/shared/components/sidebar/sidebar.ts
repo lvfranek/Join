@@ -18,9 +18,9 @@ interface NavItem {
 })
 export class Sidebar {
   protected readonly navItems: readonly NavItem[] = [
-    { label: 'Summary', path: '/app/summary', icon: '/icons/Summary.png' },
-    { label: 'Add Task', path: '/app/add-task', icon: '/icons/Add task.png' },
-    { label: 'Board', path: '/app/board', icon: '/icons/Board.png' },
-    { label: 'Contacts', path: '/app/contacts', icon: '/icons/Contacts.png' },
+    { label: 'Summary', path: '/summary', icon: '/icons/Summary.png' },
+    { label: 'Add Task', path: '/add-task', icon: '/icons/Add task.png' },
+    { label: 'Board', path: '/board', icon: '/icons/Board.png' },
+    { label: 'Contacts', path: '/contacts', icon: '/icons/Contacts.png' },
   ];
 }
