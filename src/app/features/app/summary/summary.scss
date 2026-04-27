@@ -1,0 +1,170 @@
+.top-container {
+    display: flex;
+    align-items: center;
+    gap: 26px;
+    justify-self: start;
+    margin-bottom: 40px;
+}
+
+.subheadline {
+    font-size: 27px;
+    color: #2A3647;
+    font-weight: 400;
+}
+
+.blueline {
+    background: var(--brand-secondary-500);
+    height: 60px;
+    width: 3px;
+    border-radius: 5px;
+}
+
+.urgent-circle-1 {
+    border-radius: 50%;
+    background: #FF3D00;
+    height: 69px;
+    width: 69px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.urgent-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 280px;
+    height: 180px;
+    border-radius: 30px;
+}
+
+.to-do-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 280px;
+    height: 180px;
+    border-radius: 30px;
+}
+
+.check-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 280px;
+    height: 180px;
+    border-radius: 30px;
+}
+
+.todo-and-done {
+    display: flex;
+    gap: 10px;
+}
+
+.check-container:hover {
+    background: var(--brand-primary-500);
+    border-radius: 20px;
+
+    h1 {
+        color: white;
+    }
+
+    .container-text {
+        color: white;
+    }
+
+    .icon-circle-1 {
+        background: white;
+    }
+
+    .check {
+        display: none;
+    }
+
+    .check-dark {
+        display: block;
+    }
+}
+
+.check-dark {
+    display: none;
+}
+
+.to-do-container:hover {
+    background: var(--brand-primary-500);
+    border-radius: 20px;
+
+    h1 {
+        color: white;
+    }
+
+    .container-text {
+        color: white;
+    }
+
+    .icon-circle-1 {
+        background: white;
+    }
+
+    .edit {
+        display: none;
+    }
+
+    .editdark {
+        display: block;
+    }
+}
+
+.urgent-container:hover {
+    background: var(--brand-primary-500);
+    border-radius: 20px;
+
+    h1 {
+        color: white;
+    }
+
+    .container-text {
+        color: white;
+    }
+
+    .icon-circle-1 {
+        background: white;
+    }
+}
+
+h1 {
+    font-size: 64px;
+    color: black;
+    margin-bottom: 0px;
+}
+
+.editdark {
+    display: none;
+}
+
+.lower-container {
+    display: flex;
+}
+
+.icon-circle-1 {
+    border-radius: 50%;
+    background: var(--brand-primary-500);
+    height: 69px;
+    width: 69px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.right-element {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-left: 20px;
+}
+
+.container-text {
+    font-size: var(--font-size-xl);
+    color: var(--brand-primary-500);
+}
