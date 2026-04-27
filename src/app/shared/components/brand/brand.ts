@@ -5,17 +5,29 @@ import { RouterLink } from '@angular/router';
   selector: 'app-brand',
   imports: [RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<a class="brand" routerLink="/">Join</a>`,
+  template: `
+    <a class="brand" routerLink="/">
+      <img src="/icons/logo_join_white.png" alt="Join" />
+    </a>
+  `,
   styles: `
     :host {
-      display: inline-flex;
+      display: flex;
+      justify-content: center;
+      inline-size: 100%;
     }
+
     .brand {
-      font-size: 1.5rem;
-      font-weight: 700;
-      padding-inline: 0.75rem;
-      color: var(--tui-text-primary);
+      display: inline-flex;
+      align-items: center;
       text-decoration: none;
+    }
+
+    img {
+      display: block;
+      inline-size: 100.03px;
+      block-size: 121.97px;
+      object-fit: contain;
     }
   `,
 })
