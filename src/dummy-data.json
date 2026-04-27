@@ -58,5 +58,11 @@
     "name": "Ben Richter",
     "email": "ben.richter@example.com",
     "phone": "+49 155 78901234"
+  },
+  {
+    "id": "contact-11",
+    "name": "Ben Richter",
+    "email": "ben.richter@example.com",
+    "phone": "+49 155 78901234"
   }
 ]
