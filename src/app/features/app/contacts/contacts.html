@@ -1,0 +1,81 @@
+<section class="contacts-page">
+  <aside class="contacts-list">
+    <div class="contacts-list__button-wrapper">
+      <button class="add-contact-button" type="button">
+        <span>Add new contact</span>
+        <img class="add-contact-button__icon" src="/icons/person_add.png" alt="" />
+      </button>
+    </div>
+
+    <div class="contacts-list__content">
+      @for (group of contactGroups; track group.letter) {
+        <section class="contact-group">
+          <h2 class="contact-group__letter">{{ group.letter }}</h2>
+
+          @for (contact of group.contacts; track contact.id) {
+            <button
+              class="contact-card"
+              [class.contact-card--active]="selectedContact?.id === contact.id"
+              type="button"
+              (click)="selectContact(contact)"
+            >
+              <span class="contact-card__avatar {{ contact.colorClass }}">
+                {{ getInitials(contact.name) }}
+              </span>
+
+              <span class="contact-card__info">
+                <span class="contact-card__name">{{ contact.name }}</span>
+                <span class="contact-card__email">{{ contact.email }}</span>
+              </span>
+            </button>
+          }
+        </section>
+      }
+    </div>
+  </aside>
+
+  <main class="contact-detail">
+    <header class="contact-detail__headline">
+      <h1>Contacts</h1>
+      <span class="contact-detail__divider" aria-hidden="true"></span>
+      <p>Better with a team</p>
+    </header>
+
+    @if (selectedContact) {
+      <section class="contact-detail__selected">
+        <section class="contact-detail__profile">
+          <div class="contact-detail__avatar {{ selectedContact.colorClass }}">
+            {{ getInitials(selectedContact.name) }}
+          </div>
+
+          <div class="contact-detail__main-info">
+            <h2>{{ selectedContact.name }}</h2>
+
+            <div class="contact-detail__actions">
+              <button class="contact-action" type="button">Edit</button>
+              <button class="contact-action" type="button">Delete</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="contact-information">
+          <h3>Contact Information</h3>
+
+          <div class="contact-information__item">
+            <strong>Email</strong>
+            <a [href]="'mailto:' + selectedContact.email">
+              {{ selectedContact.email }}
+            </a>
+          </div>
+
+          <div class="contact-information__item">
+            <strong>Phone</strong>
+            <a [href]="getPhoneHref(selectedContact.phone)">
+              {{ selectedContact.phone }}
+            </a>
+          </div>
+        </section>
+      </section>
+    }
+  </main>
+</section>
