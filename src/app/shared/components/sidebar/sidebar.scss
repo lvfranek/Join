@@ -6,6 +6,8 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  inline-size: 232px;
+  min-block-size: 100vh;
   padding: 1.5rem 1rem;
   background: var(--brand-primary-500);
   border-inline-end: 1px solid var(--tui-border-normal);
@@ -15,14 +17,16 @@
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+  margin-block-start: 3rem;
+  margin-inline: -1rem;
 }
 
 .nav-item {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.75rem;
-  padding: 0.625rem 0.75rem;
-  border-radius: 0.5rem;
+  padding: 0.625rem 1rem;
   color: var(--tui-text-secondary);
   text-decoration: none;
   font-weight: 500;
@@ -31,7 +35,7 @@
     color 0.15s ease;
 
   &:hover {
-    background: var(--tui-background-neutral-1-hover);
+    background: var(--brand-secondary-1000);
     color: var(--tui-text-primary);
   }
 
@@ -41,14 +45,29 @@
   }
 
   &--active {
-    background: var(--tui-background-accent-1);
-    color: var(--tui-background-accent-1-foreground);
+    background: var(--brand-tertiary-500);
+    color: #fff;
 
     &:hover {
-      background: var(--tui-background-accent-1-hover);
-      color: var(--tui-background-accent-1-foreground);
+      background: var(--brand-tertiary-500);
+      color: #fff;
+    }
+
+    .nav-item__icon {
+      filter: brightness(0) invert(1);
     }
   }
+
+  span {
+    inline-size: 5rem;
+  }
+}
+
+.nav-item__icon {
+  display: block;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  object-fit: contain;
 }
 
 .legal-nav {

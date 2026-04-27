@@ -1,8 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { TuiIcon } from '@taiga-ui/core';
 
-import { AuthService } from '../../../core/services/auth.service';
 import { Brand } from '../brand/brand';
 
 interface NavItem {
@@ -13,24 +11,16 @@ interface NavItem {
 
 @Component({
   selector: 'app-sidebar',
-  imports: [RouterLink, RouterLinkActive, TuiIcon, Brand],
+  imports: [RouterLink, RouterLinkActive, Brand],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss',
 })
 export class Sidebar {
-  private readonly auth = inject(AuthService);
-
-  protected readonly isAuthenticated = this.auth.isAuthenticated;
-
-  protected readonly navItems = computed<readonly NavItem[]>(() =>
-    this.isAuthenticated()
-      ? [
-          { label: 'Summary', path: '/app/summary', icon: '@tui.layout-dashboard' },
-          { label: 'Add Task', path: '/app/add-task', icon: '@tui.plus' },
-          { label: 'Board', path: '/app/board', icon: '@tui.kanban' },
-          { label: 'Contacts', path: '/app/contacts', icon: '@tui.users' },
-        ]
-      : [],
-  );
+  protected readonly navItems: readonly NavItem[] = [
+    { label: 'Summary', path: '/app/summary', icon: '/icons/Summary.png' },
+    { label: 'Add Task', path: '/app/add-task', icon: '/icons/Add task.png' },
+    { label: 'Board', path: '/app/board', icon: '/icons/Board.png' },
+    { label: 'Contacts', path: '/app/contacts', icon: '/icons/Contacts.png' },
+  ];
 }

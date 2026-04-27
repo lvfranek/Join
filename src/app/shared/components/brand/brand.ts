@@ -15,6 +15,7 @@ import { RouterLink } from '@angular/router';
       display: flex;
       justify-content: center;
       inline-size: 100%;
+      padding-block-start: 64px;
     }
 
     .brand {
