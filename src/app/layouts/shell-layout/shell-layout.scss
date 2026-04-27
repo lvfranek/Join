@@ -12,7 +12,7 @@
 
 .main {
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: 96px 1fr auto;
   min-inline-size: 0;
   max-height: 100vh;
 }
