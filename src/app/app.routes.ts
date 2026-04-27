@@ -7,7 +7,7 @@ export const routes: Routes = [
   // Auth shell (login, register) – plain, no sidebar
   {
     path: '',
-    canMatch: [guestGuard],
+    // canMatch: [guestGuard],
     loadComponent: () => import('./layouts/auth-layout/auth-layout').then((m) => m.AuthLayout),
     children: [
       {
@@ -29,7 +29,8 @@ export const routes: Routes = [
       // Public pages – always accessible
       {
         path: 'privacy-policy',
-        loadComponent: () => import('./features/public/privacy-policy/privacy-policy').then((m) => m.PrivacyPolicy),
+        loadComponent: () =>
+          import('./features/public/privacy-policy/privacy-policy').then((m) => m.PrivacyPolicy),
       },
       {
         path: 'legal-notice',
@@ -38,35 +39,33 @@ export const routes: Routes = [
       },
       {
         path: 'help-site',
-        loadComponent: () => import('./features/public/help-site/help-site').then((m) => m.HelpSite),
+        loadComponent: () =>
+          import('./features/public/help-site/help-site').then((m) => m.HelpSite),
       },
 
-      // Authenticated pages
+      // Authenticated pages – without /app/ prefix
       {
-        path: 'app',
+        path: 'summary',
         // canMatch: [authGuard],
-        children: [
-          { path: '', redirectTo: 'summary', pathMatch: 'full' },
-          {
-            path: 'summary',
-            loadComponent: () => import('./features/app/summary/summary').then((m) => m.Summary),
-          },
-          {
-            path: 'add-task',
-            loadComponent: () => import('./features/app/add-task/add-task').then((m) => m.AddTask),
-          },
-          {
-            path: 'board',
-            loadComponent: () => import('./features/app/board/board').then((m) => m.Board),
-          },
-          {
-            path: 'contacts',
-            loadComponent: () => import('./features/app/contacts/contacts').then((m) => m.Contacts),
-          },
-        ],
+        loadComponent: () => import('./features/app/summary/summary').then((m) => m.Summary),
+      },
+      {
+        path: 'add-task',
+        // canMatch: [authGuard],
+        loadComponent: () => import('./features/app/add-task/add-task').then((m) => m.AddTask),
+      },
+      {
+        path: 'board',
+        // canMatch: [authGuard],
+        loadComponent: () => import('./features/app/board/board').then((m) => m.Board),
+      },
+      {
+        path: 'contacts',
+        // canMatch: [authGuard],
+        loadComponent: () => import('./features/app/contacts/contacts').then((m) => m.Contacts),
       },
 
-      { path: '', redirectTo: 'help', pathMatch: 'full' },
+      { path: '', redirectTo: 'summary', pathMatch: 'full' },
     ],
   },
 
