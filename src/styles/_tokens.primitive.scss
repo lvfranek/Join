@@ -5,16 +5,16 @@
    ============================================================================ */
 :root {
   /* -- Brand -- */
-  --brand-primary-50: #e6e9ee;
-  --brand-primary-100: #b0b8c6;
-  --brand-primary-200: #8a94a8;
-  --brand-primary-300: #545f78;
-  --brand-primary-400: #2e3b56;
-  --brand-primary-500: #091931; /* base */
-  --brand-primary-600: #081629;
-  --brand-primary-700: #061120;
-  --brand-primary-800: #040c17;
-  --brand-primary-900: #02070e;
+  --brand-primary-50: #e9ebed;
+  --brand-primary-100: #bfc4cb;
+  --brand-primary-200: #9fa6b0;
+  --brand-primary-300: #757f8e;
+  --brand-primary-400: #4d5a6e;
+  --brand-primary-500: #2a3647; /* base */
+  --brand-primary-600: #263040;
+  --brand-primary-700: #1e2733;
+  --brand-primary-800: #171e28;
+  --brand-primary-900: #0f141b;
 
   --brand-secondary-50: #e9f6fc;
   --brand-secondary-100: #bce4f5;
@@ -26,6 +26,17 @@
   --brand-secondary-700: #1f8ab7;
   --brand-secondary-800: #196f93;
   --brand-secondary-900: #12506a;
+
+  --brand-tertiary-50: #e6e9ee;
+  --brand-tertiary-100: #b0b8c6;
+  --brand-tertiary-200: #8a94a8;
+  --brand-tertiary-300: #545f78;
+  --brand-tertiary-400: #2e3b56;
+  --brand-tertiary-500: #091931; /* base */
+  --brand-tertiary-600: #081629;
+  --brand-tertiary-700: #061120;
+  --brand-tertiary-800: #040c17;
+  --brand-tertiary-900: #02070e;
 
   /* -- Neutral (grayscale) -- */
   --neutral-0: #ffffff;
@@ -46,4 +57,19 @@
   --warning-500: #f4b942;
   --danger-500: #ff3d3d;
   --info-500: var(--brand-secondary-500);
+
+  /* -- Accent palette --
+     Used for kanban cards, contact avatars, category/status chips, etc.
+     Numbered (not semantic) so they can be cycled / mapped freely. */
+  --accent-1: #0038ff;
+  --accent-2: #00bee8;
+  --accent-3: #1fd7c1;
+  --accent-4: #6e52ff;
+  --accent-5: #9327ff;
+  --accent-6: #9747ff;
+  --accent-7: #c3ff2b;
+  --accent-8: #fc71ff;
+  --accent-9: #ff4646;
+  --accent-10: #ff5eb3;
+  --accent-11: #ff745e;
 }
