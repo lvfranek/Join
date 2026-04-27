@@ -1,0 +1,62 @@
+[
+  {
+    "id": "contact-1",
+    "name": "Laura Schneider",
+    "email": "laura.schneider@example.com",
+    "phone": "+49 151 23456789"
+  },
+  {
+    "id": "contact-2",
+    "name": "Maximilian Weber",
+    "email": "maximilian.weber@example.com",
+    "phone": "+49 160 87654321"
+  },
+  {
+    "id": "contact-3",
+    "name": "Sophie Müller",
+    "email": "sophie.mueller@example.com",
+    "phone": "+49 176 11223344"
+  },
+  {
+    "id": "contact-4",
+    "name": "Jonas Fischer",
+    "email": "jonas.fischer@example.com",
+    "phone": "+49 157 99887766"
+  },
+  {
+    "id": "contact-5",
+    "name": "Mia Hoffmann",
+    "email": "mia.hoffmann@example.com",
+    "phone": "+49 152 44556677"
+  },
+  {
+    "id": "contact-6",
+    "name": "Leon Wagner",
+    "email": "leon.wagner@example.com",
+    "phone": "+49 170 33445566"
+  },
+  {
+    "id": "contact-7",
+    "name": "Emma Becker",
+    "email": "emma.becker@example.com",
+    "phone": "+49 159 66778899"
+  },
+  {
+    "id": "contact-8",
+    "name": "Noah Schulz",
+    "email": "noah.schulz@example.com",
+    "phone": "+49 163 55667788"
+  },
+  {
+    "id": "contact-9",
+    "name": "Hannah Koch",
+    "email": "hannah.koch@example.com",
+    "phone": "+49 172 12349876"
+  },
+  {
+    "id": "contact-10",
+    "name": "Ben Richter",
+    "email": "ben.richter@example.com",
+    "phone": "+49 155 78901234"
+  }
+]
