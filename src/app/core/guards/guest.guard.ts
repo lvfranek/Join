@@ -7,5 +7,5 @@ export const guestGuard: CanMatchFn = () => {
   const auth = inject(AuthService);
   const router = inject(Router);
 
-  return auth.isAuthenticated() ? router.parseUrl('/app/summary') : true;
+  return auth.isAuthenticated() ? router.parseUrl('/summary') : true;
 };
