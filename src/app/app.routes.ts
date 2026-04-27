@@ -28,7 +28,7 @@ export const routes: Routes = [
     children: [
       // Public pages – always accessible
       {
-        path: 'privacy',
+        path: 'privacy-policy',
         loadComponent: () => import('./features/public/privacy-policy/privacy-policy').then((m) => m.PrivacyPolicy),
       },
       {
