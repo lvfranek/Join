@@ -1,47 +1,13 @@
 <div class="layout">
-  <aside class="sidebar">
-    <a class="brand" routerLink="/">Join</a>
-
-    @if (navItems().length) {
-      <nav class="nav" aria-label="Main navigation">
-        @for (item of navItems(); track item.path) {
-          <a class="nav-item" [routerLink]="item.path" routerLinkActive="nav-item--active">
-            <tui-icon [icon]="item.icon" />
-            <span>{{ item.label }}</span>
-          </a>
-        }
-      </nav>
-    }
-
-    <nav class="nav nav--secondary" aria-label="Public navigation">
-      @for (item of publicItems; track item.path) {
-        <a class="nav-item" [routerLink]="item.path" routerLinkActive="nav-item--active">
-          <tui-icon [icon]="item.icon" />
-          <span>{{ item.label }}</span>
-        </a>
-      }
-    </nav>
-  </aside>
+  <app-sidebar />
 
   <div class="main">
-    <header class="header">
-      <h1 class="header__title">Kanban Project Management Tool</h1>
-      <div class="header__actions">
-        @if (isAuthenticated()) {
-          <span tuiAvatar="LB" size="m" aria-label="User avatar" role="img"></span>
-        } @else {
-          <a class="header__link" routerLink="/login">Login</a>
-          <a class="header__link" routerLink="/register">Register</a>
-        }
-      </div>
-    </header>
+    <app-header />
 
     <main class="content">
       <router-outlet />
     </main>
 
-    <footer class="footer">
-      <span>© {{ 2026 }} Join</span>
-    </footer>
+    <app-footer />
   </div>
 </div>

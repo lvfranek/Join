@@ -1,12 +1,9 @@
 <div class="auth-shell">
   <header class="auth-shell__header">
-    <a class="brand" routerLink="/">Join</a>
+    <app-brand />
   </header>
   <main class="auth-shell__content">
     <router-outlet />
   </main>
-  <footer class="auth-shell__footer">
-    <a routerLink="/legal-notice">Impressum</a>
-    <a routerLink="/privacy">Datenschutz</a>
-  </footer>
+  <app-footer [links]="footerLinks" />
 </div>
