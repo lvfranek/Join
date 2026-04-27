@@ -33,10 +33,4 @@ export class Sidebar {
         ]
       : [],
   );
-
-  protected readonly publicItems: readonly NavItem[] = [
-    { label: 'Hilfe', path: '/help', icon: '@tui.circle-help' },
-    { label: 'Datenschutz', path: '/privacy', icon: '@tui.shield' },
-    { label: 'Impressum', path: '/legal-notice', icon: '@tui.info' },
-  ];
 }

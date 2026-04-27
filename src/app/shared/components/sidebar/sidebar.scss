@@ -7,7 +7,7 @@
   flex-direction: column;
   gap: 1.5rem;
   padding: 1.5rem 1rem;
-  background: var(--tui-background-neutral-1);
+  background: var(--brand-primary-500);
   border-inline-end: 1px solid var(--tui-border-normal);
 }
 
@@ -15,12 +15,6 @@
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
-
-  &--secondary {
-    margin-block-start: auto;
-    padding-block-start: 1rem;
-    border-block-start: 1px solid var(--tui-border-normal);
-  }
 }
 
 .nav-item {
@@ -54,5 +48,42 @@
       background: var(--tui-background-accent-1-hover);
       color: var(--tui-background-accent-1-foreground);
     }
+  }
+}
+
+.legal-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  margin-block-start: auto;
+  margin-inline: -1rem;
+}
+
+.legal-link {
+  display: flex;
+  justify-content: center;
+  padding-block: 0.5rem;
+  color: var(--tui-text-secondary);
+  font-size: 0.875rem;
+  font-weight: 400;
+  text-align: center;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--accent-2);
+    font-weight: 700;
+  }
+
+  &--active {
+    background: var(--brand-tertiary-500);
+  }
+
+  &:active {
+    background: var(--brand-tertiary-500);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--tui-background-accent-1);
+    outline-offset: 4px;
   }
 }

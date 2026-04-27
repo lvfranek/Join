@@ -12,12 +12,12 @@
     </nav>
   }
 
-  <nav class="nav nav--secondary" aria-label="Public navigation">
-    @for (item of publicItems; track item.path) {
-      <a class="nav-item" [routerLink]="item.path" routerLinkActive="nav-item--active">
-        <tui-icon [icon]="item.icon" />
-        <span>{{ item.label }}</span>
-      </a>
-    }
+  <nav class="legal-nav" aria-label="Legal navigation">
+    <a class="legal-link" routerLink="/privacy" routerLinkActive="legal-link--active">
+      Privacy Policy
+    </a>
+    <a class="legal-link" routerLink="/legal-notice" routerLinkActive="legal-link--active">
+      Legal notice
+    </a>
   </nav>
 </aside>
