@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-add-task',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<h2>Add Task</h2>`,
+  imports: [],
+  templateUrl: './add-task.html',
+  styleUrl: './add-task.scss',
 })
 export class AddTask {}
