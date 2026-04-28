@@ -1,5 +1,7 @@
 <header class="app-header">
-  <p class="app-header__title">Kanban Project Management Tool</p>
+  <div class="app-header__left">
+    <p class="app-header__title">Kanban Project Management Tool</p>
+  </div>
 
   <div class="app-header__actions">
     <button class="app-header__help" type="button" routerLink="/help-site" aria-label="Open help">
@@ -27,13 +29,23 @@
         [attr.inert]="isProfileMenuOpen ? null : ''"
         (click)="keepProfileMenuOpen($event)"
       >
-        <a class="app-header__profile-menu-item" routerLink="/legal-notice" (click)="closeProfileMenu()">
+        <a
+          class="app-header__profile-menu-item"
+          routerLink="/legal-notice"
+          (click)="closeProfileMenu()"
+        >
           Legal Notice
         </a>
-        <a class="app-header__profile-menu-item" routerLink="/privacy-policy" (click)="closeProfileMenu()">
+        <a
+          class="app-header__profile-menu-item"
+          routerLink="/privacy-policy"
+          (click)="closeProfileMenu()"
+        >
           Privacy Policy
         </a>
-        <button class="app-header__profile-menu-item" type="button" (click)="logout()">Log out</button>
+        <button class="app-header__profile-menu-item" type="button" (click)="logout()">
+          Log out
+        </button>
       </nav>
     </div>
   </div>

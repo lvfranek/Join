@@ -1,12 +1,15 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-brand',
   imports: [RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '[class.brand-collapsed]': 'collapsed()',
+  },
   template: `
-    <a class="brand" routerLink="/">
+    <a class="brand" [class.brand--collapsed]="collapsed()" routerLink="/">
       <img src="/icons/logo_join_white.png" alt="Join" />
     </a>
   `,
@@ -22,6 +25,7 @@ import { RouterLink } from '@angular/router';
       display: inline-flex;
       align-items: center;
       text-decoration: none;
+      overflow: hidden;
     }
 
     img {
@@ -29,7 +33,23 @@ import { RouterLink } from '@angular/router';
       inline-size: 100.03px;
       block-size: 121.97px;
       object-fit: contain;
+      flex-shrink: 0;
+      transition:
+        inline-size 0.18s ease,
+        block-size 0.18s ease;
+    }
+
+    :host(.brand-collapsed) {
+      padding-block-start: 1.5rem;
+    }
+
+    .brand--collapsed img {
+      inline-size: 48px;
+      block-size: 48px;
+      object-position: center bottom;
     }
   `,
 })
-export class Brand {}
+export class Brand {
+  readonly collapsed = input(false);
+}

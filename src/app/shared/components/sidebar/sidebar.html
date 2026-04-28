@@ -1,21 +1,95 @@
-<aside class="sidebar">
-  <app-brand></app-brand>
+<aside
+  class="sidebar"
+  [class.sidebar--collapsed]="collapsed()"
+  [class.sidebar--hidden]="hidden()"
+  [class.sidebar--compact]="compact()"
+>
+  <div class="sidebar__top">
+    <app-brand [collapsed]="collapsed() || compact()"></app-brand>
+
+    <button
+      class="sidebar__toggle"
+      tuiIconButton
+      type="button"
+      size="s"
+      [iconStart]="collapsed() || compact() ? '@tui.panel-left-open' : '@tui.panel-left-close'"
+      [tuiHint]="sidebarToggleLabel()"
+      tuiHintDirection="end"
+      [attr.aria-label]="sidebarToggleLabel()"
+      (click)="toggleMode.emit()"
+    ></button>
+  </div>
 
   <nav class="nav" aria-label="Main navigation">
     @for (item of navItems; track item.path) {
-      <a class="nav-item" [routerLink]="item.path" routerLinkActive="nav-item--active">
-        <img class="nav-item__icon" [src]="item.icon" alt="" aria-hidden="true" />
-        <span>{{ item.label }}</span>
+      <a
+        class="nav-item"
+        [routerLink]="item.path"
+        routerLinkActive="nav-item--active"
+        [tuiHint]="collapsed() || compact() ? item.label : ''"
+        tuiHintDirection="end"
+        (click)="handleNavigation()"
+      >
+        <tui-icon class="nav-item__icon" [icon]="item.icon" />
+        <span class="nav-item__label">{{ item.label }}</span>
       </a>
     }
   </nav>
 
-  <nav class="legal-nav" aria-label="Legal navigation">
-    <a class="legal-link" routerLink="/privacy-policy" routerLinkActive="legal-link--active">
-      Privacy Policy
-    </a>
-    <a class="legal-link" routerLink="/legal-notice" routerLinkActive="legal-link--active">
-      Legal notice
-    </a>
-  </nav>
+  @if (collapsed() || compact()) {
+    <div class="sidebar__legal-menu">
+      <button
+        class="sidebar__legal-trigger"
+        type="button"
+        tuiIconButton
+        appearance="secondary"
+        size="s"
+        [tuiHint]="'Legal links'"
+        tuiHintDirection="end"
+        aria-controls="sidebar-legal-menu"
+        [attr.aria-expanded]="isLegalMenuOpen() ? 'true' : 'false'"
+        aria-label="Open legal links"
+        (click)="toggleLegalMenu($event)"
+      >
+        <span class="sidebar__legal-dots" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
+      </button>
+
+      <nav
+        id="sidebar-legal-menu"
+        class="sidebar__legal-dropdown"
+        [class.sidebar__legal-dropdown--open]="isLegalMenuOpen()"
+        aria-label="Legal navigation"
+        [attr.inert]="isLegalMenuOpen() ? null : ''"
+        (click)="keepLegalMenuOpen($event)"
+      >
+        @for (item of legalItems; track item.path) {
+          <a
+            class="sidebar__legal-link"
+            [routerLink]="item.path"
+            routerLinkActive="sidebar__legal-link--active"
+            (click)="handleNavigation()"
+          >
+            {{ item.label }}
+          </a>
+        }
+      </nav>
+    </div>
+  } @else {
+    <nav class="legal-nav" aria-label="Legal navigation">
+      @for (item of legalItems; track item.path) {
+        <a
+          class="legal-link"
+          [routerLink]="item.path"
+          routerLinkActive="legal-link--active"
+          (click)="handleNavigation()"
+        >
+          {{ item.label }}
+        </a>
+      }
+    </nav>
+  }
 </aside>

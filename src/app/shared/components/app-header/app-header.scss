@@ -17,6 +17,12 @@
   box-shadow: 0 4px 8px rgb(0 0 0 / 0.12);
 }
 
+.app-header__left {
+  display: flex;
+  align-items: center;
+  min-inline-size: 0;
+}
+
 .app-header__title {
   margin: 0;
   color: #000;
@@ -138,5 +144,15 @@
   &:focus-visible {
     outline: 2px solid var(--accent-2);
     outline-offset: -2px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .app-header {
+    padding-inline: 1rem;
+  }
+
+  .app-header__title {
+    font-size: 16px;
   }
 }
