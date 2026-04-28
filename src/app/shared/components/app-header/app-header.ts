@@ -1,7 +1,8 @@
-import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 
 import { AuthService } from '../../../core/services/auth.service';
+import { SupabaseService } from '../../../core/services/supabase.service';
 
 @Component({
   selector: 'app-header',
@@ -12,12 +13,11 @@ import { AuthService } from '../../../core/services/auth.service';
 export class AppHeader {
   @ViewChild('profileButton') private profileButton?: ElementRef<HTMLButtonElement>;
 
-  isProfileMenuOpen = false;
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+  private readonly supabase = inject(SupabaseService);
 
-  constructor(
-    private readonly authService: AuthService,
-    private readonly router: Router,
-  ) {}
+  isProfileMenuOpen = false;
 
   @HostListener('document:click')
   closeProfileMenu(): void {
@@ -34,11 +34,12 @@ export class AppHeader {
     event.stopPropagation();
   }
 
-  logout(): void {
+  async logout(): Promise<void> {
+    await this.supabase.client.auth.signOut();
     this.authService.setAuthenticated(false);
     this.focusProfileButtonIfMenuHadFocus();
     this.isProfileMenuOpen = false;
-    void this.router.navigate(['/login']);
+    await this.router.navigate(['/login']);
   }
 
   private focusProfileButtonIfMenuHadFocus(): void {

@@ -1,29 +1,65 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+
+import { AuthService } from '../../../core/services/auth.service';
 import { SupabaseService } from '../../../core/services/supabase.service';
 
 @Component({
   selector: 'app-login',
+  imports: [ReactiveFormsModule, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    <div style="padding: 2rem;">
-      <h1>Login</h1>
-      <button (click)="testSupabase()">Test Supabase Connection</button>
-      @if (testResult()) {
-        <pre style="margin-top: 1rem; padding: 1rem; background: #f5f5f5;">{{ testResult() }}</pre>
-      }
-    </div>
-  `,
+  templateUrl: './login.html',
+  styleUrl: './login.scss',
 })
 export class Login {
+  private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
   private readonly supabase = inject(SupabaseService);
-  readonly testResult = signal<string>('');
+  protected readonly isSubmitting = signal(false);
+  protected readonly submitError = signal('');
+  protected readonly loginForm = new FormGroup({
+    email: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.email],
+    }),
+    password: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(6)],
+    }),
+  });
 
-  async testSupabase() {
-    try {
-      const result = await this.supabase.client.auth.getSession();
-      this.testResult.set('✓ Supabase Connection OK\n\n' + JSON.stringify(result, null, 2));
-    } catch (error) {
-      this.testResult.set('✗ Connection Error:\n\n' + JSON.stringify(error, null, 2));
+  protected hasError(controlName: 'email' | 'password'): boolean {
+    const control = this.loginForm.controls[controlName];
+
+    return control.invalid && (control.dirty || control.touched);
+  }
+
+  protected async submitLogin(): Promise<void> {
+    if (this.loginForm.invalid || this.isSubmitting()) {
+      this.loginForm.markAllAsTouched();
+      return;
     }
+
+    this.isSubmitting.set(true);
+    this.submitError.set('');
+
+    const { email, password } = this.loginForm.getRawValue();
+    const { error } = await this.supabase.client.auth.signInWithPassword({ email, password });
+
+    if (error) {
+      this.submitError.set('Check your email and password. Please try again.');
+      this.isSubmitting.set(false);
+      return;
+    }
+
+    this.auth.setAuthenticated(true);
+    this.isSubmitting.set(false);
+    await this.router.navigateByUrl('/summary');
+  }
+
+  protected continueAsGuest(): void {
+    this.auth.setAuthenticated(true);
+    void this.router.navigateByUrl('/summary');
   }
 }

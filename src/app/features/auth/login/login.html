@@ -2,6 +2,7 @@
   <header class="login-page__header">
     <a class="brand" routerLink="/" aria-label="Join start page">
       <img src="/icons/logo_join_dark.png" alt="Join" />
+      <span class="sr-only">Go to home page</span>
     </a>
 
     <div class="signup">
@@ -51,9 +52,22 @@
         }
       </label>
 
+      @if (submitError()) {
+        <p class="submit-error" aria-live="polite">{{ submitError() }}</p>
+      }
+
       <div class="login-card__actions">
-        <button class="button button--primary" type="submit">Log in</button>
-        <button class="button button--secondary" type="button" (click)="continueAsGuest()">Guest Log in</button>
+        <button class="button button--primary" type="submit" [disabled]="isSubmitting()">
+          {{ isSubmitting() ? 'Logging in...' : 'Log in' }}
+        </button>
+        <button
+          class="button button--secondary"
+          type="button"
+          (click)="continueAsGuest()"
+          [disabled]="isSubmitting()"
+        >
+          Guest Log in
+        </button>
       </div>
     </form>
   </main>

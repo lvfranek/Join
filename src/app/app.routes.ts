@@ -7,15 +7,16 @@ export const routes: Routes = [
   // Auth shell (login, register) – plain, no sidebar
   {
     path: '',
-    // canMatch: [guestGuard],
     loadComponent: () => import('./layouts/auth-layout/auth-layout').then((m) => m.AuthLayout),
     children: [
       {
         path: 'login',
+        canMatch: [guestGuard],
         loadComponent: () => import('./features/auth/login/login').then((m) => m.Login),
       },
       {
         path: 'register',
+        canMatch: [guestGuard],
         loadComponent: () => import('./features/auth/register/register').then((m) => m.Register),
       },
     ],
@@ -46,22 +47,22 @@ export const routes: Routes = [
       // Authenticated pages – without /app/ prefix
       {
         path: 'summary',
-        // canMatch: [authGuard],
+        canMatch: [authGuard],
         loadComponent: () => import('./features/app/summary/summary').then((m) => m.Summary),
       },
       {
         path: 'add-task',
-        // canMatch: [authGuard],
+        canMatch: [authGuard],
         loadComponent: () => import('./features/app/add-task/add-task').then((m) => m.AddTask),
       },
       {
         path: 'board',
-        // canMatch: [authGuard],
+        canMatch: [authGuard],
         loadComponent: () => import('./features/app/board/board').then((m) => m.Board),
       },
       {
         path: 'contacts',
-        // canMatch: [authGuard],
+        canMatch: [authGuard],
         loadComponent: () => import('./features/app/contacts/contacts').then((m) => m.Contacts),
       },
 

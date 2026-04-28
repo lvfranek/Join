@@ -9,4 +9,9 @@ export class AuthService {
   setAuthenticated(value: boolean): void {
     this.authenticated.set(value);
   }
+
+  syncFromSession(hasSession: boolean): boolean {
+    this.authenticated.set(hasSession);
+    return hasSession;
+  }
 }
