@@ -6,6 +6,7 @@
   display: flex;
   width: 100%;
   height: calc(100vh - var(--layout-header-height));
+  margin: -22px;
   overflow: hidden;
   background-color: var(--color-bg-surface-alt);
   font-family: var(--font-family-base);
@@ -150,6 +151,9 @@
 
 .contact-detail {
   overflow: hidden;
+  flex: 1;
+  height: 100%;
+  padding: 110px 64px;
 }
 
 .contact-detail__headline {
@@ -181,7 +185,7 @@
 }
 
 .contact-detail__selected {
-  animation: slide-in-from-right 300ms ease-out;
+  animation: slide-in-from-right 800ms ease-out;
 }
 
 .contact-detail__profile {
