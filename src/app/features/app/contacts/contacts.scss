@@ -1,15 +1,14 @@
 :host {
   display: block;
-  block-size: calc(100vh - var(--layout-header-height));
-  margin: calc(var(--space-6) * -1);
+  height: 100%;
   overflow: hidden;
 }
 
 .contacts-page {
   display: flex;
-  width: calc(100% + (var(--space-6) * 2));
+  width: 100%;
   height: 100%;
-  margin: calc(var(--space-6) * -1);
+  min-height: 0;
   overflow: hidden;
   background-color: var(--color-bg-surface-alt);
   font-family: var(--font-family-base);
