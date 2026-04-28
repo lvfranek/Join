@@ -1,16 +1,43 @@
 :host {
-  display: contents;
+  display: block;
 }
 
 .sidebar {
+  position: relative;
+  z-index: 5;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  inline-size: 232px;
-  min-block-size: 100vh;
+  inline-size: 100%;
+  min-block-size: 100%;
   padding: 1.5rem 1rem;
   background: var(--brand-primary-500);
   border-inline-end: 1px solid var(--tui-border-normal);
+  transition:
+    inline-size 0.18s ease,
+    transform 0.2s ease;
+}
+
+.sidebar__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+
+  app-brand {
+    flex: 1;
+    min-inline-size: 0;
+  }
+}
+
+.sidebar--collapsed .sidebar__top app-brand,
+.sidebar--compact .sidebar__top app-brand {
+  flex: none;
+}
+
+.sidebar__toggle {
+  flex: 0 0 auto;
+  margin-block-start: 0.25rem;
 }
 
 .nav {
@@ -24,7 +51,7 @@
 .nav-item {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 0.75rem;
   padding: 0.625rem 1rem;
   color: var(--tui-text-secondary);
@@ -54,20 +81,19 @@
     }
 
     .nav-item__icon {
-      filter: brightness(0) invert(1);
+      color: #fff;
     }
-  }
-
-  span {
-    inline-size: 5rem;
   }
 }
 
 .nav-item__icon {
-  display: block;
-  inline-size: 1.5rem;
-  block-size: 1.5rem;
-  object-fit: contain;
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  color: currentColor;
+}
+
+.nav-item__label {
+  white-space: nowrap;
 }
 
 .legal-nav {
@@ -105,4 +131,138 @@
     outline: 2px solid var(--tui-background-accent-1);
     outline-offset: 4px;
   }
+}
+
+.sidebar__legal-menu {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin-block-start: auto;
+}
+
+.sidebar__legal-trigger {
+  flex: 0 0 auto;
+  inline-size: 2.5rem;
+  block-size: 2.5rem;
+  border: 0;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.06);
+  color: var(--tui-text-secondary);
+
+  &:hover {
+    background: var(--brand-secondary-1000);
+    color: #fff;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--tui-background-accent-1);
+    outline-offset: 3px;
+  }
+}
+
+.sidebar__legal-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+
+  span {
+    inline-size: 0.25rem;
+    block-size: 0.25rem;
+    border-radius: 50%;
+    background: currentColor;
+  }
+}
+
+.sidebar__legal-dropdown {
+  position: absolute;
+  inset-block-end: calc(100% + 0.5rem);
+  inset-inline-start: calc(100% - 0.5rem);
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 10.5rem;
+  padding-block: 0.5rem;
+  border: 1px solid rgb(255 255 255 / 0.08);
+  border-radius: 0.875rem 0.875rem 0.875rem 0.25rem;
+  background: var(--brand-secondary-1000);
+  box-shadow: 0 1rem 2rem rgb(0 0 0 / 0.28);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-0.5rem, 0.5rem);
+  transform-origin: bottom left;
+  transition:
+    opacity 150ms ease,
+    transform 180ms ease;
+  z-index: 20;
+}
+
+.sidebar__legal-dropdown--open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(0, 0);
+}
+
+.sidebar__legal-link {
+  display: flex;
+  align-items: center;
+  min-block-size: 2.5rem;
+  padding: 0.5rem 0.875rem;
+  color: var(--tui-text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+
+  &:hover,
+  &--active {
+    background: rgb(255 255 255 / 0.06);
+    color: #fff;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--tui-background-accent-1);
+    outline-offset: -2px;
+  }
+}
+
+.sidebar--collapsed .nav-item,
+.sidebar--compact .nav-item {
+  justify-content: center;
+  padding-inline: 0.75rem;
+}
+
+.sidebar--collapsed .nav-item__label,
+.sidebar--compact .nav-item__label,
+.sidebar--compact app-brand {
+  display: none;
+}
+
+.sidebar--collapsed .nav,
+.sidebar--compact .nav {
+  margin-block-start: 1rem;
+}
+
+.sidebar--collapsed .sidebar__top,
+.sidebar--compact .sidebar__top {
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.5rem;
+}
+
+.sidebar--collapsed .sidebar__toggle,
+.sidebar--compact .sidebar__toggle {
+  order: -1;
+  margin-block-start: 0;
+}
+
+.sidebar--compact {
+  position: fixed;
+  inset-block: 0;
+  inset-inline-start: 0;
+  inline-size: 84px;
+  min-block-size: 100dvh;
+}
+
+.sidebar--compact.sidebar--hidden {
+  transform: translateX(-100%);
 }

@@ -1,5 +1,26 @@
-<div class="layout">
-  <app-sidebar />
+<div
+  class="layout"
+  [class.layout--expanded]="isSidebarExpanded()"
+  [class.layout--collapsed]="isSidebarCollapsed()"
+  [class.layout--hidden]="isSidebarHidden()"
+  [class.layout--compact]="isCompact()"
+>
+  <app-sidebar
+    [collapsed]="isSidebarCollapsed()"
+    [hidden]="isSidebarHidden()"
+    [compact]="isCompact()"
+    (toggleMode)="toggleSidebar()"
+    (requestClose)="closeSidebar()"
+  />
+
+  @if (isCompact() && !isSidebarHidden()) {
+    <button
+      class="layout__backdrop"
+      type="button"
+      (click)="closeSidebar()"
+      aria-label="Close sidebar"
+    ></button>
+  }
 
   <div class="main">
     <app-header />
@@ -7,6 +28,5 @@
     <main class="content">
       <router-outlet />
     </main>
-
   </div>
 </div>
