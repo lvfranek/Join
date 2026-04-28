@@ -8,10 +8,11 @@
 
     <div class="app-header__profile">
       <button
+        #profileButton
         class="app-header__avatar"
         type="button"
         aria-label="Open profile menu"
-        [attr.aria-expanded]="isProfileMenuOpen"
+        [attr.aria-expanded]="isProfileMenuOpen ? 'true' : 'false'"
         aria-controls="profile-menu"
         (click)="toggleProfileMenu($event)"
       >
@@ -23,7 +24,7 @@
         class="app-header__profile-menu"
         [class.app-header__profile-menu--open]="isProfileMenuOpen"
         aria-label="Profile menu"
-        [attr.aria-hidden]="!isProfileMenuOpen"
+        [attr.inert]="isProfileMenuOpen ? null : ''"
         (click)="keepProfileMenuOpen($event)"
       >
         <a class="app-header__profile-menu-item" routerLink="/legal-notice" (click)="closeProfileMenu()">
