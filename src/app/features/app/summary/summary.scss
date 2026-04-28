@@ -1,3 +1,7 @@
+.summary {
+    padding: 60px;
+}
+
 .top-container {
     display: flex;
     align-items: center;
@@ -31,11 +35,73 @@
 
 .urgent-container {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    width: 280px;
+    width: 590px;
     height: 180px;
     border-radius: 30px;
+    background: white;
+    -webkit-box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
+    margin-top: 30px;
+    padding-left: 65px;
+    padding-right: 65px;
+    transition: 75ms;
+}
+
+.urgent-container-left {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.tasks-counters-bottom {
+    display: flex;
+    gap: 30px;
+}
+
+.tasks-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 177px;
+    height: 180px;
+    border-radius: 30px;
+    background: white;
+    -webkit-box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
+    margin-top: 30px;
+    transition: 75ms;
+
+    >.right-element {
+        margin-left: 0px;
+    }
+}
+
+.tasks-container:hover {
+    background: var(--brand-primary-500);
+    border-radius: 30px;
+    scale: 1.05;
+
+    h1 {
+        color: white;
+    }
+
+    .container-text {
+        color: white;
+    }
+
+    .icon-circle-1 {
+        background: white;
+    }
+
+    .edit {
+        display: none;
+    }
+
+    .editdark {
+        display: block;
+    }
 }
 
 .to-do-container {
@@ -45,6 +111,41 @@
     width: 280px;
     height: 180px;
     border-radius: 30px;
+    background: white;
+    -webkit-box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
+    transition: 75ms;
+}
+
+.to-do-container:hover {
+    background: var(--brand-primary-500);
+    border-radius: 30px;
+    scale: 1.05;
+
+    h1 {
+        color: white;
+    }
+
+    .container-text {
+        color: white;
+    }
+
+    .icon-circle-1 {
+        background: white;
+    }
+
+    .edit {
+        display: none;
+    }
+
+    .editdark {
+        display: block;
+    }
+}
+
+.todo-and-done {
+    display: flex;
+    gap: 30px;
 }
 
 .check-container {
@@ -54,16 +155,16 @@
     width: 280px;
     height: 180px;
     border-radius: 30px;
-}
-
-.todo-and-done {
-    display: flex;
-    gap: 10px;
+    background: white;
+    -webkit-box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
+    transition: 75ms;
 }
 
 .check-container:hover {
     background: var(--brand-primary-500);
-    border-radius: 20px;
+    border-radius: 30px;
+    scale: 1.05;
 
     h1 {
         color: white;
@@ -90,34 +191,10 @@
     display: none;
 }
 
-.to-do-container:hover {
-    background: var(--brand-primary-500);
-    border-radius: 20px;
-
-    h1 {
-        color: white;
-    }
-
-    .container-text {
-        color: white;
-    }
-
-    .icon-circle-1 {
-        background: white;
-    }
-
-    .edit {
-        display: none;
-    }
-
-    .editdark {
-        display: block;
-    }
-}
-
 .urgent-container:hover {
     background: var(--brand-primary-500);
     border-radius: 20px;
+    scale: 1.05;
 
     h1 {
         color: white;
@@ -129,6 +206,10 @@
 
     .icon-circle-1 {
         background: white;
+    }
+
+    span {
+        color: white;
     }
 }
 
@@ -144,6 +225,8 @@ h1 {
 
 .lower-container {
     display: flex;
+    justify-content: start;
+    gap: 60px;
 }
 
 .icon-circle-1 {
@@ -167,4 +250,148 @@ h1 {
 .container-text {
     font-size: var(--font-size-xl);
     color: var(--brand-primary-500);
+    text-align: center;
+}
+
+.goodmorning-text {
+    font-size: 47px;
+    font-weight: 500;
+    color: var(--brand-primary-500);
+    margin-bottom: 0px;
+}
+
+.name-text {
+    font-size: 64px;
+    font-weight: 700;
+    color: #2AAAE2;
+    margin-bottom: 0px;
+}
+
+.seperator-line {
+    height: 100px;
+    width: 2px;
+    background: #D1D1D1;
+}
+
+.date-and-deadline {
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.date {
+    font-size: 21px;
+    font-weight: 700;
+    color: var(--brand-primary-500);
+}
+
+.deadline-text {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--brand-primary-500);
+}
+
+.right-elements {
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    flex-direction: column;
+}
+
+.blueline2 {
+    display: none;
+    background: var(--brand-secondary-500);
+    height: 3px;
+    width: 120px;
+    border-radius: 5px;
+}
+
+@media (max-width: 800px) {
+    .summary {
+        padding: 0px;
+    }
+
+    .right-elements {
+        display: none;
+    }
+
+    .left-elements {
+        width: 100%;
+    }
+
+    h1 {
+        font-size: 47px;
+    }
+
+    .blueline {
+        display: none;
+    }
+
+    .blueline2 {
+        display: block;
+    }
+
+    .top-container {
+        flex-direction: column;
+        align-items: start;
+        gap: 10px;
+    }
+
+    .urgent-container,
+    .check-container,
+    .to-do-container,
+    .tasks-container {
+        width: 100%;
+        padding: 15px;
+        height: 110px;
+        border-radius: 20px;
+    }
+
+    .right-element {
+        margin-left: 12px;
+    }
+
+    .urgent-container {
+        justify-content: space-around;
+    }
+
+    .urgent-circle-1,
+    .icon-circle-1 {
+        height: 44px;
+        width: 44px;
+    }
+
+    .check,
+    .urgent,
+    .edit,
+    .check-dark {
+        width: 22px;
+        height: 22px;
+    }
+
+    .container-text {
+        font-size: 14px;
+    }
+
+    .seperator-line {
+        height: 68px;
+    }
+
+    .date {
+        font-size: 16px;
+    }
+
+    .task-container:hover {
+        border-radius: 20px;
+    }
+
+    .urgent-container:hover,
+    .check-container:hover,
+    .to-do-container:hover,
+    .tasks-container:hover {
+        border-radius: 20px;
+        scale: 1;
+    }
 }
