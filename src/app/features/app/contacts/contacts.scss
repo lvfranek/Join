@@ -9,10 +9,14 @@
   background-color: var(--color-bg-surface-alt);
   font-family: var(--font-family-base);
   font-size: var(--font-size-md);
+  max-height: calc(100vh - var(--layout-header-height));
 }
 
 .contacts-list {
   width: 456px;
+  max-height: calc(100vh - var(--layout-header-height));
+
+
   background-color: var(--color-bg-surface);
   box-shadow: var(--shadow-sm);
   overflow-y: auto;
