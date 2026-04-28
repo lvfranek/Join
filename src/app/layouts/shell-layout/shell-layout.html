@@ -29,7 +29,7 @@
       <router-outlet />
     </main>
 
-    @if (isCompact()) {
+    @if (isCompact() && isSidebarHidden()) {
       <nav tuiTabBar class="bottom-nav" [activeItemIndex]="activeBottomNavIndex()">
         @for (item of bottomNavItems; track item.path; let index = $index) {
           <button
@@ -41,7 +41,6 @@
           >
             <img
               class="bottom-nav__icon"
-              [class.bottom-nav__icon--active]="activeBottomNavIndex() === index"
               [src]="item.iconPath"
               [alt]="''"
               width="30"

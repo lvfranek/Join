@@ -50,18 +50,20 @@
   }
 
   .main {
-    grid-template-rows: var(--layout-header-height) 1fr auto;
+    grid-template-rows: var(--layout-header-height) 1fr;
   }
 
   .content {
     padding: 1rem;
-    block-size: calc(100dvh - var(--layout-header-height) - var(--tui-height-m, 4rem));
+    padding-block-end: calc(1rem + 7rem + env(safe-area-inset-bottom));
+    block-size: calc(100dvh - var(--layout-header-height));
   }
 
   .bottom-nav {
-    position: sticky;
+    position: fixed;
+    inset-inline: 0;
     inset-block-end: 0;
-    z-index: 10;
+    z-index: 3;
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 0.25rem;
