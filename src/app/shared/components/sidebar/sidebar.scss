@@ -79,10 +79,6 @@
       background: var(--brand-tertiary-500);
       color: #fff;
     }
-
-    .nav-item__icon {
-      color: #fff;
-    }
   }
 }
 
@@ -91,6 +87,13 @@
   block-size: 1.875rem;
   object-fit: contain;
   flex: 0 0 auto;
+  filter: brightness(0) invert(0.6);
+  transition: filter 0.15s ease;
+}
+
+.nav-item:hover .nav-item__icon,
+.nav-item--active .nav-item__icon {
+  filter: brightness(0) invert(1);
 }
 
 .nav-item__label {
