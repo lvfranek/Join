@@ -5,7 +5,8 @@
 .contacts-page {
   display: flex;
   width: 100%;
-  min-height: calc(100vh - var(--layout-header-height));
+  height: calc(100vh - var(--layout-header-height));
+  overflow: hidden;
   background-color: var(--color-bg-surface-alt);
   font-family: var(--font-family-base);
   font-size: var(--font-size-md);
@@ -14,24 +15,22 @@
 
 .contacts-list {
   width: 456px;
-  max-height: calc(100vh - var(--layout-header-height));
-
-
+  height: 100%;
   background-color: var(--color-bg-surface);
   box-shadow: var(--shadow-sm);
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .contacts-list__button-wrapper {
-  position: sticky;
-  top: 0;
-  z-index: var(--z-sticky);
+  flex: 0 0 auto;
   padding: 22px 52px;
   background-color: var(--color-bg-surface);
 }
 
 .add-contact-button {
-  width: 255px;
+  width: 337px;
   height: 56px;
   padding: var(--space-3) var(--space-4);
   border: 1px solid var(--color-bg-inverse);
@@ -67,7 +66,11 @@
 }
 
 .contacts-list__content {
+  flex: 1;
+  min-height: 0;
   padding: 0 52px 32px;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .contact-group {
@@ -146,8 +149,7 @@
 }
 
 .contact-detail {
-  flex: 1;
-  padding: 110px 64px;
+  overflow: hidden;
 }
 
 .contact-detail__headline {
@@ -179,7 +181,7 @@
 }
 
 .contact-detail__selected {
-  display: block;
+  animation: slide-in-from-right 300ms ease-out;
 }
 
 .contact-detail__profile {
@@ -287,4 +289,16 @@
 
 .avatar--red {
   background-color: var(--color-category-9);
+}
+
+@keyframes slide-in-from-right {
+  from {
+    opacity: 0;
+    transform: translateX(160px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }

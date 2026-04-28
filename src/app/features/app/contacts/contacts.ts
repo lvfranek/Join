@@ -52,6 +52,11 @@ export class Contacts {
   contactGroups: ContactGroup[] = this.groupContacts(this.contacts);
 
   selectContact(contact: Contact): void {
+    if (this.selectedContact?.id === contact.id) {
+      this.selectedContact = null;
+      return;
+    }
+
     this.selectedContact = contact;
   }
 
