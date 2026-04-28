@@ -1,35 +1,31 @@
 <section class="contacts-page">
   <aside class="contacts-list">
     <div class="contacts-list__button-wrapper">
-      <button class="add-contact-button" type="button">
+      <button class="add-contact-button" type="button" (click)="openDialog()">
         <span>Add new contact</span>
-        <img class="add-contact-button__icon" src="/icons/person_add.png" alt="" />
+        <img class="add-contact-button__icon" src="/icons/person_add.svg" alt="person add icon" />
       </button>
     </div>
 
     <div class="contacts-list__content">
       @for (group of contactGroups; track group.letter) {
-        <section class="contact-group">
-          <h2 class="contact-group__letter">{{ group.letter }}</h2>
+      <section class="contact-group">
+        <h2 class="contact-group__letter">{{ group.letter }}</h2>
 
-          @for (contact of group.contacts; track contact.id) {
-            <button
-              class="contact-card"
-              [class.contact-card--active]="selectedContact?.id === contact.id"
-              type="button"
-              (click)="selectContact(contact)"
-            >
-              <span class="contact-card__avatar {{ contact.colorClass }}">
-                {{ getInitials(contact.name) }}
-              </span>
+        @for (contact of group.contacts; track contact.id) {
+        <button class="contact-card" [class.contact-card--active]="selectedContact?.id === contact.id" type="button"
+          (click)="selectContact(contact)">
+          <span class="contact-card__avatar {{ contact.colorClass }}">
+            {{ getInitials(contact.name) }}
+          </span>
 
-              <span class="contact-card__info">
-                <span class="contact-card__name">{{ contact.name }}</span>
-                <span class="contact-card__email">{{ contact.email }}</span>
-              </span>
-            </button>
-          }
-        </section>
+          <span class="contact-card__info">
+            <span class="contact-card__name">{{ contact.name }}</span>
+            <span class="contact-card__email">{{ contact.email }}</span>
+          </span>
+        </button>
+        }
+      </section>
       }
     </div>
   </aside>
@@ -42,47 +38,116 @@
     </header>
 
     @if (selectedContact) {
-      <section class="contact-detail__selected">
-        <section class="contact-detail__profile">
-          <div class="contact-detail__avatar {{ selectedContact.colorClass }}">
-            {{ getInitials(selectedContact.name) }}
+    <section class="contact-detail__selected">
+      <section class="contact-detail__profile">
+        <div class="contact-detail__avatar {{ selectedContact.colorClass }}">
+          {{ getInitials(selectedContact.name) }}
+        </div>
+
+        <div class="contact-detail__main-info">
+          <h2>{{ selectedContact.name }}</h2>
+
+          <div class="contact-detail__actions">
+            <button class="contact-action" type="button">
+              <span class="contact-action__icon contact-action__icon--edit"></span>
+              <span>Edit</span>
+            </button>
+
+            <button class="contact-action" type="button">
+              <span class="contact-action__icon contact-action__icon--delete"></span>
+              <span>Delete</span>
+            </button>
           </div>
+        </div>
+      </section>
 
-          <div class="contact-detail__main-info">
-            <h2>{{ selectedContact.name }}</h2>
+      <section class="contact-information">
+        <h3>Contact Information</h3>
 
-            <div class="contact-detail__actions">
-              <button class="contact-action" type="button">
-                <span class="contact-action__icon contact-action__icon--edit"></span>
-                <span>Edit</span>
+        <div class="contact-information__item">
+          <strong>Email</strong>
+          <a [href]="'mailto:' + selectedContact.email">
+            {{ selectedContact.email }}
+          </a>
+        </div>
+
+        <div class="contact-information__item">
+          <strong>Phone</strong>
+          <a [href]="getPhoneHref(selectedContact.phone)">
+            {{ selectedContact.phone }}
+          </a>
+        </div>
+      </section>
+    </section>
+    }
+  </main>
+
+  @if (isDialogOpen()) {
+  <div class="add-contact-overlay" [class.add-contact-overlay--closing]="isDialogClosing()" (click)="closeDialog()"></div>
+  <dialog class="add-contact-dialog" [class.add-contact-dialog--closing]="isDialogClosing()" open>
+    <div class="add-contact-dialog__container">
+      <button class="add-contact-dialog__close" type="button" (click)="closeDialog()" aria-label="Close dialog">
+        <img src="./icons/contacts-dialog/close.svg" alt="close" />
+      </button>
+
+      <!-- Left Side -->
+      <div class="add-contact-dialog__left">
+        <img class="add-contact-dialog__logo" src="/icons/contacts-dialog/logo.svg" alt="join logo" />
+        <h1 class="add-contact-dialog__title">Add contact</h1>
+        <p class="add-contact-dialog__subtitle">Tasks are better with a team!</p>
+        <div class="add-contact-dialog__divider" aria-hidden="true"></div>
+      </div>
+
+      <div class="add-contact-dialog__image">
+        <img src="/icons/contacts-dialog/user.svg" alt="user avatar" />
+      </div>
+
+      <!-- Right Side -->
+      <div class="add-contact-dialog__right">
+        <div class="add-contact-dialog__form">
+          <div class="add-contact-dialog__inputs">
+            <div class="add-contact-dialog__input-group">
+              <div class="add-contact-dialog__input-wrap">
+                <input id="contact-name" type="text" placeholder="Name" [(ngModel)]="newContactName"
+                  class="add-contact-dialog__input" />
+                <img class="add-contact-dialog__input-icon" src="/icons/contacts-dialog/person.svg" alt=""
+                  aria-hidden="true" />
+              </div>
+            </div>
+
+            <div class="add-contact-dialog__input-group">
+              <div class="add-contact-dialog__input-wrap">
+                <input id="contact-email" type="email" placeholder="Email" [(ngModel)]="newContactEmail"
+                  class="add-contact-dialog__input" />
+                <img class="add-contact-dialog__input-icon" src="/icons/contacts-dialog/mail.svg" alt=""
+                  aria-hidden="true" />
+              </div>
+            </div>
+
+            <div class="add-contact-dialog__input-group">
+              <div class="add-contact-dialog__input-wrap">
+                <input id="contact-phone" type="tel" placeholder="Phone" [(ngModel)]="newContactPhone"
+                  class="add-contact-dialog__input" />
+                <img class="add-contact-dialog__input-icon" src="/icons/contacts-dialog/call.svg" alt=""
+                  aria-hidden="true" />
+              </div>
+            </div>
+
+            <div class="add-contact-dialog__buttons">
+              <button class="add-contact-dialog__cancel" type="button" (click)="closeDialog()">
+                <span>Cancel</span>
+                <img src="./icons/add-task/Vector.svg" alt="cross icon" class="cross-basic">
+                <img src="./icons/add-task/cross-lightblue.svg" alt="cross icon" class="cross-lightblue">
               </button>
-
-              <button class="contact-action" type="button">
-                <span class="contact-action__icon contact-action__icon--delete"></span>
-                <span>Delete</span>
+              <button class="add-contact-dialog__create" type="button" (click)="createContact()">
+                <span>Create contact</span>
+                <img src="./icons/add-task/check.svg" alt="cross icon">
               </button>
             </div>
           </div>
-        </section>
-
-        <section class="contact-information">
-          <h3>Contact Information</h3>
-
-          <div class="contact-information__item">
-            <strong>Email</strong>
-            <a [href]="'mailto:' + selectedContact.email">
-              {{ selectedContact.email }}
-            </a>
-          </div>
-
-          <div class="contact-information__item">
-            <strong>Phone</strong>
-            <a [href]="getPhoneHref(selectedContact.phone)">
-              {{ selectedContact.phone }}
-            </a>
-          </div>
-        </section>
-      </section>
-    }
-  </main>
+        </div>
+      </div>
+    </div>
+  </dialog>
+  }
 </section>

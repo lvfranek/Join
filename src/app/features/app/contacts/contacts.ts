@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 import contactsData from '../../../../dummy-data.json';
 
@@ -25,11 +26,17 @@ type ContactGroup = {
 @Component({
   selector: 'app-contacts',
   standalone: true,
+  imports: [FormsModule],
   templateUrl: './contacts.html',
   styleUrl: './contacts.scss',
 })
 export class Contacts {
   selectedContact: Contact | null = null;
+  isDialogOpen = signal(false);
+  isDialogClosing = signal(false);
+  newContactName = signal('');
+  newContactEmail = signal('');
+  newContactPhone = signal('');
 
   private avatarColorClasses = [
     'avatar--orange',
@@ -95,5 +102,39 @@ export class Contacts {
       letter,
       contacts: groupedContacts,
     }));
+  }
+
+  openDialog(): void {
+    this.isDialogOpen.set(true);
+  }
+
+  closeDialog(): void {
+    this.isDialogClosing.set(true);
+    setTimeout(() => {
+      this.isDialogOpen.set(false);
+      this.isDialogClosing.set(false);
+      this.resetForm();
+    }, 400);
+  }
+
+  createContact(): void {
+    if (!this.newContactName() || !this.newContactEmail() || !this.newContactPhone()) {
+      return;
+    }
+
+    // TODO: Add contact to backend
+    console.log('Creating contact:', {
+      name: this.newContactName(),
+      email: this.newContactEmail(),
+      phone: this.newContactPhone(),
+    });
+
+    this.closeDialog();
+  }
+
+  private resetForm(): void {
+    this.newContactName.set('');
+    this.newContactEmail.set('');
+    this.newContactPhone.set('');
   }
 }
