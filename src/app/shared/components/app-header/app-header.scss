@@ -1,7 +1,7 @@
 :host {
   display: block;
   inline-size: 100%;
-  block-size: 96px;
+  block-size: var(--layout-header-height);
 }
 
 .app-header {
@@ -11,7 +11,7 @@
   align-items: center;
   justify-content: space-between;
   inline-size: 100%;
-  block-size: 96px;
+  block-size: var(--layout-header-height);
   padding-inline: 94px 32px;
   background: #fff;
   box-shadow: 0 4px 8px rgb(0 0 0 / 0.12);
