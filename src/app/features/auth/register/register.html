@@ -1,0 +1,92 @@
+<section class="register-page" aria-labelledby="register-title">
+  <header class="register-page__header">
+    <a class="brand" routerLink="/" aria-label="Join start page">
+      <img src="/icons/logo_join_dark.png" alt="Join" />
+      <span class="sr-only">Go to home page</span>
+    </a>
+  </header>
+
+  <main class="register-page__main">
+    <form class="register-card" [formGroup]="registerForm" (ngSubmit)="submitRegister()" novalidate>
+      <div class="register-card__headline">
+        <a class="register-card__back" routerLink="/login" aria-label="Back to login">←</a>
+        <h1 id="register-title">Sign up</h1>
+        <span aria-hidden="true"></span>
+      </div>
+
+      <label class="field" [class.field--invalid]="hasError('fullName')">
+        <input
+          type="text"
+          formControlName="fullName"
+          placeholder="Name"
+          autocomplete="name"
+          aria-label="Name"
+          [attr.aria-invalid]="hasError('fullName')"
+        />
+      </label>
+
+      <label class="field" [class.field--invalid]="hasError('email')">
+        <input
+          type="email"
+          formControlName="email"
+          placeholder="Email"
+          autocomplete="email"
+          aria-label="Email"
+          [attr.aria-invalid]="hasError('email')"
+        />
+      </label>
+
+      <label class="field" [class.field--invalid]="hasError('password')">
+        <input
+          type="password"
+          formControlName="password"
+          placeholder="Password"
+          autocomplete="new-password"
+          aria-label="Password"
+          [attr.aria-invalid]="hasError('password')"
+        />
+      </label>
+
+      <label
+        class="field"
+        [class.field--invalid]="hasError('confirmPassword') || passwordsMismatch()"
+      >
+        <input
+          type="password"
+          formControlName="confirmPassword"
+          placeholder="Confirm Password"
+          autocomplete="new-password"
+          aria-label="Confirm Password"
+          [attr.aria-invalid]="hasError('confirmPassword') || passwordsMismatch()"
+        />
+        @if (passwordsMismatch()) {
+          <span class="field__message">Passwords do not match.</span>
+        }
+      </label>
+
+      <label class="privacy-check" [class.privacy-check--invalid]="hasError('acceptPrivacy')">
+        <input type="checkbox" formControlName="acceptPrivacy" aria-label="Accept privacy policy" />
+        <span>I accept the <a routerLink="/privacy-policy">Privacy policy</a></span>
+      </label>
+
+      @if (submitError()) {
+        <p class="submit-error" aria-live="polite">{{ submitError() }}</p>
+      }
+
+      @if (submitSuccess()) {
+        <p class="submit-success" aria-live="polite">{{ submitSuccess() }}</p>
+      }
+
+      <div class="register-card__actions">
+        <button class="button button--primary" type="submit" [disabled]="isSubmitting()">
+          {{ isSubmitting() ? 'Signing up...' : 'Sign up' }}
+        </button>
+      </div>
+    </form>
+  </main>
+
+  <footer class="register-page__footer">
+    <a routerLink="/privacy-policy">Privacy Policy</a>
+    <a routerLink="/legal-notice">Legal notice</a>
+  </footer>
+</section>

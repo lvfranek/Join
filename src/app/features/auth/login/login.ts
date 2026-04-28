@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { AuthService } from '../../../core/services/auth.service';
 import { SupabaseService } from '../../../core/services/supabase.service';
@@ -14,10 +14,12 @@ import { SupabaseService } from '../../../core/services/supabase.service';
 })
 export class Login {
   private readonly auth = inject(AuthService);
+  private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly supabase = inject(SupabaseService);
   protected readonly isSubmitting = signal(false);
   protected readonly submitError = signal('');
+  protected readonly submitSuccess = signal('');
   protected readonly loginForm = new FormGroup({
     email: new FormControl('', {
       nonNullable: true,
@@ -28,6 +30,19 @@ export class Login {
       validators: [Validators.required, Validators.minLength(6)],
     }),
   });
+
+  constructor() {
+    if (this.route.snapshot.queryParamMap.get('registered') === '1') {
+      this.submitSuccess.set('You signed up successfully. Please log in.');
+
+      void this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { registered: null },
+        queryParamsHandling: 'merge',
+        replaceUrl: true,
+      });
+    }
+  }
 
   protected hasError(controlName: 'email' | 'password'): boolean {
     const control = this.loginForm.controls[controlName];
@@ -43,6 +58,7 @@ export class Login {
 
     this.isSubmitting.set(true);
     this.submitError.set('');
+    this.submitSuccess.set('');
 
     const { email, password } = this.loginForm.getRawValue();
     const { error } = await this.supabase.client.auth.signInWithPassword({ email, password });

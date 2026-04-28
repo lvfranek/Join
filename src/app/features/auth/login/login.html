@@ -18,6 +18,10 @@
         <span aria-hidden="true"></span>
       </div>
 
+      @if (submitSuccess()) {
+        <p class="submit-success" aria-live="polite">{{ submitSuccess() }}</p>
+      }
+
       <label class="field" [class.field--invalid]="hasError('email')">
         <input
           type="email"
