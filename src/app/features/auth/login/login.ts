@@ -1,29 +1,45 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { SupabaseService } from '../../../core/services/supabase.service';
+import { Component } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    <div style="padding: 2rem;">
-      <h1>Login</h1>
-      <button (click)="testSupabase()">Test Supabase Connection</button>
-      @if (testResult()) {
-        <pre style="margin-top: 1rem; padding: 1rem; background: #f5f5f5;">{{ testResult() }}</pre>
-      }
-    </div>
-  `,
+  imports: [ReactiveFormsModule, RouterLink],
+  templateUrl: './login.html',
+  styleUrl: './login.scss',
 })
 export class Login {
-  private readonly supabase = inject(SupabaseService);
-  readonly testResult = signal<string>('');
+  constructor(
+    private readonly auth: AuthService,
+    private readonly router: Router,
+  ) {}
 
-  async testSupabase() {
-    try {
-      const result = await this.supabase.client.auth.getSession();
-      this.testResult.set('✓ Supabase Connection OK\n\n' + JSON.stringify(result, null, 2));
-    } catch (error) {
-      this.testResult.set('✗ Connection Error:\n\n' + JSON.stringify(error, null, 2));
+  protected readonly loginForm = new FormGroup({
+    email: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.email],
+    }),
+    password: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+  });
+
+  protected hasError(controlName: keyof typeof this.loginForm.controls): boolean {
+    const control = this.loginForm.controls[controlName];
+    return control.invalid && (control.dirty || control.touched);
+  }
+
+  protected submitLogin(): void {
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
     }
+  }
+
+  protected continueAsGuest(): void {
+    this.auth.setAuthenticated(true);
+    void this.router.navigate(['/summary']);
   }
 }
