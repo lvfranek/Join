@@ -31,6 +31,10 @@
   gap: 17px;
 }
 
+.app-header__profile {
+  position: relative;
+}
+
 .app-header__help {
   display: grid;
   place-items: center;
@@ -79,5 +83,60 @@
   &:focus-visible {
     outline: 2px solid var(--accent-2);
     outline-offset: 3px;
+  }
+}
+
+.app-header__profile-menu {
+  position: absolute;
+  inset-block-start: 76px;
+  inset-inline-end: 0;
+  display: flex;
+  flex-direction: column;
+  inline-size: 150px;
+  padding-block: 8px;
+  border-radius: 12px 0 12px 12px;
+  background: var(--brand-primary-500);
+  box-shadow: 0 4px 10px rgb(0 0 0 / 0.18);
+  z-index: 10;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-24px);
+  transform-origin: top right;
+  transition:
+    opacity 150ms ease,
+    transform 180ms ease;
+}
+
+.app-header__profile-menu--open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.app-header__profile-menu-item {
+  display: flex;
+  align-items: center;
+  min-block-size: 40px;
+  border: 0;
+  padding: 8px 18px;
+  background: transparent;
+  color: #cdcdcd;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.2;
+  text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    background: rgb(255 255 255 / 0.08);
+    color: #fff;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent-2);
+    outline-offset: -2px;
   }
 }
