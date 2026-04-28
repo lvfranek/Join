@@ -28,5 +28,30 @@
     <main class="content">
       <router-outlet />
     </main>
+
+    @if (isCompact()) {
+      <nav tuiTabBar class="bottom-nav" [activeItemIndex]="activeBottomNavIndex()">
+        @for (item of bottomNavItems; track item.path; let index = $index) {
+          <button
+            tuiTabBarItem
+            class="bottom-nav__item"
+            [class.bottom-nav__item--active]="activeBottomNavIndex() === index"
+            type="button"
+            (click)="router.navigate([item.path])"
+          >
+            <img
+              class="bottom-nav__icon"
+              [class.bottom-nav__icon--active]="activeBottomNavIndex() === index"
+              [src]="item.iconPath"
+              [alt]="''"
+              width="30"
+              height="30"
+              aria-hidden="true"
+            />
+            <span class="bottom-nav__label">{{ item.label }}</span>
+          </button>
+        }
+      </nav>
+    }
   </div>
 </div>

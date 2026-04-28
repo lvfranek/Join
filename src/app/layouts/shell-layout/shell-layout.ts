@@ -1,17 +1,24 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { Router, RouterOutlet } from '@angular/router';
+import { TuiTabBar } from '@taiga-ui/addon-mobile';
 
 import { AppHeader } from '../../shared/components/app-header/app-header';
 import { Sidebar } from '../../shared/components/sidebar/sidebar';
 
 type SidebarMode = 'expanded' | 'collapsed' | 'hidden';
 
+interface BottomNavItem {
+  readonly label: string;
+  readonly path: string;
+  readonly iconPath: string;
+}
+
 @Component({
   selector: 'app-shell-layout',
   host: {
     '(window:resize)': 'onViewportResize()',
   },
-  imports: [RouterOutlet, AppHeader, Sidebar],
+  imports: [RouterOutlet, AppHeader, Sidebar, TuiTabBar],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './shell-layout.html',
   styleUrl: './shell-layout.scss',
@@ -20,8 +27,22 @@ export class ShellLayout {
   private static readonly COMPACT_BREAKPOINT = 1024;
   private static readonly STORAGE_KEY = 'sidebar-mode';
 
+  protected readonly router = inject(Router);
   private readonly viewportWidth = signal(window.innerWidth);
   private readonly sidebarMode = signal<SidebarMode>(ShellLayout.resolveInitialMode());
+
+  protected readonly bottomNavItems: readonly BottomNavItem[] = [
+    { label: 'Summary', path: '/summary', iconPath: '/icons/Summary.png' },
+    { label: 'Add Tasks', path: '/add-task', iconPath: '/icons/Add task.png' },
+    { label: 'Board', path: '/board', iconPath: '/icons/Board.png' },
+    { label: 'Contacts', path: '/contacts', iconPath: '/icons/Contacts.png' },
+  ];
+
+  protected activeBottomNavIndex = computed(() => {
+    const url = this.router.url;
+    const idx = this.bottomNavItems.findIndex((item) => url.startsWith(item.path));
+    return idx >= 0 ? idx : 0;
+  });
 
   private static resolveInitialMode(): SidebarMode {
     if (window.innerWidth <= ShellLayout.COMPACT_BREAKPOINT) return 'hidden';
