@@ -4,18 +4,10 @@
 }
 
 .auth-shell {
-  display: grid;
-  grid-template-rows: auto 1fr auto;
   min-block-size: 100dvh;
-  background: var(--tui-background-neutral-1);
-
-  &__header {
-    padding: 1rem 1.5rem;
-  }
+  background: var(--color-bg-second);
 
   &__content {
-    display: grid;
-    place-items: center;
-    padding: 1.5rem;
+    min-block-size: 100dvh;
   }
 }
