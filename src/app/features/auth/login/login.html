@@ -1,0 +1,65 @@
+<section class="login-page" aria-labelledby="login-title">
+  <header class="login-page__header">
+    <a class="brand" routerLink="/" aria-label="Join start page">
+      <img src="/icons/logo_join_dark.png" alt="Join" />
+    </a>
+
+    <div class="signup">
+      <span>Not a Join user?</span>
+      <a class="signup__button" routerLink="/register">Sign up</a>
+    </div>
+  </header>
+
+  <main class="login-page__main">
+    <form class="login-card" [formGroup]="loginForm" (ngSubmit)="submitLogin()" novalidate>
+      <div class="login-card__headline">
+        <h1 id="login-title">Log in</h1>
+        <span aria-hidden="true"></span>
+      </div>
+
+      <label class="field" [class.field--invalid]="hasError('email')">
+        <input
+          type="email"
+          formControlName="email"
+          placeholder="Email"
+          autocomplete="email"
+          aria-label="Email"
+          aria-describedby="email-error"
+          [attr.aria-invalid]="hasError('email')"
+        />
+        @if (hasError('email')) {
+          <span class="field__message" id="email-error">
+            Check your email and password. Please try again.
+          </span>
+        }
+      </label>
+
+      <label class="field" [class.field--invalid]="hasError('password')">
+        <input
+          type="password"
+          formControlName="password"
+          placeholder="Password"
+          autocomplete="current-password"
+          aria-label="Password"
+          aria-describedby="password-error"
+          [attr.aria-invalid]="hasError('password')"
+        />
+        @if (hasError('password')) {
+          <span class="field__message" id="password-error">
+            Check your email and password. Please try again.
+          </span>
+        }
+      </label>
+
+      <div class="login-card__actions">
+        <button class="button button--primary" type="submit">Log in</button>
+        <button class="button button--secondary" type="button" (click)="continueAsGuest()">Guest Log in</button>
+      </div>
+    </form>
+  </main>
+
+  <footer class="login-page__footer">
+    <a routerLink="/privacy-policy">Privacy Policy</a>
+    <a routerLink="/legal-notice">Legal notice</a>
+  </footer>
+</section>
