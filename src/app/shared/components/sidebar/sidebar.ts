@@ -1,13 +1,14 @@
+import { NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, output, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { TuiButton, TuiHintDirective, TuiIcon } from '@taiga-ui/core';
+import { TuiButton, TuiHintDirective } from '@taiga-ui/core';
 
 import { Brand } from '../brand/brand';
 
 interface NavItem {
   readonly label: string;
   readonly path: string;
-  readonly icon: string;
+  readonly iconPath: string;
 }
 
 interface LegalItem {
@@ -21,7 +22,7 @@ interface LegalItem {
     '(document:click)': 'closeLegalMenu()',
     '(document:keydown.escape)': 'closeLegalMenu()',
   },
-  imports: [RouterLink, RouterLinkActive, Brand, TuiIcon, TuiButton, TuiHintDirective],
+  imports: [NgOptimizedImage, RouterLink, RouterLinkActive, Brand, TuiButton, TuiHintDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss',
@@ -37,10 +38,10 @@ export class Sidebar {
   protected readonly isLegalMenuOpen = signal(false);
 
   protected readonly navItems: readonly NavItem[] = [
-    { label: 'Summary', path: '/summary', icon: '@tui.layout-dashboard' },
-    { label: 'Add Task', path: '/add-task', icon: '@tui.plus' },
-    { label: 'Board', path: '/board', icon: '@tui.kanban' },
-    { label: 'Contacts', path: '/contacts', icon: '@tui.users' },
+    { label: 'Summary', path: '/summary', iconPath: '/icons/Summary.png' },
+    { label: 'Add Task', path: '/add-task', iconPath: '/icons/Add task.png' },
+    { label: 'Board', path: '/board', iconPath: '/icons/Board.png' },
+    { label: 'Contacts', path: '/contacts', iconPath: '/icons/Contacts.png' },
   ];
 
   protected readonly legalItems: readonly LegalItem[] = [

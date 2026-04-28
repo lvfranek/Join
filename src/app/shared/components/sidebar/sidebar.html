@@ -30,7 +30,14 @@
         tuiHintDirection="end"
         (click)="handleNavigation()"
       >
-        <tui-icon class="nav-item__icon" [icon]="item.icon" />
+        <img
+          class="nav-item__icon"
+          [ngSrc]="item.iconPath"
+          [alt]="''"
+          width="30"
+          height="30"
+          aria-hidden="true"
+        />
         <span class="nav-item__label">{{ item.label }}</span>
       </a>
     }
