@@ -7,15 +7,19 @@
 
     <div class="middle-container">
         <div class="left-elements">
-            <div>
-                <p class="input-headlines">Title</p>
-                <input type="text" placeholder="Enter a title">
-
-                <p class="input-headlines">Description</p>
-                <input type="text" placeholder="Enter a description">
-
-                <p class="input-headlines">Due date</p>
-                <input type="text" placeholder="dd/mm/yyyy">
+            <div class="input-fields">
+                <div>
+                    <p class="input-headlines">Title<span class="redcross">*</span></p>
+                    <input type="text" placeholder="Enter a title">
+                </div>
+                <div>
+                    <p class="input-headlines">Description</p>
+                    <input type="text" placeholder="Enter a description">
+                </div>
+                <div>
+                    <p class="input-headlines">Due date</p>
+                    <input type="text" placeholder="dd/mm/yyyy">
+                </div>
             </div>
         </div>
 
@@ -23,6 +27,11 @@
 
         <div class="right-elements">
             <p class="input-headlines">Priority</p>
+            <div>
+                <button>Urgent</button>
+                <button>Medium</button>
+                <button>Low</button>
+            </div>
             <p class="input-headlines">Assigned to</p>
             <select type="text"></select>
             <p class="input-headlines">Category</p>

@@ -2,6 +2,35 @@
     padding: 60px;
 }
 
+.input-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.redcross {
+    color: red;
+}
+
+input {
+    width: 100%;
+    font-size: 20px;
+    padding: 12px 21px;
+    border-radius: 10px;
+    background: white;
+    color: black;
+    border: 1px solid #D1D1D1;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-headlines {
+    font-weight: 400;
+    font-size: 20px;
+    margin-bottom: 0px;
+    color: var(--brand-primary-500);
+}
+
 .top-container {
     display: flex;
     align-items: center;
