@@ -1,12 +1,18 @@
 .summary {
     padding: 60px;
-}
-
-.input-fields {
     display: flex;
     flex-direction: column;
-    gap: 30px;
-    width: 500px;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.left-elements {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 500px;
 }
 
 .redcross {
@@ -68,9 +74,13 @@ h1 {
 
 .right-elements {
     display: flex;
-    justify-content: center;
     align-items: start;
+    justify-content: start;
     flex-direction: column;
+    gap: 24px;
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 500px;
 }
 
 
@@ -100,25 +110,191 @@ h1 {
     display: inline-block;
     cursor: pointer;
     color: #2a3647;
-    font-size: 17px;
-    padding: 15px 31px;
+    font-size: 20px;
+    padding: 15px 16px;
     text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    transition: 75ms;
+}
+
+.clear-button:hover {
+    border: 1px solid #29ABE2;
+    color: #29ABE2;
+    -webkit-box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+
+    .cross-basic {
+        display: none;
+    }
+
+    .cross-lightblue {
+        display: block;
+    }
+}
+
+.clear-button:active {
+    border: 1px solid black;
+    background-color: transparent;
+    color: black;
+
+    .cross-basic {
+        display: block;
+    }
+
+    .cross-lightblue {
+        display: none;
+    }
+}
+
+.cross-lightblue {
+    display: none;
 }
 
 .create-task-button {
     background-color: #2a3647;
     border-radius: 10px;
-    border: 1px solid #2a3647;
+    border: 0px;
     display: inline-block;
     cursor: pointer;
     color: #ffffff;
-    font-size: 17px;
+    font-size: 20px;
     font-weight: 700;
-    padding: 15px 31px;
+    padding: 15px 20px;
     text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    transition: 75ms;
+}
+
+.create-task-button:hover {
+    background-color: #29ABE2;
+    -webkit-box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+.create-task-button:active {
+    background: black;
+}
+
+.description {
+    resize: both;
+}
+
+.small-container-left {
+    width: 100%;
+}
+
+.small-container-right {
+    width: 100%;
 }
 
 
+// PRIORITY BUTTONS
+.high-white,
+.medium-white,
+.low-white {
+    display: none;
+}
+
+.priority-buttons {
+    display: flex;
+    gap: 16px;
+}
+
+.priority-button-urgent,
+.priority-button-medium,
+.priority-button-low {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    border-radius: 10px;
+    border: 1px;
+    padding: 16px 10px;
+    width: 100%;
+    box-shadow: 0px 0px 4px 0px #0000001A;
+
+    >span {
+        font-size: 20px;
+        font-weight: 400;
+        color: black;
+    }
+}
+
+.priority-button-urgent:active {
+    background: #FF3D00;
+
+    .high-white {
+        display: block
+    }
+
+    .high {
+        display: none;
+    }
+
+    >span {
+        color: white;
+    }
+}
+
+.priority-button-medium:active {
+    background: #FFA800;
+
+    .medium-white {
+        display: block
+    }
+
+    .medium {
+        display: none;
+    }
+
+    >span {
+        color: white;
+    }
+}
+
+.priority-button-low:active {
+    background: #7AE229;
+
+    .low-white {
+        display: block
+    }
+
+    .low {
+        display: none;
+    }
+
+    >span {
+        color: white;
+    }
+}
+
+.priority-button-urgent:hover,
+.priority-button-medium:hover,
+.priority-button-low:hover {
+    cursor: pointer;
+    box-shadow: 0px 4px 4px 0px #00000040;
+}
+
+select {
+    width: 100%;
+    height: 48px;
+    border-radius: 10px;
+    border: 1px solid #D1D1D1;
+    background: white;
+    color: black;
+    font-size: 20px;
+}
+
+select:hover {
+    cursor: pointer;
+}
 
 @media (max-width: 800px) {
     .summary {

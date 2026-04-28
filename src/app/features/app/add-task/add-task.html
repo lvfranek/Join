@@ -1,43 +1,63 @@
 <section class="summary">
-    <div class="top-container">
-        <h1>Add Task</h1>
-    </div>
+    <div>
+        <div class="top-container">
+            <h1>Add Task</h1>
+        </div>
 
 
 
-    <div class="middle-container">
-        <div class="left-elements">
-            <div class="input-fields">
-                <div>
+        <div class="middle-container">
+            <div class="left-elements">
+                <div class="small-container-left">
                     <p class="input-headlines">Title<span class="redcross">*</span></p>
                     <input type="text" placeholder="Enter a title">
                 </div>
-                <div>
+                <div class="small-container-left">
                     <p class="input-headlines">Description</p>
-                    <input type="text" placeholder="Enter a description">
+                    <input type="text" placeholder="Enter a description" class="description">
                 </div>
-                <div>
-                    <p class="input-headlines">Due date</p>
+                <div class="small-container-left">
+                    <p class="input-headlines">Due date<span class="redcross">*</span></p>
                     <input type="text" placeholder="dd/mm/yyyy">
                 </div>
             </div>
-        </div>
 
-        <div class="middleline"></div>
+            <div class="middleline"></div>
 
-        <div class="right-elements">
-            <p class="input-headlines">Priority</p>
-            <div>
-                <button>Urgent</button>
-                <button>Medium</button>
-                <button>Low</button>
+            <div class="right-elements">
+                <div class="small-container-right">
+                    <p class="input-headlines">Priority</p>
+                    <div class="priority-buttons">
+                        <button class="priority-button-urgent">
+                            <span>Urgent</span>
+                            <img src="./icons/add-task/high.svg" alt="high" class="high">
+                            <img src="./icons/add-task/high-white.svg" alt="high-white" class="high-white">
+                        </button>
+                        <button class="priority-button-medium">
+                            <span>Medium</span>
+                            <img src="./icons/add-task/medium.svg" alt="medium" class="medium">
+                            <img src="./icons/add-task/medium-white.svg" alt="medium-white" class="medium-white">
+                        </button>
+                        <button class="priority-button-low">
+                            <span>Low</span>
+                            <img src="./icons/add-task/low.svg" alt="low" class="low">
+                            <img src="./icons/add-task/low-white.svg" alt="low-white" class="low-white">
+                        </button>
+                    </div>
+                </div>
+                <div class="small-container-right">
+                    <p class="input-headlines">Assigned to</p>
+                    <select type="text"></select>
+                </div>
+                <div class="small-container-right">
+                    <p class="input-headlines">Category<span class="redcross">*</span></p>
+                    <select type="text"></select>
+                </div>
+                <div class="small-container-right">
+                    <p class="input-headlines">Subtasks</p>
+                    <input type="text" placeholder="Add new subtask">
+                </div>
             </div>
-            <p class="input-headlines">Assigned to</p>
-            <select type="text"></select>
-            <p class="input-headlines">Category</p>
-            <select type="text"></select>
-            <p class="input-headlines">Subtasks</p>
-            <input type="text" placeholder="Add new subtask">
         </div>
     </div>
 
@@ -47,8 +67,15 @@
         </div>
 
         <div class="lower-buttons">
-            <button class="clear-button">Clear</button>
-            <button class="create-task-button">Create Task</button>
+            <button class="clear-button">
+                <span>Clear</span>
+                <img src="./icons/add-task/Vector.svg" alt="cross icon" class="cross-basic">
+                <img src="./icons/add-task/cross-lightblue.svg" alt="cross icon" class="cross-lightblue">
+            </button>
+            <button class="create-task-button">
+                <span>Create Task</span>
+                <img src="./icons/add-task/check.svg" alt="cross icon">
+            </button>
         </div>
 
     </div>
