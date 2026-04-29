@@ -18,6 +18,8 @@ import { SupabaseService } from '../../../core/services/supabase.service';
   styleUrl: './greeting.scss',
 })
 export class Greeting implements OnInit, OnDestroy {
+  private static readonly SUMMARY_GREETING_BREAKPOINT = 1180;
+
   private readonly router = inject(Router);
   private readonly supabase = inject(SupabaseService);
   private readonly timers: number[] = [];
@@ -26,6 +28,11 @@ export class Greeting implements OnInit, OnDestroy {
   protected readonly isLeaving = signal(false);
 
   async ngOnInit(): Promise<void> {
+    if (!this.shouldShowGreeting()) {
+      await this.router.navigateByUrl('/summary');
+      return;
+    }
+
     await this.loadUserName();
     this.scheduleSummaryRedirect();
   }
@@ -62,6 +69,10 @@ export class Greeting implements OnInit, OnDestroy {
         void this.router.navigateByUrl('/summary');
       }, 3100),
     );
+  }
+
+  private shouldShowGreeting(): boolean {
+    return window.innerWidth <= Greeting.SUMMARY_GREETING_BREAKPOINT;
   }
 
   private asNonEmptyString(value: unknown): string | undefined {
