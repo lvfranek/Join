@@ -48,10 +48,10 @@ export class ShellLayout {
   protected readonly isAuthenticated = this.auth.isAuthenticated;
 
   protected readonly bottomNavItems: readonly BottomNavItem[] = [
-    { label: 'Summary', path: '/summary', iconPath: '/icons/Summary.png' },
-    { label: 'Add Task', path: '/add-task', iconPath: '/icons/Add task.png' },
-    { label: 'Board', path: '/board', iconPath: '/icons/Board.png' },
-    { label: 'Contacts', path: '/contacts', iconPath: '/icons/Contacts.png' },
+    { label: 'Summary', path: '/summary', iconPath: '/icons/Summary.svg' },
+    { label: 'Add Task', path: '/add-task', iconPath: '/icons/Add task.svg' },
+    { label: 'Board', path: '/board', iconPath: '/icons/Board.svg' },
+    { label: 'Contacts', path: '/contacts', iconPath: '/icons/Contacts.svg' },
   ];
 
   constructor() {
