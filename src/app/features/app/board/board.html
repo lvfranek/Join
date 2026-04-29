@@ -1,8 +1,63 @@
 <section class="board">
     <div class="top-container">
         <h1>Board</h1>
+
+        <div class="board-top-actions">
+            <div class="board-search-input-wrap">
+                <input class="board-search-input" type="text" placeholder="Find Task" />
+                <span class="board-search-divider" aria-hidden="true"></span>
+                <img class="board-search-icon" src="/icons/board/search.svg" alt="search" />
+            </div>
+            <button class="board-add-task-button" type="button">
+                <span>Add task</span>
+                <img src="/icons/board/add.svg" alt="add task" />
+            </button>
+        </div>
     </div>
 
+    <section class="board-columns">
+        <article class="board-column">
+            <div class="board-column__header">
+                <h2>To do</h2>
+                <button class="board-column__plus-button" type="button" aria-label="Add task to To do">
+                    <img class="plus-icon-default" src="/icons/board/plus button.svg" alt="" aria-hidden="true" />
+                    <img class="plus-icon-hover" src="/icons/board/plus button hover.svg" alt="" aria-hidden="true" />
+                </button>
+            </div>
+            <div class="board-column__content">No tasks to do</div>
+        </article>
 
-    
+        <article class="board-column">
+            <div class="board-column__header">
+                <h2>In progress</h2>
+                <button class="board-column__plus-button" type="button" aria-label="Add task to In progress">
+                    <img class="plus-icon-default" src="/icons/board/plus button.svg" alt="" aria-hidden="true" />
+                    <img class="plus-icon-hover" src="/icons/board/plus button hover.svg" alt="" aria-hidden="true" />
+                </button>
+            </div>
+            <div class="board-column__content">No tasks in progress</div>
+        </article>
+
+        <article class="board-column">
+            <div class="board-column__header">
+                <h2>Await feedback</h2>
+                <button class="board-column__plus-button" type="button" aria-label="Add task to Await feedback">
+                    <img class="plus-icon-default" src="/icons/board/plus button.svg" alt="" aria-hidden="true" />
+                    <img class="plus-icon-hover" src="/icons/board/plus button hover.svg" alt="" aria-hidden="true" />
+                </button>
+            </div>
+            <div class="board-column__content">No tasks awaiting feedback</div>
+        </article>
+
+        <article class="board-column">
+            <div class="board-column__header">
+                <h2>Done</h2>
+                <button class="board-column__plus-button" type="button" aria-label="Add task to Done">
+                    <img class="plus-icon-default" src="/icons/board/plus button.svg" alt="" aria-hidden="true" />
+                    <img class="plus-icon-hover" src="/icons/board/plus button hover.svg" alt="" aria-hidden="true" />
+                </button>
+            </div>
+            <div class="board-column__content">No tasks done</div>
+        </article>
+    </section>
 </section>
