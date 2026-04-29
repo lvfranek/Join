@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
-import { TuiTabBar } from '@taiga-ui/addon-mobile';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { filter } from 'rxjs/operators';
 
 import { AuthService } from '../../core/services/auth.service';
 import { SupabaseService } from '../../core/services/supabase.service';
@@ -20,7 +20,7 @@ interface BottomNavItem {
   host: {
     '(window:resize)': 'onViewportResize()',
   },
-  imports: [RouterOutlet, AppHeader, Sidebar, TuiTabBar],
+  imports: [RouterOutlet, AppHeader, Sidebar],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './shell-layout.html',
   styleUrl: './shell-layout.scss',
@@ -34,6 +34,7 @@ export class ShellLayout {
   private readonly supabase = inject(SupabaseService);
   private readonly viewportWidth = signal(window.innerWidth);
   private readonly sidebarMode = signal<SidebarMode>(ShellLayout.resolveInitialMode());
+  private readonly currentUrl = signal(this.router.url);
 
   protected readonly isAuthenticated = this.auth.isAuthenticated;
 
@@ -44,14 +45,18 @@ export class ShellLayout {
     { label: 'Contacts', path: '/contacts', iconPath: '/icons/Contacts.png' },
   ];
 
-  protected activeBottomNavIndex = computed(() => {
-    const url = this.router.url;
-    const idx = this.bottomNavItems.findIndex((item) => url.startsWith(item.path));
-    return idx >= 0 ? idx : 0;
-  });
-
   constructor() {
     void this.syncAuthState();
+
+    this.router.events
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .subscribe((event) => {
+        this.currentUrl.set(event.urlAfterRedirects);
+      });
+  }
+
+  protected isBottomNavActive(path: string): boolean {
+    return this.currentUrl().startsWith(path);
   }
 
   private async syncAuthState(): Promise<void> {
