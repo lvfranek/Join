@@ -35,9 +35,19 @@ export class Contacts {
   isDialogOpen = signal(false);
   isDialogClosing = signal(false);
   isMobileActionsOpen = signal(false);
+  dialogMode = signal<'create' | 'edit'>('create');
+  editingContactId = signal<string | null>(null);
+  isSuccessToastOpen = signal(false);
+  isSuccessToastClosing = signal(false);
   newContactName = signal('');
   newContactEmail = signal('');
   newContactPhone = signal('');
+
+  private dialogAnimationDuration = 400;
+  private toastVisibleDuration = 2500;
+  private toastAnimationDuration = 400;
+  private toastHideTimer: ReturnType<typeof setTimeout> | null = null;
+  private toastCleanupTimer: ReturnType<typeof setTimeout> | null = null;
 
   private avatarColorClasses = [
     'avatar--orange',
@@ -117,6 +127,22 @@ export class Contacts {
   }
 
   openDialog(): void {
+    this.dialogMode.set('create');
+    this.editingContactId.set(null);
+    this.resetForm();
+    this.isDialogOpen.set(true);
+  }
+
+  openEditDialog(): void {
+    if (!this.selectedContact) {
+      return;
+    }
+
+    this.dialogMode.set('edit');
+    this.editingContactId.set(this.selectedContact.id);
+    this.newContactName.set(this.selectedContact.name);
+    this.newContactEmail.set(this.selectedContact.email);
+    this.newContactPhone.set(this.selectedContact.phone);
     this.isDialogOpen.set(true);
   }
 
@@ -125,8 +151,19 @@ export class Contacts {
     setTimeout(() => {
       this.isDialogOpen.set(false);
       this.isDialogClosing.set(false);
+      this.dialogMode.set('create');
+      this.editingContactId.set(null);
       this.resetForm();
-    }, 400);
+    }, this.dialogAnimationDuration);
+  }
+
+  submitContact(): void {
+    if (this.dialogMode() === 'edit') {
+      this.updateContact();
+      return;
+    }
+
+    this.createContact();
   }
 
   createContact(): void {
@@ -142,6 +179,78 @@ export class Contacts {
     });
 
     this.closeDialog();
+    setTimeout(() => {
+      this.showSuccessToast();
+    }, this.dialogAnimationDuration);
+  }
+
+  deleteContact(): void {
+    const editingContactId = this.editingContactId();
+
+    if (!editingContactId) {
+      return;
+    }
+
+    this.contacts = this.contacts.filter((contact) => contact.id !== editingContactId);
+    this.contactGroups = this.groupContacts(this.contacts);
+
+    if (this.selectedContact?.id === editingContactId) {
+      this.selectedContact = null;
+    }
+
+    this.closeDialog();
+  }
+
+  private updateContact(): void {
+    const editingContactId = this.editingContactId();
+
+    if (!editingContactId || !this.newContactName() || !this.newContactEmail() || !this.newContactPhone()) {
+      return;
+    }
+
+    const currentContact = this.contacts.find((contact) => contact.id === editingContactId);
+
+    if (!currentContact) {
+      return;
+    }
+
+    const updatedContact: Contact = {
+      ...currentContact,
+      name: this.newContactName(),
+      email: this.newContactEmail(),
+      phone: this.newContactPhone(),
+    };
+
+    this.contacts = this.contacts
+      .map((contact) => (contact.id === editingContactId ? updatedContact : contact))
+      .sort((a, b) => a.name.localeCompare(b.name));
+    this.contactGroups = this.groupContacts(this.contacts);
+    this.selectedContact = updatedContact;
+
+    this.closeDialog();
+  }
+
+  private showSuccessToast(): void {
+    if (this.toastHideTimer) {
+      clearTimeout(this.toastHideTimer);
+    }
+
+    if (this.toastCleanupTimer) {
+      clearTimeout(this.toastCleanupTimer);
+    }
+
+    this.isSuccessToastClosing.set(false);
+    this.isSuccessToastOpen.set(true);
+
+    this.toastHideTimer = setTimeout(() => {
+      this.isSuccessToastClosing.set(true);
+      this.toastCleanupTimer = setTimeout(() => {
+        this.isSuccessToastOpen.set(false);
+        this.isSuccessToastClosing.set(false);
+        this.toastCleanupTimer = null;
+      }, this.toastAnimationDuration);
+      this.toastHideTimer = null;
+    }, this.toastVisibleDuration);
   }
 
   private resetForm(): void {
