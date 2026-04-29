@@ -33,7 +33,6 @@
       <nav tuiTabBar class="bottom-nav" [activeItemIndex]="activeBottomNavIndex()">
         @for (item of bottomNavItems; track item.path; let index = $index) {
           <button
-            tuiTabBarItem
             class="bottom-nav__item"
             [class.bottom-nav__item--active]="activeBottomNavIndex() === index"
             type="button"

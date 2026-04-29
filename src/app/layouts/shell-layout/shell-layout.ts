@@ -33,7 +33,7 @@ export class ShellLayout {
 
   protected readonly bottomNavItems: readonly BottomNavItem[] = [
     { label: 'Summary', path: '/summary', iconPath: '/icons/Summary.png' },
-    { label: 'Add Tasks', path: '/add-task', iconPath: '/icons/Add task.png' },
+    { label: 'Add Task', path: '/add-task', iconPath: '/icons/Add task.png' },
     { label: 'Board', path: '/board', iconPath: '/icons/Board.png' },
     { label: 'Contacts', path: '/contacts', iconPath: '/icons/Contacts.png' },
   ];
