@@ -82,25 +82,26 @@
         </div>
       </section>
 
-      <div class="contact-detail__mobile-actions" [class.contact-detail__mobile-actions--open]="isMobileActionsOpen()">
-        <div class="contact-detail__mobile-menu">
-          <button class="contact-action" type="button" (click)="openEditDialog(); toggleMobileActions()">
-            <span class="contact-action__icon contact-action__icon--edit"></span>
-            <span>Edit</span>
-          </button>
+    </section>
 
-          <button class="contact-action" type="button" (click)="deleteContact(); toggleMobileActions()">
-            <span class="contact-action__icon contact-action__icon--delete"></span>
-            <span>Delete</span>
-          </button>
-        </div>
+    <div class="contact-detail__mobile-actions" [class.contact-detail__mobile-actions--open]="isMobileActionsOpen()">
+      <div class="contact-detail__mobile-menu">
+        <button class="contact-action" type="button" (click)="openEditDialog(); toggleMobileActions()">
+          <span class="contact-action__icon contact-action__icon--edit"></span>
+          <span>Edit</span>
+        </button>
 
-        <button class="contact-detail__mobile-menu-button" type="button" (click)="toggleMobileActions()"
-          aria-label="Open contact actions" [attr.aria-expanded]="isMobileActionsOpen()">
-          <span aria-hidden="true"></span>
+        <button class="contact-action" type="button" (click)="deleteContact(); toggleMobileActions()">
+          <span class="contact-action__icon contact-action__icon--delete"></span>
+          <span>Delete</span>
         </button>
       </div>
-    </section>
+
+      <button class="contact-detail__mobile-menu-button" type="button" (click)="toggleMobileActions()"
+        aria-label="Open contact actions" [attr.aria-expanded]="isMobileActionsOpen()">
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
     }
   </main>
 
