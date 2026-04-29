@@ -9,23 +9,27 @@
 
     <div class="contacts-list__content">
       @for (group of contactGroups; track group.letter) {
-      <section class="contact-group">
-        <h2 class="contact-group__letter">{{ group.letter }}</h2>
+        <section class="contact-group">
+          <h2 class="contact-group__letter">{{ group.letter }}</h2>
 
-        @for (contact of group.contacts; track contact.id) {
-        <button class="contact-card" [class.contact-card--active]="selectedContact?.id === contact.id" type="button"
-          (click)="selectContact(contact)">
-          <span class="contact-card__avatar {{ contact.colorClass }}">
-            {{ getInitials(contact.name) }}
-          </span>
+          @for (contact of group.contacts; track contact.id) {
+            <button
+              class="contact-card"
+              [class.contact-card--active]="selectedContact?.id === contact.id"
+              type="button"
+              (click)="selectContact(contact)"
+            >
+              <span class="contact-card__avatar {{ contact.colorClass }}">
+                {{ getInitials(contact.name) }}
+              </span>
 
-          <span class="contact-card__info">
-            <span class="contact-card__name">{{ contact.name }}</span>
-            <span class="contact-card__email">{{ contact.email }}</span>
-          </span>
-        </button>
-        }
-      </section>
+              <span class="contact-card__info">
+                <span class="contact-card__name">{{ contact.name }}</span>
+                <span class="contact-card__email">{{ contact.email }}</span>
+              </span>
+            </button>
+          }
+        </section>
       }
     </div>
   </aside>
@@ -33,7 +37,12 @@
   <main class="contact-detail">
     <header class="contact-detail__headline">
       <h1>Contacts</h1>
-      <button class="contact-detail__back" type="button" (click)="closeContactDetail()" aria-label="Back to contacts">
+      <button
+        class="contact-detail__back"
+        type="button"
+        (click)="closeContactDetail()"
+        aria-label="Back to contacts"
+      >
         <img src="/help-imprint-privacy/back-arrow.svg" alt="" aria-hidden="true" />
       </button>
       <span class="contact-detail__divider" aria-hidden="true"></span>
@@ -41,163 +50,242 @@
     </header>
 
     @if (selectedContact) {
-    <section class="contact-detail__selected">
-      <section class="contact-detail__profile">
-        <div class="contact-detail__avatar {{ selectedContact.colorClass }}">
-          {{ getInitials(selectedContact.name) }}
-        </div>
-
-        <div class="contact-detail__main-info">
-          <h2>{{ selectedContact.name }}</h2>
-
-          <div class="contact-detail__actions">
-            <button class="contact-action" type="button" (click)="openEditDialog()">
-              <span class="contact-action__icon contact-action__icon--edit"></span>
-              <span>Edit</span>
-            </button>
-
-            <button class="contact-action" type="button">
-              <span class="contact-action__icon contact-action__icon--delete"></span>
-              <span>Delete</span>
-            </button>
+      <section class="contact-detail__selected">
+        <section class="contact-detail__profile">
+          <div class="contact-detail__avatar {{ selectedContact.colorClass }}">
+            {{ getInitials(selectedContact.name) }}
           </div>
-        </div>
+
+          <div class="contact-detail__main-info">
+            <h2>{{ selectedContact.name }}</h2>
+
+            <div class="contact-detail__actions">
+              <button class="contact-action" type="button" (click)="openEditDialog()">
+                <span class="contact-action__icon contact-action__icon--edit"></span>
+                <span>Edit</span>
+              </button>
+
+              <button class="contact-action" type="button" (click)="deleteSelectedContact()">
+                <span class="contact-action__icon contact-action__icon--delete"></span>
+                <span>Delete</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section class="contact-information">
+          <h3>Contact Information</h3>
+
+          <div class="contact-information__item">
+            <strong>Email</strong>
+            <a [href]="'mailto:' + selectedContact.email">
+              {{ selectedContact.email }}
+            </a>
+          </div>
+
+          <div class="contact-information__item">
+            <strong>Phone</strong>
+            <a [href]="getPhoneHref(selectedContact.phone)">
+              {{ selectedContact.phone }}
+            </a>
+          </div>
+        </section>
       </section>
 
-      <section class="contact-information">
-        <h3>Contact Information</h3>
+      <div
+        class="contact-detail__mobile-actions"
+        [class.contact-detail__mobile-actions--open]="isMobileActionsOpen()"
+      >
+        <div class="contact-detail__mobile-menu">
+          <button
+            class="contact-action"
+            type="button"
+            (click)="openEditDialog(); toggleMobileActions()"
+          >
+            <span class="contact-action__icon contact-action__icon--edit"></span>
+            <span>Edit</span>
+          </button>
 
-        <div class="contact-information__item">
-          <strong>Email</strong>
-          <a [href]="'mailto:' + selectedContact.email">
-            {{ selectedContact.email }}
-          </a>
+          <button
+            class="contact-action"
+            type="button"
+            (click)="deleteContact(); toggleMobileActions()"
+          >
+            <span class="contact-action__icon contact-action__icon--delete"></span>
+            <span>Delete</span>
+          </button>
         </div>
 
-        <div class="contact-information__item">
-          <strong>Phone</strong>
-          <a [href]="getPhoneHref(selectedContact.phone)">
-            {{ selectedContact.phone }}
-          </a>
-        </div>
-      </section>
-
-    </section>
-
-    <div class="contact-detail__mobile-actions" [class.contact-detail__mobile-actions--open]="isMobileActionsOpen()">
-      <div class="contact-detail__mobile-menu">
-        <button class="contact-action" type="button" (click)="openEditDialog(); toggleMobileActions()">
-          <span class="contact-action__icon contact-action__icon--edit"></span>
-          <span>Edit</span>
-        </button>
-
-        <button class="contact-action" type="button" (click)="deleteContact(); toggleMobileActions()">
-          <span class="contact-action__icon contact-action__icon--delete"></span>
-          <span>Delete</span>
+        <button
+          class="contact-detail__mobile-menu-button"
+          type="button"
+          (click)="toggleMobileActions()"
+          aria-label="Open contact actions"
+          [attr.aria-expanded]="isMobileActionsOpen()"
+        >
+          <span aria-hidden="true"></span>
         </button>
       </div>
-
-      <button class="contact-detail__mobile-menu-button" type="button" (click)="toggleMobileActions()"
-        aria-label="Open contact actions" [attr.aria-expanded]="isMobileActionsOpen()">
-        <span aria-hidden="true"></span>
-      </button>
-    </div>
     }
   </main>
 
   @if (isDialogOpen()) {
-  <div class="add-contact-overlay" [class.add-contact-overlay--closing]="isDialogClosing()" (click)="closeDialog()"></div>
-  <dialog class="add-contact-dialog" [class.add-contact-dialog--closing]="isDialogClosing()" open>
-    <div class="add-contact-dialog__container">
-      <button class="add-contact-dialog__close" type="button" (click)="closeDialog()" aria-label="Close dialog">
-        <img src="./icons/contacts-dialog/close.svg" alt="close" />
-      </button>
+    <div
+      class="add-contact-overlay"
+      [class.add-contact-overlay--closing]="isDialogClosing()"
+      (click)="closeDialog()"
+    ></div>
+    <dialog class="add-contact-dialog" [class.add-contact-dialog--closing]="isDialogClosing()" open>
+      <div class="add-contact-dialog__container">
+        <button
+          class="add-contact-dialog__close"
+          type="button"
+          (click)="closeDialog()"
+          aria-label="Close dialog"
+        >
+          <img src="./icons/contacts-dialog/close.svg" alt="close" />
+        </button>
 
-      <!-- Left Side -->
-      <div class="add-contact-dialog__left">
-        <img class="add-contact-dialog__logo" src="/icons/contacts-dialog/logo.svg" alt="join logo" />
-        <h1 class="add-contact-dialog__title">{{ dialogMode() === 'edit' ? 'Edit contact' : 'Add contact' }}</h1>
-        @if (dialogMode() === 'create') {
-        <p class="add-contact-dialog__subtitle">Tasks are better with a team!</p>
-        }
-        <div class="add-contact-dialog__divider" aria-hidden="true"></div>
-      </div>
-
-      <div class="add-contact-dialog__image">
-        @if (dialogMode() === 'edit' && selectedContact) {
-        <div class="contact-detail__avatar {{ selectedContact.colorClass }}">
-          {{ dialogAvatarInitials() }}
+        <!-- Left Side -->
+        <div class="add-contact-dialog__left">
+          <img
+            class="add-contact-dialog__logo"
+            src="/icons/contacts-dialog/logo.svg"
+            alt="join logo"
+          />
+          <h1 class="add-contact-dialog__title">
+            {{ dialogMode() === 'edit' ? 'Edit contact' : 'Add contact' }}
+          </h1>
+          @if (dialogMode() === 'create') {
+            <p class="add-contact-dialog__subtitle">Tasks are better with a team!</p>
+          }
+          <div class="add-contact-dialog__divider" aria-hidden="true"></div>
         </div>
-        } @else {
-        <img src="/icons/contacts-dialog/user.svg" alt="user avatar" />
-        }
-      </div>
 
-      <!-- Right Side -->
-      <div class="add-contact-dialog__right">
-        <div class="add-contact-dialog__form">
-          <div class="add-contact-dialog__inputs">
-            <div class="add-contact-dialog__input-group">
-              <div class="add-contact-dialog__input-wrap">
-                <input id="contact-name" type="text" placeholder="Name" [(ngModel)]="newContactName"
-                  (blur)="validateNameOnBlur()" class="add-contact-dialog__input" />
-                <img class="add-contact-dialog__input-icon" src="/icons/contacts-dialog/person.svg" alt=""
-                  aria-hidden="true" />
-              </div>
-              @if (nameError()) {
-              <div class="add-contact-dialog__error">{{ nameError() }}</div>
-              }
+        <div class="add-contact-dialog__image">
+          @if (dialogMode() === 'edit' && selectedContact) {
+            <div class="contact-detail__avatar {{ selectedContact.colorClass }}">
+              {{ dialogAvatarInitials() }}
             </div>
+          } @else {
+            <img src="/icons/contacts-dialog/user.svg" alt="user avatar" />
+          }
+        </div>
 
-            <div class="add-contact-dialog__input-group">
-              <div class="add-contact-dialog__input-wrap">
-                <input id="contact-email" type="email" placeholder="Email" [(ngModel)]="newContactEmail"
-                  (blur)="validateEmailOnBlur()" class="add-contact-dialog__input" />
-                <img class="add-contact-dialog__input-icon" src="/icons/contacts-dialog/mail.svg" alt=""
-                  aria-hidden="true" />
-              </div>
-              @if (emailError()) {
-              <div class="add-contact-dialog__error">{{ emailError() }}</div>
-              }
-            </div>
-
-            <div class="add-contact-dialog__input-group">
-              <div class="add-contact-dialog__input-wrap">
-                <input id="contact-phone" type="tel" placeholder="Phone" [(ngModel)]="newContactPhone"
-                  (blur)="validatePhoneOnBlur()" class="add-contact-dialog__input" />
-                <img class="add-contact-dialog__input-icon" src="/icons/contacts-dialog/call.svg" alt=""
-                  aria-hidden="true" />
-              </div>
-              @if (phoneError()) {
-              <div class="add-contact-dialog__error">{{ phoneError() }}</div>
-              }
-            </div>
-
-            <div class="add-contact-dialog__buttons">
-              <button class="add-contact-dialog__cancel" [class.add-contact-dialog__cancel--delete]="dialogMode() === 'edit'"
-                type="button" (click)="dialogMode() === 'edit' ? deleteContact() : closeDialog()">
-                <span>{{ dialogMode() === 'edit' ? 'Delete' : 'Cancel' }}</span>
-                @if (dialogMode() === 'create') {
-                <img src="./icons/add-task/Vector.svg" alt="cross icon" class="cross-basic">
-                <img src="./icons/add-task/cross-lightblue.svg" alt="cross icon" class="cross-lightblue">
+        <!-- Right Side -->
+        <div class="add-contact-dialog__right">
+          <div class="add-contact-dialog__form">
+            <div class="add-contact-dialog__inputs">
+              <div class="add-contact-dialog__input-group">
+                <div class="add-contact-dialog__input-wrap">
+                  <input
+                    id="contact-name"
+                    type="text"
+                    placeholder="Name"
+                    [(ngModel)]="newContactName"
+                    (blur)="validateNameOnBlur()"
+                    (input)="onNameInput()"
+                    class="add-contact-dialog__input"
+                    [class.add-contact-dialog__input--error]="nameError()"
+                  />
+                  <img
+                    class="add-contact-dialog__input-icon"
+                    src="/icons/contacts-dialog/person.svg"
+                    alt=""
+                    aria-hidden="true"
+                  />
+                </div>
+                @if (nameError()) {
+                  <div class="add-contact-dialog__error">{{ nameError() }}</div>
                 }
-              </button>
-              <button class="add-contact-dialog__create" type="button" (click)="submitContact()">
-                <span>{{ dialogMode() === 'edit' ? 'Save' : 'Create contact' }}</span>
-                <img src="./icons/add-task/check.svg" alt="cross icon">
-              </button>
+              </div>
+
+              <div class="add-contact-dialog__input-group">
+                <div class="add-contact-dialog__input-wrap">
+                  <input
+                    id="contact-email"
+                    type="email"
+                    placeholder="Email"
+                    [(ngModel)]="newContactEmail"
+                    (blur)="validateEmailOnBlur()"
+                    (input)="onEmailInput()"
+                    class="add-contact-dialog__input"
+                    [class.add-contact-dialog__input--error]="emailError()"
+                  />
+                  <img
+                    class="add-contact-dialog__input-icon"
+                    src="/icons/contacts-dialog/mail.svg"
+                    alt=""
+                    aria-hidden="true"
+                  />
+                </div>
+                @if (emailError()) {
+                  <div class="add-contact-dialog__error">{{ emailError() }}</div>
+                }
+              </div>
+
+              <div class="add-contact-dialog__input-group">
+                <div class="add-contact-dialog__input-wrap">
+                  <input
+                    id="contact-phone"
+                    type="tel"
+                    placeholder="Phone"
+                    [(ngModel)]="newContactPhone"
+                    (blur)="validatePhoneOnBlur()"
+                    (input)="onPhoneInput()"
+                    class="add-contact-dialog__input"
+                    [class.add-contact-dialog__input--error]="phoneError()"
+                  />
+                  <img
+                    class="add-contact-dialog__input-icon"
+                    src="/icons/contacts-dialog/call.svg"
+                    alt=""
+                    aria-hidden="true"
+                  />
+                </div>
+                @if (phoneError()) {
+                  <div class="add-contact-dialog__error">{{ phoneError() }}</div>
+                }
+              </div>
+
+              <div class="add-contact-dialog__buttons">
+                <button
+                  class="add-contact-dialog__cancel"
+                  [class.add-contact-dialog__cancel--delete]="dialogMode() === 'edit'"
+                  type="button"
+                  (click)="dialogMode() === 'edit' ? deleteContact() : closeDialog()"
+                >
+                  <span>{{ dialogMode() === 'edit' ? 'Delete' : 'Cancel' }}</span>
+                  @if (dialogMode() === 'create') {
+                    <img src="./icons/add-task/Vector.svg" alt="cross icon" class="cross-basic" />
+                    <img
+                      src="./icons/add-task/cross-lightblue.svg"
+                      alt="cross icon"
+                      class="cross-lightblue"
+                    />
+                  }
+                </button>
+                <button class="add-contact-dialog__create" type="button" (click)="submitContact()">
+                  <span>{{ dialogMode() === 'edit' ? 'Save' : 'Create contact' }}</span>
+                  <img src="./icons/add-task/check.svg" alt="cross icon" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </dialog>
+    </dialog>
   }
 
   @if (isSuccessToastOpen()) {
-  <div class="contact-success-toast" [class.contact-success-toast--closing]="isSuccessToastClosing()" role="status"
-    aria-live="polite" aria-atomic="true">
-    <span>Contact succesfully created</span>
-  </div>
+    <div
+      class="contact-success-toast"
+      [class.contact-success-toast--closing]="isSuccessToastClosing()"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+    >
+      <span>Contact succesfully created</span>
+    </div>
   }
 </section>

@@ -1,8 +1,16 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
 import { AuthService } from '../../core/services/auth.service';
+import { ContactService } from '../../core/services/contact.service';
 import { SupabaseService } from '../../core/services/supabase.service';
 import { AppHeader } from '../../shared/components/app-header/app-header';
 import { Sidebar } from '../../shared/components/sidebar/sidebar';
@@ -32,6 +40,7 @@ export class ShellLayout {
   protected readonly router = inject(Router);
   private readonly auth = inject(AuthService);
   private readonly supabase = inject(SupabaseService);
+  private readonly contactService = inject(ContactService);
   private readonly viewportWidth = signal(window.innerWidth);
   private readonly sidebarMode = signal<SidebarMode>(ShellLayout.resolveInitialMode());
   private readonly currentUrl = signal(this.router.url);
@@ -53,6 +62,12 @@ export class ShellLayout {
       .subscribe((event) => {
         this.currentUrl.set(event.urlAfterRedirects);
       });
+
+    effect(() => {
+      if (this.auth.isAuthenticated()) {
+        void this.contactService.list();
+      }
+    });
   }
 
   protected isBottomNavActive(path: string): boolean {
