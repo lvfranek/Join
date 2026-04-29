@@ -151,6 +151,10 @@
   }
 }
 
+.app-header__profile-menu-item--mobile-only {
+  display: none;
+}
+
 @media (max-width: 1024px) {
   .app-header {
     padding-inline: 1rem;
@@ -166,5 +170,9 @@
 
   .app-header__help {
     display: none;
+  }
+
+  .app-header__profile-menu-item--mobile-only {
+    display: flex;
   }
 }
