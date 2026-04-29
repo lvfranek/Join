@@ -9,7 +9,16 @@
   <main class="register-page__main">
     <form class="register-card" [formGroup]="registerForm" (ngSubmit)="submitRegister()" novalidate>
       <div class="register-card__headline">
-        <a class="register-card__back" routerLink="/login" aria-label="Back to login">←</a>
+        <button
+          class="register-card__back"
+          tuiButton
+          type="button"
+          appearance="flat"
+          size="s"
+          [iconStart]="'@tui.arrow-left'"
+          routerLink="/login"
+          aria-label="Back to login"
+        ></button>
         <h1 id="register-title">Sign up</h1>
         <span aria-hidden="true"></span>
       </div>

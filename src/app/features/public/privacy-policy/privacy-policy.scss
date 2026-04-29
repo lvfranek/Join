@@ -8,22 +8,7 @@
 }
 
 .back-arrow {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 32px;
-    width: 32px;
-    background: none;
-    border: none;
-
-    &:hover {
-        border-radius: 50%;
-        background: #EEEEEE;
-
-        >img {
-            scale: 1.15;
-        }
-    }
+    flex: 0 0 auto;
 }
 h1 {
     font-size: 61px;
