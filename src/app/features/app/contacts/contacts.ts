@@ -34,6 +34,7 @@ export class Contacts {
   selectedContact: Contact | null = null;
   isDialogOpen = signal(false);
   isDialogClosing = signal(false);
+  isMobileActionsOpen = signal(false);
   newContactName = signal('');
   newContactEmail = signal('');
   newContactPhone = signal('');
@@ -59,12 +60,23 @@ export class Contacts {
   contactGroups: ContactGroup[] = this.groupContacts(this.contacts);
 
   selectContact(contact: Contact): void {
+    this.isMobileActionsOpen.set(false);
+
     if (this.selectedContact?.id === contact.id) {
       this.selectedContact = null;
       return;
     }
 
     this.selectedContact = contact;
+  }
+
+  closeContactDetail(): void {
+    this.selectedContact = null;
+    this.isMobileActionsOpen.set(false);
+  }
+
+  toggleMobileActions(): void {
+    this.isMobileActionsOpen.update((isOpen) => !isOpen);
   }
 
   getInitials(name: string): string {
