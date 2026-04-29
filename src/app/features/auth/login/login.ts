@@ -75,7 +75,7 @@ export class Login {
   }
 
   protected continueAsGuest(): void {
-    this.auth.setAuthenticated(true);
+    this.auth.loginAsGuest();
     void this.router.navigateByUrl('/summary');
   }
 }

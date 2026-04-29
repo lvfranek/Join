@@ -62,21 +62,21 @@ export class Contacts implements OnInit {
     'avatar--red',
   ];
 
-  contacts: Contact[] = [];
+  contacts = computed<Contact[]>(() =>
+    this.contactService
+      .contacts()
+      .map((record) => this.toContact(record))
+      .sort((a, b) => a.name.localeCompare(b.name)),
+  );
 
-  contactGroups: ContactGroup[] = [];
+  contactGroups = computed<ContactGroup[]>(() => this.groupContacts(this.contacts()));
 
   constructor() {
     effect(() => {
-      const records = this.contactService.contacts();
-      this.contacts = records
-        .map((record) => this.toContact(record))
-        .sort((a, b) => a.name.localeCompare(b.name));
-      this.contactGroups = this.groupContacts(this.contacts);
-
-      if (this.selectedContact) {
-        const stillExists = this.contacts.find((c) => c.id === this.selectedContact!.id);
-        this.selectedContact = stillExists ?? null;
+      if (!this.selectedContact) return;
+      const stillExists = this.contacts().some((c) => c.id === this.selectedContact!.id);
+      if (!stillExists) {
+        this.selectedContact = null;
       }
     });
   }
@@ -348,10 +348,7 @@ export class Contacts implements OnInit {
 
     try {
       const created = await this.contactService.create(payload);
-      const newContact = this.toContact(created);
-      this.contacts = [...this.contacts, newContact].sort((a, b) => a.name.localeCompare(b.name));
-      this.contactGroups = this.groupContacts(this.contacts);
-      this.selectedContact = newContact;
+      this.selectedContact = this.toContact(created);
 
       this.closeDialog();
       setTimeout(() => {
@@ -368,12 +365,10 @@ export class Contacts implements OnInit {
     }
 
     const idToDelete = this.selectedContact.id;
+    this.selectedContact = null;
+    this.isMobileActionsOpen.set(false);
     try {
       await this.contactService.remove(idToDelete);
-      this.contacts = this.contacts.filter((contact) => contact.id !== idToDelete);
-      this.contactGroups = this.groupContacts(this.contacts);
-      this.selectedContact = null;
-      this.isMobileActionsOpen.set(false);
     } catch (error) {
       console.error('Failed to delete contact', error);
     }
@@ -388,8 +383,6 @@ export class Contacts implements OnInit {
 
     try {
       await this.contactService.remove(editingContactId);
-      this.contacts = this.contacts.filter((contact) => contact.id !== editingContactId);
-      this.contactGroups = this.groupContacts(this.contacts);
 
       if (this.selectedContact?.id === editingContactId) {
         this.selectedContact = null;
@@ -413,7 +406,7 @@ export class Contacts implements OnInit {
       return;
     }
 
-    const currentContact = this.contacts.find((contact) => contact.id === editingContactId);
+    const currentContact = this.contacts().find((contact) => contact.id === editingContactId);
 
     if (!currentContact) {
       return;
@@ -425,13 +418,7 @@ export class Contacts implements OnInit {
         email: this.newContactEmail().trim(),
         phone: this.newContactPhone().trim(),
       });
-      const updatedContact = this.toContact(updated);
-
-      this.contacts = this.contacts
-        .map((contact) => (contact.id === editingContactId ? updatedContact : contact))
-        .sort((a, b) => a.name.localeCompare(b.name));
-      this.contactGroups = this.groupContacts(this.contacts);
-      this.selectedContact = updatedContact;
+      this.selectedContact = this.toContact(updated);
 
       this.closeDialog();
     } catch (error) {

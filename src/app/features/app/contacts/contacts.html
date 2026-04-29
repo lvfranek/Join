@@ -8,7 +8,7 @@
     </div>
 
     <div class="contacts-list__content">
-      @for (group of contactGroups; track group.letter) {
+      @for (group of contactGroups(); track group.letter) {
         <section class="contact-group">
           <h2 class="contact-group__letter">{{ group.letter }}</h2>
 

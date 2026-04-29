@@ -63,8 +63,17 @@ export class ShellLayout {
         this.currentUrl.set(event.urlAfterRedirects);
       });
 
+    let lastMode: 'none' | 'user' | 'guest' = 'none';
     effect(() => {
-      if (this.auth.isAuthenticated()) {
+      const authed = this.auth.isAuthenticated();
+      const guest = this.auth.isGuest();
+      const mode: 'none' | 'user' | 'guest' = !authed ? 'none' : guest ? 'guest' : 'user';
+
+      if (mode === lastMode) return;
+      lastMode = mode;
+
+      this.contactService.invalidate();
+      if (mode !== 'none') {
         void this.contactService.list();
       }
     });

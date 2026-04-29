@@ -36,7 +36,7 @@ export class AppHeader {
 
   async logout(): Promise<void> {
     await this.supabase.client.auth.signOut();
-    this.authService.setAuthenticated(false);
+    this.authService.logout();
     this.focusProfileButtonIfMenuHadFocus();
     this.isProfileMenuOpen = false;
     await this.router.navigate(['/login']);
