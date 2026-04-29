@@ -31,6 +31,13 @@
         (click)="keepProfileMenuOpen($event)"
       >
         <a
+          class="app-header__profile-menu-item app-header__profile-menu-item--mobile-only"
+          routerLink="/help-site"
+          (click)="closeProfileMenu()"
+        >
+          Help
+        </a>
+        <a
           class="app-header__profile-menu-item"
           routerLink="/legal-notice"
           (click)="closeProfileMenu()"
