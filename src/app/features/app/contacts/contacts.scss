@@ -554,6 +554,12 @@
     border-color: #29abe2;
     box-shadow: 0 0 0 3px rgba(41, 171, 226, 0.1);
   }
+
+  &--error,
+  &--error:focus {
+    border-color: #e74c3c;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.15);
+  }
 }
 
 .add-contact-dialog__input-icon {

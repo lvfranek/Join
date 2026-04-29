@@ -1,7 +1,11 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import contactsData from '../../../../dummy-data.json';
+import {
+  ContactInput,
+  ContactRecord,
+  ContactService,
+} from '../../../core/services/contact.service';
 
 type Contact = {
   id: string;
@@ -9,13 +13,6 @@ type Contact = {
   email: string;
   phone: string;
   colorClass: string;
-};
-
-type DummyContact = {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
 };
 
 type ContactGroup = {
@@ -30,7 +27,8 @@ type ContactGroup = {
   templateUrl: './contacts.html',
   styleUrl: './contacts.scss',
 })
-export class Contacts {
+export class Contacts implements OnInit {
+  private readonly contactService = inject(ContactService);
   selectedContact: Contact | null = null;
   isDialogOpen = signal(false);
   isDialogClosing = signal(false);
@@ -64,14 +62,61 @@ export class Contacts {
     'avatar--red',
   ];
 
-  contacts: Contact[] = (contactsData as DummyContact[])
-    .map((contact, index) => ({
-      ...contact,
-      colorClass: this.getAvatarColorClass(index),
-    }))
-    .sort((a, b) => a.name.localeCompare(b.name));
+  contacts: Contact[] = [];
 
-  contactGroups: ContactGroup[] = this.groupContacts(this.contacts);
+  contactGroups: ContactGroup[] = [];
+
+  constructor() {
+    effect(() => {
+      const records = this.contactService.contacts();
+      this.contacts = records
+        .map((record) => this.toContact(record))
+        .sort((a, b) => a.name.localeCompare(b.name));
+      this.contactGroups = this.groupContacts(this.contacts);
+
+      if (this.selectedContact) {
+        const stillExists = this.contacts.find((c) => c.id === this.selectedContact!.id);
+        this.selectedContact = stillExists ?? null;
+      }
+    });
+  }
+
+  async ngOnInit(): Promise<void> {
+    try {
+      await this.contactService.list();
+    } catch (error) {
+      console.error('Failed to load contacts from Supabase', error);
+    }
+  }
+
+  private toContact(record: ContactRecord): Contact {
+    const fullName = [record.first_name, record.last_name].filter(Boolean).join(' ').trim();
+    return {
+      id: record.id,
+      name: fullName,
+      email: record.email,
+      phone: record.phone,
+      colorClass: this.getColorClassFor(record.id),
+    };
+  }
+
+  private getColorClassFor(seed: string): string {
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) {
+      hash = (hash * 31 + seed.charCodeAt(i)) | 0;
+    }
+    const index = Math.abs(hash) % this.avatarColorClasses.length;
+    return this.avatarColorClasses[index];
+  }
+
+  private splitName(fullName: string): { first_name: string; last_name: string | null } {
+    const parts = fullName.trim().split(/\s+/).filter(Boolean);
+    const [first, ...rest] = parts;
+    return {
+      first_name: first ?? '',
+      last_name: rest.length ? rest.join(' ') : null,
+    };
+  }
 
   selectContact(contact: Contact): void {
     this.isMobileActionsOpen.set(false);
@@ -272,45 +317,99 @@ export class Contacts {
     }
   }
 
-  createContact(): void {
+  onNameInput(): void {
+    if (this.nameError()) {
+      this.validateNameOnBlur();
+    }
+  }
+
+  onEmailInput(): void {
+    if (this.emailError()) {
+      this.validateEmailOnBlur();
+    }
+  }
+
+  onPhoneInput(): void {
+    if (this.phoneError()) {
+      this.validatePhoneOnBlur();
+    }
+  }
+
+  async createContact(): Promise<void> {
     if (!this.newContactName() || !this.newContactEmail() || !this.newContactPhone()) {
       return;
     }
 
-    // TODO: Add contact to backend
-    console.log('Creating contact:', {
-      name: this.newContactName(),
-      email: this.newContactEmail(),
-      phone: this.newContactPhone(),
-    });
+    const payload: ContactInput = {
+      ...this.splitName(this.newContactName()),
+      email: this.newContactEmail().trim(),
+      phone: this.newContactPhone().trim(),
+    };
 
-    this.closeDialog();
-    setTimeout(() => {
-      this.showSuccessToast();
-    }, this.dialogAnimationDuration);
+    try {
+      const created = await this.contactService.create(payload);
+      const newContact = this.toContact(created);
+      this.contacts = [...this.contacts, newContact].sort((a, b) => a.name.localeCompare(b.name));
+      this.contactGroups = this.groupContacts(this.contacts);
+      this.selectedContact = newContact;
+
+      this.closeDialog();
+      setTimeout(() => {
+        this.showSuccessToast();
+      }, this.dialogAnimationDuration);
+    } catch (error) {
+      console.error('Failed to create contact', error);
+    }
   }
 
-  deleteContact(): void {
+  async deleteSelectedContact(): Promise<void> {
+    if (!this.selectedContact) {
+      return;
+    }
+
+    const idToDelete = this.selectedContact.id;
+    try {
+      await this.contactService.remove(idToDelete);
+      this.contacts = this.contacts.filter((contact) => contact.id !== idToDelete);
+      this.contactGroups = this.groupContacts(this.contacts);
+      this.selectedContact = null;
+      this.isMobileActionsOpen.set(false);
+    } catch (error) {
+      console.error('Failed to delete contact', error);
+    }
+  }
+
+  async deleteContact(): Promise<void> {
     const editingContactId = this.editingContactId();
 
     if (!editingContactId) {
       return;
     }
 
-    this.contacts = this.contacts.filter((contact) => contact.id !== editingContactId);
-    this.contactGroups = this.groupContacts(this.contacts);
+    try {
+      await this.contactService.remove(editingContactId);
+      this.contacts = this.contacts.filter((contact) => contact.id !== editingContactId);
+      this.contactGroups = this.groupContacts(this.contacts);
 
-    if (this.selectedContact?.id === editingContactId) {
-      this.selectedContact = null;
+      if (this.selectedContact?.id === editingContactId) {
+        this.selectedContact = null;
+      }
+
+      this.closeDialog();
+    } catch (error) {
+      console.error('Failed to delete contact', error);
     }
-
-    this.closeDialog();
   }
 
-  private updateContact(): void {
+  private async updateContact(): Promise<void> {
     const editingContactId = this.editingContactId();
 
-    if (!editingContactId || !this.newContactName() || !this.newContactEmail() || !this.newContactPhone()) {
+    if (
+      !editingContactId ||
+      !this.newContactName() ||
+      !this.newContactEmail() ||
+      !this.newContactPhone()
+    ) {
       return;
     }
 
@@ -320,20 +419,24 @@ export class Contacts {
       return;
     }
 
-    const updatedContact: Contact = {
-      ...currentContact,
-      name: this.newContactName(),
-      email: this.newContactEmail(),
-      phone: this.newContactPhone(),
-    };
+    try {
+      const updated = await this.contactService.update(editingContactId, {
+        ...this.splitName(this.newContactName()),
+        email: this.newContactEmail().trim(),
+        phone: this.newContactPhone().trim(),
+      });
+      const updatedContact = this.toContact(updated);
 
-    this.contacts = this.contacts
-      .map((contact) => (contact.id === editingContactId ? updatedContact : contact))
-      .sort((a, b) => a.name.localeCompare(b.name));
-    this.contactGroups = this.groupContacts(this.contacts);
-    this.selectedContact = updatedContact;
+      this.contacts = this.contacts
+        .map((contact) => (contact.id === editingContactId ? updatedContact : contact))
+        .sort((a, b) => a.name.localeCompare(b.name));
+      this.contactGroups = this.groupContacts(this.contacts);
+      this.selectedContact = updatedContact;
 
-    this.closeDialog();
+      this.closeDialog();
+    } catch (error) {
+      console.error('Failed to update contact', error);
+    }
   }
 
   private showSuccessToast(): void {

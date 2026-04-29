@@ -1,68 +1,74 @@
 [
   {
     "id": "contact-1",
-    "name": "Laura Schneider",
-    "email": "laura.schneider@example.com",
-    "phone": "+49 151 23456789"
+    "name": "Bruce Wayne",
+    "email": "definitely.not.batman@wayne-enterprises.com",
+    "phone": "+49 151 00000001"
   },
   {
     "id": "contact-2",
-    "name": "Maximilian Weber",
-    "email": "maximilian.weber@example.com",
-    "phone": "+49 160 87654321"
+    "name": "Tony Stark",
+    "email": "iam@ironman.com",
+    "phone": "+49 160 31415926"
   },
   {
     "id": "contact-3",
-    "name": "Sophie Müller",
-    "email": "sophie.mueller@example.com",
-    "phone": "+49 176 11223344"
+    "name": "Hermione Granger",
+    "email": "hermione@hogwarts.edu",
+    "phone": "+49 176 90909090"
   },
   {
     "id": "contact-4",
-    "name": "Jonas Fischer",
-    "email": "jonas.fischer@example.com",
-    "phone": "+49 157 99887766"
+    "name": "Walter White",
+    "email": "heisenberg@chemistry.com",
+    "phone": "+49 157 50550505"
   },
   {
     "id": "contact-5",
-    "name": "Mia Hoffmann",
-    "email": "mia.hoffmann@example.com",
-    "phone": "+49 152 44556677"
+    "name": "Leslie Knope",
+    "email": "leslie.knope@pawnee.gov",
+    "phone": "+49 152 42424242"
   },
   {
     "id": "contact-6",
-    "name": "Leon Wagner",
-    "email": "leon.wagner@example.com",
-    "phone": "+49 170 33445566"
+    "name": "Frodo Baggins",
+    "email": "frodo@theshire.me",
+    "phone": "+49 170 11221122"
   },
   {
     "id": "contact-7",
-    "name": "Emma Becker",
-    "email": "emma.becker@example.com",
-    "phone": "+49 159 66778899"
+    "name": "Sherlock Holmes",
+    "email": "sherlock@221b.co.uk",
+    "phone": "+49 159 22122122"
   },
   {
     "id": "contact-8",
-    "name": "Noah Schulz",
-    "email": "noah.schulz@example.com",
-    "phone": "+49 163 55667788"
+    "name": "Lara Croft",
+    "email": "lara@tombraider.com",
+    "phone": "+49 163 19961996"
   },
   {
     "id": "contact-9",
-    "name": "Hannah Koch",
-    "email": "hannah.koch@example.com",
-    "phone": "+49 172 12349876"
+    "name": "Michael Scott",
+    "email": "worlds.best.boss@dundermifflin.com",
+    "phone": "+49 172 81818181"
   },
   {
     "id": "contact-10",
-    "name": "Ben Richter",
-    "email": "ben.richter@example.com",
-    "phone": "+49 155 78901234"
+    "name": "Ellen Ripley",
+    "email": "ripley@nostromo.space",
+    "phone": "+49 155 21792179"
   },
   {
     "id": "contact-11",
-    "name": "Ben Richter",
-    "email": "ben.richter@example.com",
-    "phone": "+49 155 78901234"
+    "name": "Indiana Jones",
+    "email": "indy@archaeology.edu",
+    "phone": "+49 162 19811984"
+  },
+  {
+    "id": "contact-12",
+    "name": "Princess Leia",
+    "email": "leia@rebellion.org",
+    "phone": "+49 173 49774977"
   }
 ]
