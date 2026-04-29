@@ -46,7 +46,7 @@ export class Sidebar {
   ];
 
   private readonly publicNavItems: readonly NavItem[] = [
-    { label: 'Login', path: '/login', iconPath: '/icons/person_add.png' },
+    { label: 'Login', path: '/login', iconPath: '/icons/person_add.svg' },
   ];
 
   protected readonly navItems = computed(() =>
