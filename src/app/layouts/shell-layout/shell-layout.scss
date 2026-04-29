@@ -72,7 +72,6 @@
     padding: 0.5rem 1rem;
     background: var(--brand-primary-500);
     border-top: 1px solid rgb(255 255 255 / 0.08);
-    overflow: visible;
   }
 
   .bottom-nav__item {
@@ -81,19 +80,30 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    min-block-size: 6rem;
+    inline-size: 100%;
+    block-size: 100%;
+    min-inline-size: 0;
+    min-block-size: 0;
+    padding: 0.625rem 0.25rem 0.75rem;
     border: 0;
     border-radius: 1.75rem;
     background: transparent;
-    color: var(--tui-text-secondary);
+    color: rgb(255 255 255 / 0.7);
     font: inherit;
     font-size: 1rem;
     font-weight: 400;
     text-align: center;
     cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
     transition:
       background 0.15s ease,
       color 0.15s ease;
+
+    &:hover {
+      background: rgb(255 255 255 / 0.08);
+      color: #fff;
+    }
 
     &:focus-visible {
       outline: 2px solid var(--tui-background-accent-1);
@@ -101,8 +111,9 @@
     }
   }
 
-  .bottom-nav__item--active {
-    background: var(--brand-secondary-1000);
+  .bottom-nav__item--active,
+  .bottom-nav__item--active:hover {
+    background: rgb(16 64 124 / 0.92);
     color: #fff;
   }
 
@@ -110,18 +121,21 @@
     inline-size: 2.125rem;
     block-size: 2.125rem;
     object-fit: contain;
-    filter: brightness(0) invert(0.6);
+    pointer-events: none;
+    filter: brightness(0) invert(0.85);
     transition: filter 0.15s ease;
   }
 
-  .bottom-nav__item--active .bottom-nav__icon,
   .bottom-nav__item:hover .bottom-nav__icon,
-  .bottom-nav__icon--active {
+  .bottom-nav__item--active .bottom-nav__icon {
     filter: brightness(0) invert(1);
   }
 
   .bottom-nav__label {
+    display: block;
     line-height: 1.05;
     white-space: nowrap;
+    pointer-events: none;
+    color: inherit;
   }
 }
