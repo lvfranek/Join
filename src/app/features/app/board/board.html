@@ -1,8 +1,78 @@
 <section class="board">
     <div class="top-container">
         <h1>Board</h1>
+
+        <div class="board-top-actions">
+            <div class="board-search-input-wrap">
+                <input class="board-search-input" type="text" placeholder="Find Task" />
+                <span class="board-search-divider" aria-hidden="true"></span>
+                <img class="board-search-icon" src="/icons/board/search.svg" alt="search" />
+            </div>
+            <button class="board-add-task-button" type="button">
+                <span>Add task</span>
+                <img src="/icons/board/add.svg" alt="add task" />
+            </button>
+        </div>
     </div>
 
+    <section class="board-columns">
+        <article class="board-column">
+            <div class="board-column__header">
+                <h2>To do</h2>
+                <button class="board-column__plus-button" type="button" aria-label="Add task to To do">
+                    <img class="plus-icon-default" src="/icons/board/plus button.svg" alt="" aria-hidden="true" />
+                    <img class="plus-icon-hover" src="/icons/board/plus button hover.svg" alt="" aria-hidden="true" />
+                </button>
+            </div>
+            <div class="board-column__content">No tasks to do</div>
+        </article>
 
-    
+        <article class="board-column">
+            <div class="board-column__header">
+                <h2>In progress</h2>
+                <button class="board-column__plus-button" type="button" aria-label="Add task to In progress">
+                    <img class="plus-icon-default" src="/icons/board/plus button.svg" alt="" aria-hidden="true" />
+                    <img class="plus-icon-hover" src="/icons/board/plus button hover.svg" alt="" aria-hidden="true" />
+                </button>
+            </div>
+            <div class="board-column__tasks">
+                <article class="board-task-placeholder">
+                    <div class="board-task-category">Category</div>
+                    <div class="board-task-title">Implement user authentication flow</div>
+                    <div class="board-task-description">Set up OAuth2 login with Google and GitHub, including token refresh and session management for all protected routes.</div>
+                    <div class="board-task-subtasks">Subtasks</div>
+                    <div class="board-task-assigned-to-and-priority">
+                        <div class="users">
+                            <span>AB</span>
+                        </div>
+                        <div class="priority">
+                            <img src="./icons/board/medium.svg" alt="Medium">
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </article>
+
+        <article class="board-column">
+            <div class="board-column__header">
+                <h2>Await feedback</h2>
+                <button class="board-column__plus-button" type="button" aria-label="Add task to Await feedback">
+                    <img class="plus-icon-default" src="/icons/board/plus button.svg" alt="" aria-hidden="true" />
+                    <img class="plus-icon-hover" src="/icons/board/plus button hover.svg" alt="" aria-hidden="true" />
+                </button>
+            </div>
+            <div class="board-column__content">No tasks awaiting feedback</div>
+        </article>
+
+        <article class="board-column">
+            <div class="board-column__header">
+                <h2>Done</h2>
+                <button class="board-column__plus-button" type="button" aria-label="Add task to Done">
+                    <img class="plus-icon-default" src="/icons/board/plus button.svg" alt="" aria-hidden="true" />
+                    <img class="plus-icon-hover" src="/icons/board/plus button hover.svg" alt="" aria-hidden="true" />
+                </button>
+            </div>
+            <div class="board-column__content">No tasks done</div>
+        </article>
+    </section>
 </section>
