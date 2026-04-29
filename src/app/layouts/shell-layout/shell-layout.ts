@@ -71,7 +71,15 @@ export class ShellLayout {
   }
 
   protected isBottomNavActive(path: string): boolean {
+    if (path === '/summary' && this.currentUrl().startsWith('/greeting')) {
+      return true;
+    }
+
     return this.currentUrl().startsWith(path);
+  }
+
+  protected isSummaryView(): boolean {
+    return this.currentUrl().startsWith('/summary');
   }
 
   private async syncAuthState(): Promise<void> {

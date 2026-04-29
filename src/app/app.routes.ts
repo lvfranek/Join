@@ -40,6 +40,11 @@ export const routes: Routes = [
         loadComponent: () => import('./features/app/summary/summary').then((m) => m.Summary),
       },
       {
+        path: 'greeting',
+        canMatch: [authGuard],
+        loadComponent: () => import('./features/app/greeting/greeting').then((m) => m.Greeting),
+      },
+      {
         path: 'add-task',
         canMatch: [authGuard],
         loadComponent: () => import('./features/app/add-task/add-task').then((m) => m.AddTask),

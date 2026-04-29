@@ -71,11 +71,11 @@ export class Login {
 
     this.auth.setAuthenticated(true);
     this.isSubmitting.set(false);
-    await this.router.navigateByUrl('/summary');
+    await this.router.navigateByUrl('/greeting');
   }
 
   protected continueAsGuest(): void {
     this.auth.setAuthenticated(true);
-    void this.router.navigateByUrl('/summary');
+    void this.router.navigateByUrl('/greeting');
   }
 }
