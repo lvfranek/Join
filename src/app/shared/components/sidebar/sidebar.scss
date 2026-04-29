@@ -13,15 +13,13 @@
   padding: 1.5rem 1rem;
   background: var(--brand-primary-500);
   border-inline-end: 1px solid var(--tui-border-normal);
-  transition:
-    inline-size 0.18s ease,
-    transform 0.2s ease;
 }
 
 .sidebar__top {
+  position: relative;
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
+  justify-content: center;
   gap: 0.75rem;
 
   app-brand {
@@ -36,8 +34,10 @@
 }
 
 .sidebar__toggle {
+  position: absolute;
+  inset-block-start: 0.25rem;
+  inset-inline-end: 0;
   flex: 0 0 auto;
-  margin-block-start: 0.25rem;
 }
 
 .nav {
@@ -255,6 +255,7 @@
 
 .sidebar--collapsed .sidebar__toggle,
 .sidebar--compact .sidebar__toggle {
+  position: static;
   order: -1;
   margin-block-start: 0;
 }
@@ -265,6 +266,8 @@
   inset-inline-start: 0;
   inline-size: 84px;
   min-block-size: 100dvh;
+  transition: transform 0.2s ease;
+  will-change: transform;
 }
 
 .sidebar--compact.sidebar--hidden {

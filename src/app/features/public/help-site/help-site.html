@@ -1,9 +1,16 @@
 <section class="help-site">
   <div class="headline">
     <h1>Help</h1>
-    <button class="back-arrow">
-      <img src="/help-imprint-privacy/back-arrow.svg" alt="back-arrow">
-    </button>
+    <button
+      class="back-arrow"
+      tuiIconButton
+      type="button"
+      appearance="flat"
+      size="s"
+      [iconStart]="'@tui.arrow-left'"
+      aria-label="Go back"
+      (click)="goBack()"
+    ></button>
   </div>
 
   <p>
@@ -42,7 +49,6 @@
     </div>
   </div>
 
-
   <div class="how-to-use">
     <span class="number-list">2.</span>
     <div class="bullet-point">
@@ -60,8 +66,9 @@
     <div class="bullet-point">
       <h3>Adding Cards</h3>
       <p>
-        Cards represent individual tasks. Click the "+" button under the appropriate list to create a
-        new card. Fill in the task details such as task name, description, due date, and assignees.
+        Cards represent individual tasks. Click the "+" button under the appropriate list to create
+        a new card. Fill in the task details such as task name, description, due date, and
+        assignees.
       </p>
     </div>
   </div>
@@ -90,8 +97,8 @@
 
   <h3>Best Practices</h3>
   <p>
-    Using Join effectively requires regular updates. Make sure you and your team keep the board up to
-    date so it always reflects the current state of your project.
+    Using Join effectively requires regular updates. Make sure you and your team keep the board up
+    to date so it always reflects the current state of your project.
   </p>
 
   <h2>Need Help?</h2>
