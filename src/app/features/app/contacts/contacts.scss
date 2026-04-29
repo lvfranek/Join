@@ -56,7 +56,7 @@
     border-color 100ms ease-in-out,
     box-shadow 100ms ease-in-out;
 
-  >span {
+  > span {
     font-size: 20px;
   }
 }
@@ -220,7 +220,7 @@
 }
 
 .contact-detail__selected {
-  animation: slide-in-from-right 800ms ease-out;
+  animation: slide-in-from-right 150ms ease-out;
 }
 
 .contact-detail__profile {
@@ -673,8 +673,12 @@
 }
 
 @keyframes fade-out {
-  from { opacity: 1; }
-  to { opacity: 0; }
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 
 .add-contact-dialog--closing {
@@ -874,23 +878,22 @@
   .add-contact-dialog__cancel {
     display: none;
   }
-.add-contact-dialog__cancel--delete {
-  display: flex;
-}
+  .add-contact-dialog__cancel--delete {
+    display: flex;
+  }
 
-.contact-success-toast {
-  left: 50%;
-  right: auto;
-  bottom: 120px;
-  width: min(320px, calc(100vw - 32px));
-  animation-name: slide-in-contact-toast-mobile;
-  transform: translateX(-50%);
-}
+  .contact-success-toast {
+    left: 50%;
+    right: auto;
+    bottom: 120px;
+    width: min(320px, calc(100vw - 32px));
+    animation-name: slide-in-contact-toast-mobile;
+    transform: translateX(-50%);
+  }
 
-.contact-success-toast--closing {
-  animation-name: slide-out-contact-toast-mobile;
-}
-
+  .contact-success-toast--closing {
+    animation-name: slide-out-contact-toast-mobile;
+  }
 }
 
 @media (max-width: 1180px) {
