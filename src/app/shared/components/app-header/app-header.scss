@@ -16,6 +16,7 @@
   justify-content: space-between;
   inline-size: 100%;
   block-size: var(--layout-header-height);
+  height: 80px;
   padding-inline: 94px 32px;
   background: #fff;
   box-shadow: 0 4px 8px rgb(0 0 0 / 0.12);
@@ -175,4 +176,10 @@
   .app-header__profile-menu-item--mobile-only {
     display: flex;
   }
+
+    .app-header__avatar {
+      height: 40px;
+      width: auto;
+      border: 2px solid var(--brand-primary-500);
+    }
 }

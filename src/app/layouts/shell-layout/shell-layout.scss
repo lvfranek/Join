@@ -59,7 +59,8 @@
 
   .content {
     padding: 0;
-    padding-block-end: calc(8rem + env(safe-area-inset-bottom));
+    //padding-block-end: calc(8rem + env(safe-area-inset-bottom));
+    padding-block-end: 80px;
     block-size: calc(100dvh - var(--layout-header-height));
   }
 
