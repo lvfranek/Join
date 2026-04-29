@@ -96,6 +96,10 @@ h1 {
     color: black;
 }
 
+.required-text--mobile {
+    display: none;
+}
+
 .lower-buttons {
     display: flex;
     justify-content: center;
@@ -191,6 +195,14 @@ h1 {
 
 .small-container-right {
     width: 100%;
+}
+
+.date-input-wrap {
+    position: relative;
+}
+
+.date-input-icon {
+    display: none;
 }
 
 
@@ -297,16 +309,38 @@ select:hover {
 }
 
 @media (max-width: 800px) {
-    .summary {
-        padding: 0px;
+    .add-task {
+        padding: 14px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        overflow: hidden;
+        min-height: 0;
+        padding-bottom: 0px;
     }
 
-    .right-elements {
-        display: none;
+    .content {
+        padding-bottom: 112px;
+    }
+
+    .add-task>div:first-child {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        min-height: 0;
     }
 
     .left-elements {
         width: 100%;
+        flex: none;
+        max-width: none;
+    }
+
+    .right-elements {
+        width: 100%;
+        flex: none;
+        max-width: none;
     }
 
     h1 {
@@ -317,5 +351,98 @@ select:hover {
         flex-direction: column;
         align-items: start;
         gap: 10px;
+    }
+
+    .middle-container {
+        flex-direction: column;
+        gap: 24px;
+        justify-content: start;
+        height: auto;
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .middleline {
+        display: none;
+    }
+
+    .bottom-container {
+        justify-content: end;
+        align-items: center;
+        flex-shrink: 0;
+        position: sticky;
+        bottom: 0;
+        background: #F6F7F8;
+        height: 80px;
+        padding: 0;
+        box-sizing: border-box;
+        z-index: 2;
+    }
+
+    .lower-buttons {
+        background: transparent;
+        gap: 24px;
+    }
+
+
+    .input-headlines {
+        font-size: 16px;
+    }
+
+    input {
+        font-size: 16px;
+        height: 40px;
+    }
+
+    .date-input-wrap {
+        input {
+            padding-right: 48px;
+        }
+    }
+
+    .date-input-icon {
+        display: block;
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 18px;
+        height: 18px;
+        pointer-events: none;
+    }
+
+    .required-text {
+        font-size: 16px;
+    }
+
+    .required-text--mobile {
+        display: inline-block;
+        margin-top: 8px;
+    }
+
+    .required-text-wrap {
+        display: none;
+    }
+
+    .priority-button-low,
+    .priority-button-medium,
+    .priority-button-urgent {
+        span {
+            font-size: 16px;
+        }
+    }
+
+    .create-task-button {
+        span {
+            font-size: 18px;
+        }
+    }
+
+    .clear-button {
+        span {
+            font-size: 18px;
+        }
     }
 }
