@@ -1018,15 +1018,9 @@
   .contacts--detail-open .contact-detail {
     display: block;
     height: 100%;
-    overflow-y: auto;
+    overflow: hidden;
     padding: 46px clamp(16px, 5vw, 24px) calc(8rem + 48px + env(safe-area-inset-bottom));
     background: var(--color-bg-surface-alt);
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-
-  .contacts--detail-open .contact-detail::-webkit-scrollbar {
-    display: none;
   }
 
   .contact-detail__headline {
