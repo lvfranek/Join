@@ -1,4 +1,4 @@
-<section class="contacts">
+<section class="contacts" [class.contacts--detail-open]="!!selectedContact">
   <aside class="contacts-list">
     <div class="contacts-list__button-wrapper">
       <button class="add-contact-button" type="button" (click)="openDialog()">
@@ -33,6 +33,9 @@
   <main class="contact-detail">
     <header class="contact-detail__headline">
       <h1>Contacts</h1>
+      <button class="contact-detail__back" type="button" (click)="closeContactDetail()" aria-label="Back to contacts">
+        <img src="/help-imprint-privacy/back-arrow.svg" alt="" aria-hidden="true" />
+      </button>
       <span class="contact-detail__divider" aria-hidden="true"></span>
       <p>Better with a team</p>
     </header>
@@ -78,6 +81,25 @@
           </a>
         </div>
       </section>
+
+      <div class="contact-detail__mobile-actions" [class.contact-detail__mobile-actions--open]="isMobileActionsOpen()">
+        <div class="contact-detail__mobile-menu">
+          <button class="contact-action" type="button">
+            <span class="contact-action__icon contact-action__icon--edit"></span>
+            <span>Edit</span>
+          </button>
+
+          <button class="contact-action" type="button">
+            <span class="contact-action__icon contact-action__icon--delete"></span>
+            <span>Delete</span>
+          </button>
+        </div>
+
+        <button class="contact-detail__mobile-menu-button" type="button" (click)="toggleMobileActions()"
+          aria-label="Open contact actions" [attr.aria-expanded]="isMobileActionsOpen()">
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
     </section>
     }
   </main>
