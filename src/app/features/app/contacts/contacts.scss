@@ -1019,7 +1019,7 @@
 
   .contacts-list__content {
     height: 100%;
-    padding: 16px clamp(20px, 8vw, 48px) calc(8rem + 96px + env(safe-area-inset-bottom));
+    padding: 16px 16px 90px 16px;
   }
 
   .contact-group__letter {

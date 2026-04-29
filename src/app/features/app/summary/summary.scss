@@ -100,6 +100,7 @@
     background: var(--brand-primary-500);
     border-radius: 30px;
     scale: 1.05;
+    cursor: pointer;
 
     h1 {
         color: white;
@@ -139,6 +140,7 @@
     background: var(--brand-primary-500);
     border-radius: 30px;
     scale: 1.05;
+    cursor: pointer;
 
     h1 {
         color: white;
@@ -183,6 +185,7 @@
     background: var(--brand-primary-500);
     border-radius: 30px;
     scale: 1.05;
+    cursor: pointer;
 
     h1 {
         color: white;
@@ -213,6 +216,7 @@
     background: var(--brand-primary-500);
     border-radius: 20px;
     scale: 1.05;
+    cursor: pointer;
 
     h1 {
         color: white;
@@ -553,8 +557,8 @@ h1 {
     .urgent,
     .edit,
     .check-dark {
-        width: clamp(16px, 3.5dvh, 22px)!important;
-        height: clamp(16px, 3.5dvh, 22px)!important;
+        width: clamp(16px, 3.5dvh, 22px) !important;
+        height: clamp(16px, 3.5dvh, 22px) !important;
     }
 
     .container-text {
