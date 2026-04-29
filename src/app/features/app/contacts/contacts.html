@@ -48,7 +48,7 @@
           <h2>{{ selectedContact.name }}</h2>
 
           <div class="contact-detail__actions">
-            <button class="contact-action" type="button">
+            <button class="contact-action" type="button" (click)="openEditDialog()">
               <span class="contact-action__icon contact-action__icon--edit"></span>
               <span>Edit</span>
             </button>
@@ -93,8 +93,10 @@
       <!-- Left Side -->
       <div class="add-contact-dialog__left">
         <img class="add-contact-dialog__logo" src="/icons/contacts-dialog/logo.svg" alt="join logo" />
-        <h1 class="add-contact-dialog__title">Add contact</h1>
+        <h1 class="add-contact-dialog__title">{{ dialogMode() === 'edit' ? 'Edit contact' : 'Add contact' }}</h1>
+        @if (dialogMode() === 'create') {
         <p class="add-contact-dialog__subtitle">Tasks are better with a team!</p>
+        }
         <div class="add-contact-dialog__divider" aria-hidden="true"></div>
       </div>
 
@@ -134,13 +136,16 @@
             </div>
 
             <div class="add-contact-dialog__buttons">
-              <button class="add-contact-dialog__cancel" type="button" (click)="closeDialog()">
-                <span>Cancel</span>
+              <button class="add-contact-dialog__cancel" [class.add-contact-dialog__cancel--delete]="dialogMode() === 'edit'"
+                type="button" (click)="dialogMode() === 'edit' ? deleteContact() : closeDialog()">
+                <span>{{ dialogMode() === 'edit' ? 'Delete' : 'Cancel' }}</span>
+                @if (dialogMode() === 'create') {
                 <img src="./icons/add-task/Vector.svg" alt="cross icon" class="cross-basic">
                 <img src="./icons/add-task/cross-lightblue.svg" alt="cross icon" class="cross-lightblue">
+                }
               </button>
-              <button class="add-contact-dialog__create" type="button" (click)="createContact()">
-                <span>Create contact</span>
+              <button class="add-contact-dialog__create" type="button" (click)="submitContact()">
+                <span>{{ dialogMode() === 'edit' ? 'Save' : 'Create contact' }}</span>
                 <img src="./icons/add-task/check.svg" alt="cross icon">
               </button>
             </div>
@@ -149,5 +154,12 @@
       </div>
     </div>
   </dialog>
+  }
+
+  @if (isSuccessToastOpen()) {
+  <div class="contact-success-toast" [class.contact-success-toast--closing]="isSuccessToastClosing()" role="status"
+    aria-live="polite" aria-atomic="true">
+    <span>Contact succesfully created</span>
+  </div>
   }
 </section>
