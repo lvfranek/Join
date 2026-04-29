@@ -21,7 +21,7 @@
   </div>
 
   <nav class="nav" aria-label="Main navigation">
-    @for (item of navItems; track item.path) {
+    @for (item of navItems(); track item.path) {
       <a
         class="nav-item"
         [routerLink]="item.path"
@@ -43,7 +43,7 @@
     }
   </nav>
 
-  @if (collapsed() || compact()) {
+  @if (!publicMode() && (collapsed() || compact())) {
     <div class="sidebar__legal-menu">
       <button
         class="sidebar__legal-trigger"
@@ -85,7 +85,7 @@
         }
       </nav>
     </div>
-  } @else {
+  } @else if (!publicMode()) {
     <nav class="legal-nav" aria-label="Legal navigation">
       @for (item of legalItems; track item.path) {
         <a

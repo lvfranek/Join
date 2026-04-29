@@ -27,6 +27,11 @@ export const routes: Routes = [
     path: '',
     loadComponent: () => import('./layouts/shell-layout/shell-layout').then((m) => m.ShellLayout),
     children: [
+      {
+        path: 'welcome',
+        loadComponent: () => import('./features/public/welcome/welcome').then((m) => m.Welcome),
+      },
+
       // Public pages – always accessible
       {
         path: 'privacy-policy',
@@ -66,7 +71,7 @@ export const routes: Routes = [
         loadComponent: () => import('./features/app/contacts/contacts').then((m) => m.Contacts),
       },
 
-      { path: '', redirectTo: 'summary', pathMatch: 'full' },
+      { path: '', redirectTo: 'welcome', pathMatch: 'full' },
     ],
   },
 

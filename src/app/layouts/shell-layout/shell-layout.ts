@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { Router, RouterOutlet } from '@angular/router';
 import { TuiTabBar } from '@taiga-ui/addon-mobile';
 
+import { AuthService } from '../../core/services/auth.service';
+import { SupabaseService } from '../../core/services/supabase.service';
 import { AppHeader } from '../../shared/components/app-header/app-header';
 import { Sidebar } from '../../shared/components/sidebar/sidebar';
 
@@ -28,8 +30,12 @@ export class ShellLayout {
   private static readonly STORAGE_KEY = 'sidebar-mode';
 
   protected readonly router = inject(Router);
+  private readonly auth = inject(AuthService);
+  private readonly supabase = inject(SupabaseService);
   private readonly viewportWidth = signal(window.innerWidth);
   private readonly sidebarMode = signal<SidebarMode>(ShellLayout.resolveInitialMode());
+
+  protected readonly isAuthenticated = this.auth.isAuthenticated;
 
   protected readonly bottomNavItems: readonly BottomNavItem[] = [
     { label: 'Summary', path: '/summary', iconPath: '/icons/Summary.png' },
@@ -43,6 +49,15 @@ export class ShellLayout {
     const idx = this.bottomNavItems.findIndex((item) => url.startsWith(item.path));
     return idx >= 0 ? idx : 0;
   });
+
+  constructor() {
+    void this.syncAuthState();
+  }
+
+  private async syncAuthState(): Promise<void> {
+    const { data } = await this.supabase.client.auth.getSession();
+    this.auth.syncFromSession(!!data.session);
+  }
 
   private static resolveInitialMode(): SidebarMode {
     if (window.innerWidth <= ShellLayout.COMPACT_BREAKPOINT) return 'hidden';
