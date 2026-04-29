@@ -1153,7 +1153,7 @@
   .contact-detail__mobile-actions {
     position: fixed;
     right: max(16px, env(safe-area-inset-right));
-    bottom: calc(7rem + 18px + env(safe-area-inset-bottom));
+    bottom: calc(6.5rem + env(safe-area-inset-bottom));
     z-index: 4;
     display: block;
   }
