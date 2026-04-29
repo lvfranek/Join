@@ -9,6 +9,7 @@
     [collapsed]="isSidebarCollapsed()"
     [hidden]="isSidebarHidden()"
     [compact]="isCompact()"
+    [publicMode]="!isAuthenticated()"
     (toggleMode)="toggleSidebar()"
     (requestClose)="closeSidebar()"
   />
@@ -29,7 +30,7 @@
       <router-outlet />
     </main>
 
-    @if (isCompact() && isSidebarHidden()) {
+    @if (isCompact() && isSidebarHidden() && isAuthenticated()) {
       <nav tuiTabBar class="bottom-nav" [activeItemIndex]="activeBottomNavIndex()">
         @for (item of bottomNavItems; track item.path; let index = $index) {
           <button

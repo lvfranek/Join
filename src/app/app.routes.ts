@@ -4,29 +4,18 @@ import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
 
 export const routes: Routes = [
-  // Auth shell (login, register) – plain, no sidebar
-  {
-    path: '',
-    loadComponent: () => import('./layouts/auth-layout/auth-layout').then((m) => m.AuthLayout),
-    children: [
-      {
-        path: 'login',
-        canMatch: [guestGuard],
-        loadComponent: () => import('./features/auth/login/login').then((m) => m.Login),
-      },
-      {
-        path: 'register',
-        canMatch: [guestGuard],
-        loadComponent: () => import('./features/auth/register/register').then((m) => m.Register),
-      },
-    ],
-  },
-
   // Main shell (sidebar + header + footer) – public and app pages
   {
     path: '',
     loadComponent: () => import('./layouts/shell-layout/shell-layout').then((m) => m.ShellLayout),
     children: [
+      {
+        path: '',
+        pathMatch: 'full',
+        loadComponent: () => import('./features/public/welcome/welcome').then((m) => m.Welcome),
+      },
+      { path: 'welcome', redirectTo: '', pathMatch: 'full' },
+
       // Public pages – always accessible
       {
         path: 'privacy-policy',
@@ -65,8 +54,24 @@ export const routes: Routes = [
         canMatch: [authGuard],
         loadComponent: () => import('./features/app/contacts/contacts').then((m) => m.Contacts),
       },
+    ],
+  },
 
-      { path: '', redirectTo: 'summary', pathMatch: 'full' },
+  // Auth shell (login, register) – plain, no sidebar
+  {
+    path: '',
+    loadComponent: () => import('./layouts/auth-layout/auth-layout').then((m) => m.AuthLayout),
+    children: [
+      {
+        path: 'login',
+        canMatch: [guestGuard],
+        loadComponent: () => import('./features/auth/login/login').then((m) => m.Login),
+      },
+      {
+        path: 'register',
+        canMatch: [guestGuard],
+        loadComponent: () => import('./features/auth/register/register').then((m) => m.Register),
+      },
     ],
   },
 

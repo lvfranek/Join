@@ -1,5 +1,5 @@
 import { NgOptimizedImage } from '@angular/common';
-import { ChangeDetectionStrategy, Component, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TuiButton, TuiHintDirective } from '@taiga-ui/core';
 
@@ -31,18 +31,27 @@ export class Sidebar {
   readonly collapsed = input(false);
   readonly hidden = input(false);
   readonly compact = input(false);
+  readonly publicMode = input(false);
 
   readonly toggleMode = output<void>();
   readonly requestClose = output<void>();
 
   protected readonly isLegalMenuOpen = signal(false);
 
-  protected readonly navItems: readonly NavItem[] = [
+  private readonly appNavItems: readonly NavItem[] = [
     { label: 'Summary', path: '/summary', iconPath: '/icons/Summary.png' },
     { label: 'Add Task', path: '/add-task', iconPath: '/icons/Add task.png' },
     { label: 'Board', path: '/board', iconPath: '/icons/Board.png' },
     { label: 'Contacts', path: '/contacts', iconPath: '/icons/Contacts.png' },
   ];
+
+  private readonly publicNavItems: readonly NavItem[] = [
+    { label: 'Login', path: '/login', iconPath: '/icons/person_add.png' },
+  ];
+
+  protected readonly navItems = computed(() =>
+    this.publicMode() ? this.publicNavItems : this.appNavItems,
+  );
 
   protected readonly legalItems: readonly LegalItem[] = [
     { label: 'Privacy Policy', path: '/privacy-policy' },
