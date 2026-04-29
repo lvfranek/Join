@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import contactsData from '../../../../dummy-data.json';
@@ -42,6 +42,10 @@ export class Contacts {
   newContactName = signal('');
   newContactEmail = signal('');
   newContactPhone = signal('');
+  nameError = signal('');
+  emailError = signal('');
+  phoneError = signal('');
+  dialogAvatarInitials = computed(() => this.getInitials(this.newContactName()));
 
   private dialogAnimationDuration = 400;
   private toastVisibleDuration = 2500;
@@ -158,12 +162,114 @@ export class Contacts {
   }
 
   submitContact(): void {
+    this.clearErrors();
+
+    if (!this.validateForm()) {
+      return;
+    }
+
     if (this.dialogMode() === 'edit') {
       this.updateContact();
       return;
     }
 
     this.createContact();
+  }
+
+  private validateForm(): boolean {
+    let isValid = true;
+
+    // Validate name
+    const name = this.newContactName().trim();
+    if (!name) {
+      this.nameError.set('Name is required');
+      isValid = false;
+    } else if (!/^\D+$/.test(name)) {
+      this.nameError.set('Name cannot contain numbers');
+      isValid = false;
+    } else if (!this.hasFirstAndLastName(name)) {
+      this.nameError.set('Name must contain first and last name');
+      isValid = false;
+    }
+
+    // Validate email
+    const email = this.newContactEmail().trim();
+    if (!email) {
+      this.emailError.set('Email is required');
+      isValid = false;
+    } else if (!this.isValidEmail(email)) {
+      this.emailError.set('Please enter a valid email address');
+      isValid = false;
+    }
+
+    // Validate phone
+    const phone = this.newContactPhone().trim();
+    if (!phone) {
+      this.phoneError.set('Phone is required');
+      isValid = false;
+    } else if (!this.isValidPhone(phone)) {
+      this.phoneError.set('Phone can only contain numbers and an optional + at the beginning');
+      isValid = false;
+    }
+
+    return isValid;
+  }
+
+  private hasFirstAndLastName(name: string): boolean {
+    const parts = name.trim().split(/\s+/).filter(Boolean);
+    return parts.length >= 2;
+  }
+
+  private isValidEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
+  private isValidPhone(phone: string): boolean {
+    const normalizedPhone = phone.replace(/\s+/g, '');
+    const phoneRegex = /^\+?\d+$/;
+    return phoneRegex.test(normalizedPhone);
+  }
+
+  private clearErrors(): void {
+    this.nameError.set('');
+    this.emailError.set('');
+    this.phoneError.set('');
+  }
+
+  validateNameOnBlur(): void {
+    const name = this.newContactName().trim();
+    if (!name) {
+      this.nameError.set('Name is required');
+    } else if (!/^\D+$/.test(name)) {
+      this.nameError.set('Name cannot contain numbers');
+    } else if (!this.hasFirstAndLastName(name)) {
+      this.nameError.set('Name must contain first and last name');
+    } else {
+      this.nameError.set('');
+    }
+  }
+
+  validateEmailOnBlur(): void {
+    const email = this.newContactEmail().trim();
+    if (!email) {
+      this.emailError.set('Email is required');
+    } else if (!this.isValidEmail(email)) {
+      this.emailError.set('Please enter a valid email address');
+    } else {
+      this.emailError.set('');
+    }
+  }
+
+  validatePhoneOnBlur(): void {
+    const phone = this.newContactPhone().trim();
+    if (!phone) {
+      this.phoneError.set('Phone is required');
+    } else if (!this.isValidPhone(phone)) {
+      this.phoneError.set('Phone can only contain numbers and an optional + at the beginning');
+    } else {
+      this.phoneError.set('');
+    }
   }
 
   createContact(): void {
@@ -257,5 +363,6 @@ export class Contacts {
     this.newContactName.set('');
     this.newContactEmail.set('');
     this.newContactPhone.set('');
+    this.clearErrors();
   }
 }

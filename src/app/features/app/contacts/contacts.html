@@ -123,7 +123,13 @@
       </div>
 
       <div class="add-contact-dialog__image">
+        @if (dialogMode() === 'edit' && selectedContact) {
+        <div class="contact-detail__avatar {{ selectedContact.colorClass }}">
+          {{ dialogAvatarInitials() }}
+        </div>
+        } @else {
         <img src="/icons/contacts-dialog/user.svg" alt="user avatar" />
+        }
       </div>
 
       <!-- Right Side -->
@@ -133,28 +139,37 @@
             <div class="add-contact-dialog__input-group">
               <div class="add-contact-dialog__input-wrap">
                 <input id="contact-name" type="text" placeholder="Name" [(ngModel)]="newContactName"
-                  class="add-contact-dialog__input" />
+                  (blur)="validateNameOnBlur()" class="add-contact-dialog__input" />
                 <img class="add-contact-dialog__input-icon" src="/icons/contacts-dialog/person.svg" alt=""
                   aria-hidden="true" />
               </div>
+              @if (nameError()) {
+              <div class="add-contact-dialog__error">{{ nameError() }}</div>
+              }
             </div>
 
             <div class="add-contact-dialog__input-group">
               <div class="add-contact-dialog__input-wrap">
                 <input id="contact-email" type="email" placeholder="Email" [(ngModel)]="newContactEmail"
-                  class="add-contact-dialog__input" />
+                  (blur)="validateEmailOnBlur()" class="add-contact-dialog__input" />
                 <img class="add-contact-dialog__input-icon" src="/icons/contacts-dialog/mail.svg" alt=""
                   aria-hidden="true" />
               </div>
+              @if (emailError()) {
+              <div class="add-contact-dialog__error">{{ emailError() }}</div>
+              }
             </div>
 
             <div class="add-contact-dialog__input-group">
               <div class="add-contact-dialog__input-wrap">
                 <input id="contact-phone" type="tel" placeholder="Phone" [(ngModel)]="newContactPhone"
-                  class="add-contact-dialog__input" />
+                  (blur)="validatePhoneOnBlur()" class="add-contact-dialog__input" />
                 <img class="add-contact-dialog__input-icon" src="/icons/contacts-dialog/call.svg" alt=""
                   aria-hidden="true" />
               </div>
+              @if (phoneError()) {
+              <div class="add-contact-dialog__error">{{ phoneError() }}</div>
+              }
             </div>
 
             <div class="add-contact-dialog__buttons">
