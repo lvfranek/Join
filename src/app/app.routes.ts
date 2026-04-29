@@ -54,7 +54,6 @@ export const routes: Routes = [
         canMatch: [authGuard],
         loadComponent: () => import('./features/app/contacts/contacts').then((m) => m.Contacts),
       },
-
     ],
   },
 
