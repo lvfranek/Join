@@ -1,41 +1,42 @@
 .privacy-policy {
-    padding: 120px;
+  padding: 120px;
 }
 
 .headline {
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
 }
 
 .back-arrow {
-    flex: 0 0 auto;
+  flex: 0 0 auto;
 }
 h1 {
-    font-size: 61px;
-    color: black;
-    font-weight: 700;
+  font-size: 61px;
+  color: black;
+  font-weight: 700;
 }
 
 h2 {
-    font-size: 27px;
-    color: black;
-    font-weight: 700;
+  font-size: 27px;
+  color: black;
+  font-weight: 700;
 }
 
 h3 {
-    font-size: 20px;
-    color: black;
-    font-weight: 700;
-    margin-bottom: 0px;
+  font-size: 20px;
+  color: black;
+  font-weight: 700;
+  margin-bottom: 0px;
 }
 
-p,li {
-    font-size: 16px;
-    color: black;
+p,
+li {
+  font-size: 16px;
+  color: black;
 }
 
 @media (max-width: 1000px) {
-    .privacy-policy {
-        padding: 0px;
-    }
+  .privacy-policy {
+    padding: 60px;
+  }
 }
