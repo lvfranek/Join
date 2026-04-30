@@ -1,4 +1,4 @@
-<section class="contacts" [class.contacts--detail-open]="!!selectedContact">
+<section class="contacts" [class.contacts--detail-open]="!!selectedContact()">
   <aside class="contacts-list">
     <div class="contacts-list__button-wrapper">
       <button class="add-contact-button" type="button" (click)="openDialog()">
@@ -8,14 +8,14 @@
     </div>
 
     <div class="contacts-list__content">
-      @for (group of contactGroups; track group.letter) {
+      @for (group of contactGroups(); track group.letter) {
         <section class="contact-group">
           <h2 class="contact-group__letter">{{ group.letter }}</h2>
 
           @for (contact of group.contacts; track contact.id) {
             <button
               class="contact-card"
-              [class.contact-card--active]="selectedContact?.id === contact.id"
+              [class.contact-card--active]="selectedContact()?.id === contact.id"
               type="button"
               (click)="selectContact(contact)"
             >
@@ -49,15 +49,15 @@
       <p>Better with a team</p>
     </header>
 
-    @if (selectedContact) {
+    @if (selectedContact(); as contact) {
       <section class="contact-detail__selected">
         <section class="contact-detail__profile">
-          <div class="contact-detail__avatar {{ selectedContact.colorClass }}">
-            {{ getInitials(selectedContact.name) }}
+          <div class="contact-detail__avatar {{ contact.colorClass }}">
+            {{ getInitials(contact.name) }}
           </div>
 
           <div class="contact-detail__main-info">
-            <h2>{{ selectedContact.name }}</h2>
+            <h2>{{ contact.name }}</h2>
 
             <div class="contact-detail__actions">
               <button class="contact-action" type="button" (click)="openEditDialog()">
@@ -78,15 +78,15 @@
 
           <div class="contact-information__item">
             <strong>Email</strong>
-            <a [href]="'mailto:' + selectedContact.email">
-              {{ selectedContact.email }}
+            <a [href]="'mailto:' + contact.email">
+              {{ contact.email }}
             </a>
           </div>
 
           <div class="contact-information__item">
             <strong>Phone</strong>
-            <a [href]="getPhoneHref(selectedContact.phone)">
-              {{ selectedContact.phone }}
+            <a [href]="getPhoneHref(contact.phone)">
+              {{ contact.phone }}
             </a>
           </div>
         </section>
@@ -106,11 +106,7 @@
             <span>Edit</span>
           </button>
 
-          <button
-            class="contact-action"
-            type="button"
-            (click)="deleteContact(); toggleMobileActions()"
-          >
+          <button class="contact-action" type="button" (click)="deleteSelectedContact()">
             <span class="contact-action__icon contact-action__icon--delete"></span>
             <span>Delete</span>
           </button>
@@ -163,8 +159,8 @@
         </div>
 
         <div class="add-contact-dialog__image">
-          @if (dialogMode() === 'edit' && selectedContact) {
-            <div class="contact-detail__avatar {{ selectedContact.colorClass }}">
+          @if (dialogMode() === 'edit' && selectedContact(); as contact) {
+            <div class="contact-detail__avatar {{ contact.colorClass }}">
               {{ dialogAvatarInitials() }}
             </div>
           } @else {

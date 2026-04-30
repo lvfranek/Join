@@ -29,7 +29,7 @@ type ContactGroup = {
 })
 export class Contacts implements OnInit {
   private readonly contactService = inject(ContactService);
-  selectedContact: Contact | null = null;
+  selectedContactId = signal<string | null>(null);
   isDialogOpen = signal(false);
   isDialogClosing = signal(false);
   isMobileActionsOpen = signal(false);
@@ -62,21 +62,26 @@ export class Contacts implements OnInit {
     'avatar--red',
   ];
 
-  contacts: Contact[] = [];
+  contacts = computed<Contact[]>(() =>
+    this.contactService
+      .contacts()
+      .map((record) => this.toContact(record))
+      .sort((a, b) => a.name.localeCompare(b.name)),
+  );
 
-  contactGroups: ContactGroup[] = [];
+  contactGroups = computed<ContactGroup[]>(() => this.groupContacts(this.contacts()));
+
+  selectedContact = computed<Contact | null>(
+    () => this.contacts().find((c) => c.id === this.selectedContactId()) ?? null,
+  );
 
   constructor() {
     effect(() => {
-      const records = this.contactService.contacts();
-      this.contacts = records
-        .map((record) => this.toContact(record))
-        .sort((a, b) => a.name.localeCompare(b.name));
-      this.contactGroups = this.groupContacts(this.contacts);
-
-      if (this.selectedContact) {
-        const stillExists = this.contacts.find((c) => c.id === this.selectedContact!.id);
-        this.selectedContact = stillExists ?? null;
+      const id = this.selectedContactId();
+      if (!id) return;
+      const stillExists = this.contacts().some((c) => c.id === id);
+      if (!stillExists) {
+        this.selectedContactId.set(null);
       }
     });
   }
@@ -121,16 +126,16 @@ export class Contacts implements OnInit {
   selectContact(contact: Contact): void {
     this.isMobileActionsOpen.set(false);
 
-    if (this.selectedContact?.id === contact.id) {
-      this.selectedContact = null;
+    if (this.selectedContactId() === contact.id) {
+      this.selectedContactId.set(null);
       return;
     }
 
-    this.selectedContact = contact;
+    this.selectedContactId.set(contact.id);
   }
 
   closeContactDetail(): void {
-    this.selectedContact = null;
+    this.selectedContactId.set(null);
     this.isMobileActionsOpen.set(false);
   }
 
@@ -183,15 +188,16 @@ export class Contacts implements OnInit {
   }
 
   openEditDialog(): void {
-    if (!this.selectedContact) {
+    const current = this.selectedContact();
+    if (!current) {
       return;
     }
 
     this.dialogMode.set('edit');
-    this.editingContactId.set(this.selectedContact.id);
-    this.newContactName.set(this.selectedContact.name);
-    this.newContactEmail.set(this.selectedContact.email);
-    this.newContactPhone.set(this.selectedContact.phone);
+    this.editingContactId.set(current.id);
+    this.newContactName.set(current.name);
+    this.newContactEmail.set(current.email);
+    this.newContactPhone.set(current.phone);
     this.isDialogOpen.set(true);
   }
 
@@ -348,10 +354,7 @@ export class Contacts implements OnInit {
 
     try {
       const created = await this.contactService.create(payload);
-      const newContact = this.toContact(created);
-      this.contacts = [...this.contacts, newContact].sort((a, b) => a.name.localeCompare(b.name));
-      this.contactGroups = this.groupContacts(this.contacts);
-      this.selectedContact = newContact;
+      this.selectedContactId.set(created.id);
 
       this.closeDialog();
       setTimeout(() => {
@@ -363,16 +366,14 @@ export class Contacts implements OnInit {
   }
 
   async deleteSelectedContact(): Promise<void> {
-    if (!this.selectedContact) {
+    const id = this.selectedContactId();
+    if (!id) {
       return;
     }
 
-    const idToDelete = this.selectedContact.id;
     try {
-      await this.contactService.remove(idToDelete);
-      this.contacts = this.contacts.filter((contact) => contact.id !== idToDelete);
-      this.contactGroups = this.groupContacts(this.contacts);
-      this.selectedContact = null;
+      await this.contactService.remove(id);
+      this.selectedContactId.set(null);
       this.isMobileActionsOpen.set(false);
     } catch (error) {
       console.error('Failed to delete contact', error);
@@ -388,13 +389,9 @@ export class Contacts implements OnInit {
 
     try {
       await this.contactService.remove(editingContactId);
-      this.contacts = this.contacts.filter((contact) => contact.id !== editingContactId);
-      this.contactGroups = this.groupContacts(this.contacts);
-
-      if (this.selectedContact?.id === editingContactId) {
-        this.selectedContact = null;
+      if (this.selectedContactId() === editingContactId) {
+        this.selectedContactId.set(null);
       }
-
       this.closeDialog();
     } catch (error) {
       console.error('Failed to delete contact', error);
@@ -413,26 +410,13 @@ export class Contacts implements OnInit {
       return;
     }
 
-    const currentContact = this.contacts.find((contact) => contact.id === editingContactId);
-
-    if (!currentContact) {
-      return;
-    }
-
     try {
       const updated = await this.contactService.update(editingContactId, {
         ...this.splitName(this.newContactName()),
         email: this.newContactEmail().trim(),
         phone: this.newContactPhone().trim(),
       });
-      const updatedContact = this.toContact(updated);
-
-      this.contacts = this.contacts
-        .map((contact) => (contact.id === editingContactId ? updatedContact : contact))
-        .sort((a, b) => a.name.localeCompare(b.name));
-      this.contactGroups = this.groupContacts(this.contacts);
-      this.selectedContact = updatedContact;
-
+      this.selectedContactId.set(updated.id);
       this.closeDialog();
     } catch (error) {
       console.error('Failed to update contact', error);
