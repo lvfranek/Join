@@ -34,6 +34,15 @@
   overflow: auto;
   background: var(--color-bg-second);
   block-size: calc(100vh - var(--layout-header-height));
+  padding-inline: max(0px, (100% - 1440px) / 2);
+}
+
+.content--flush {
+  padding-inline: 0 max(0px, 100% - 1440px);
+}
+
+.content--full {
+  padding-inline: 0;
 }
 
 .content--summary {
