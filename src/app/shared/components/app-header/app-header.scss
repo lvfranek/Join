@@ -16,10 +16,9 @@
   justify-content: space-between;
   inline-size: 100%;
   block-size: var(--layout-header-height);
-  height: 96px;
   padding-inline: 94px 32px;
   background: #fff;
-  box-shadow: 0 4px 8px rgb(0 0 0 / 0.12);
+  box-shadow: var(--shadow-xs);
 }
 
 .app-header__left {
@@ -111,21 +110,28 @@
   padding-block: 8px;
   border-radius: 12px 0 12px 12px;
   background: var(--brand-primary-500);
-  box-shadow: 0 4px 10px rgb(0 0 0 / 0.18);
+  box-shadow: var(--shadow-md);
   z-index: 10;
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
   transform: translateY(-24px);
   transform-origin: top right;
   transition:
     opacity 150ms ease,
-    transform 180ms ease;
+    transform 180ms ease,
+    visibility 0s linear 180ms;
 }
 
 .app-header__profile-menu--open {
   opacity: 1;
+  visibility: visible;
   pointer-events: auto;
   transform: translateY(0);
+  transition:
+    opacity 150ms ease,
+    transform 180ms ease,
+    visibility 0s linear 0s;
 }
 
 .app-header__profile-menu-item {
@@ -163,7 +169,6 @@
 @media (max-width: 1024px) {
   .app-header {
     padding-inline: 1rem;
-    height: 80px;
   }
 
   .header-logo {

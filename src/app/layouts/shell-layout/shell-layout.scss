@@ -58,6 +58,10 @@
 }
 
 @media (max-width: 1024px) {
+  :host {
+    --layout-header-height: 80px;
+  }
+
   .layout {
     grid-template-columns: 1fr;
   }

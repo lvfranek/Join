@@ -21,7 +21,7 @@
 
 input {
     width: 100%;
-    font-size: 20px;
+    font-size: var(--font-size-xl);
     padding: 12px 21px;
     border-radius: 10px;
     background: white;
@@ -37,7 +37,7 @@ input {
 
 .input-headlines {
     font-weight: 400;
-    font-size: 20px;
+    font-size: var(--font-size-xl);
     margin-bottom: 5px;
     color: var(--brand-primary-500);
 }
@@ -91,7 +91,7 @@ h1 {
 }
 
 .required-text {
-    font-size: 20px;
+    font-size: var(--font-size-xl);
     font-weight: 400;
     color: black;
 }
@@ -114,7 +114,7 @@ h1 {
     display: inline-block;
     cursor: pointer;
     color: #2a3647;
-    font-size: 20px;
+    font-size: var(--font-size-xl);
     padding: 15px 16px;
     text-decoration: none;
     display: flex;
@@ -164,7 +164,7 @@ h1 {
     display: inline-block;
     cursor: pointer;
     color: #ffffff;
-    font-size: 20px;
+    font-size: var(--font-size-xl);
     font-weight: 700;
     padding: 15px 20px;
     text-decoration: none;
@@ -233,7 +233,7 @@ h1 {
     box-shadow: 0px 0px 4px 0px #0000001A;
 
     >span {
-        font-size: 20px;
+        font-size: var(--font-size-xl);
         font-weight: 400;
         color: black;
     }
@@ -304,7 +304,7 @@ select {
     border: 1px solid #D1D1D1;
     background: white;
     color: black;
-    font-size: 20px;
+    font-size: var(--font-size-xl);
 }
 
 select:hover {
@@ -391,11 +391,11 @@ select:hover {
 
 
     .input-headlines {
-        font-size: 16px;
+        font-size: var(--font-size-md);
     }
 
     input {
-        font-size: 16px;
+        font-size: var(--font-size-md);
         height: 40px;
     }
 
@@ -417,7 +417,7 @@ select:hover {
     }
 
     .required-text {
-        font-size: 16px;
+        font-size: var(--font-size-md);
     }
 
     .required-text--mobile {
@@ -433,7 +433,7 @@ select:hover {
     .priority-button-medium,
     .priority-button-urgent {
         span {
-            font-size: 16px;
+            font-size: var(--font-size-md);
         }
     }
 
