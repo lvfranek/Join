@@ -82,6 +82,14 @@ export class ShellLayout {
     return this.currentUrl().startsWith('/summary');
   }
 
+  protected isContactsView(): boolean {
+    return this.currentUrl().startsWith('/contacts');
+  }
+
+  protected isBoardView(): boolean {
+    return this.currentUrl().startsWith('/board');
+  }
+
   private async syncAuthState(): Promise<void> {
     const { data } = await this.supabase.client.auth.getSession();
     this.auth.syncFromSession(!!data.session);
