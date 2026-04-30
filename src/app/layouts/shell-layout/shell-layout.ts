@@ -90,6 +90,16 @@ export class ShellLayout {
     return this.currentUrl().startsWith('/board');
   }
 
+  protected isPublicTextView(): boolean {
+    const url = this.currentUrl();
+
+    return (
+      url.startsWith('/help-site') ||
+      url.startsWith('/legal-notice') ||
+      url.startsWith('/privacy-policy')
+    );
+  }
+
   private async syncAuthState(): Promise<void> {
     const { data } = await this.supabase.client.auth.getSession();
     this.auth.syncFromSession(!!data.session);
