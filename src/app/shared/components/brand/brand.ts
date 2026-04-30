@@ -10,7 +10,7 @@ import { RouterLink } from '@angular/router';
   },
   template: `
     <a class="brand" [class.brand--collapsed]="collapsed()" routerLink="/">
-      <img src="/icons/logo_join_white.png" alt="Join" />
+      <img src="/icons/logo_join_white.svg" alt="Join" />
     </a>
   `,
   styles: `
