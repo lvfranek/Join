@@ -391,10 +391,6 @@ h1 {
         font-size: clamp(16px, 3dvh, 24px);
     }
 
-    .todo-and-done {
-        gap: var(--summary-row-gap);
-    }
-
     .urgent-container,
     .tasks-container {
         margin-top: var(--summary-row-gap);
