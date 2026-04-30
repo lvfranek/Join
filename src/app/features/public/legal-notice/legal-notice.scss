@@ -4,6 +4,23 @@
   padding: clamp(60px, 7vw, 120px);
   overflow-y: auto;
   font-family: var(--font-family-base);
+  scrollbar-color: #a8a8a8 var(--color-bg-surface);
+  scrollbar-width: thin;
+}
+
+.legal-notice::-webkit-scrollbar {
+  width: 8px;
+}
+
+.legal-notice::-webkit-scrollbar-track {
+  background: var(--color-bg-surface);
+}
+
+.legal-notice::-webkit-scrollbar-thumb {
+  min-height: 53px;
+  border: 2px solid var(--color-bg-surface);
+  border-radius: var(--radius-pill);
+  background-color: var(--color-border-strong);
 }
 
 .headline {

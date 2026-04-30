@@ -49,6 +49,18 @@
   overflow: hidden;
 }
 
+.content--light-scrollbar {
+  scrollbar-color: #a8a8a8 var(--color-bg-surface);
+}
+
+.content--light-scrollbar::-webkit-scrollbar-track {
+  background: var(--color-bg-surface);
+}
+
+.content--light-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #a8a8a8;
+}
+
 .layout__backdrop {
   position: fixed;
   inset: 0;
