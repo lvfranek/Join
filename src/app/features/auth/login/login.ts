@@ -77,7 +77,7 @@ export class Login {
   }
 
   protected continueAsGuest(): void {
-    this.auth.setAuthenticated(true);
+    this.auth.setGuestAuthenticated();
     void this.router.navigateByUrl(this.resolvePostLoginRoute());
   }
 
