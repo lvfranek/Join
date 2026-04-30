@@ -39,10 +39,10 @@ export class Sidebar {
   protected readonly isLegalMenuOpen = signal(false);
 
   private readonly appNavItems: readonly NavItem[] = [
-    { label: 'Summary', path: '/summary', iconPath: '/icons/Summary.png' },
-    { label: 'Add Task', path: '/add-task', iconPath: '/icons/Add task.png' },
-    { label: 'Board', path: '/board', iconPath: '/icons/Board.png' },
-    { label: 'Contacts', path: '/contacts', iconPath: '/icons/Contacts.png' },
+    { label: 'Summary', path: '/summary', iconPath: '/icons/Summary.svg' },
+    { label: 'Add Task', path: '/add-task', iconPath: '/icons/Add task.svg' },
+    { label: 'Board', path: '/board', iconPath: '/icons/Board.svg' },
+    { label: 'Contacts', path: '/contacts', iconPath: '/icons/Contacts.svg' },
   ];
 
   private readonly publicNavItems: readonly NavItem[] = [

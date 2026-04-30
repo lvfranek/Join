@@ -15,6 +15,11 @@
   border-inline-end: 1px solid var(--tui-border-normal);
 }
 
+.nav-item__icon {
+  width: 25px!important;
+  height: 25px;
+}
+
 .sidebar__top {
   position: relative;
   display: flex;
