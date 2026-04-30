@@ -27,7 +27,9 @@
     <app-header />
 
     <main class="content">
-      <router-outlet />
+      <div class="content__inner" [class.content__inner--flush]="isFlushRoute()">
+        <router-outlet />
+      </div>
     </main>
 
     @if (isCompact() && isSidebarHidden() && isAuthenticated()) {

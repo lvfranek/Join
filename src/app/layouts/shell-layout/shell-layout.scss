@@ -36,6 +36,17 @@
   block-size: calc(100vh - var(--layout-header-height));
 }
 
+.content__inner {
+  inline-size: 100%;
+  max-inline-size: 1440px;
+  margin-inline: auto;
+  block-size: 100%;
+
+  &--flush {
+    margin-inline: 0 auto;
+  }
+}
+
 .layout__backdrop {
   position: fixed;
   inset: 0;

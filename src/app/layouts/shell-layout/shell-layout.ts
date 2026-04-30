@@ -83,6 +83,8 @@ export class ShellLayout {
     return this.currentUrl().startsWith(path);
   }
 
+  protected readonly isFlushRoute = computed(() => this.currentUrl().startsWith('/contacts'));
+
   private async syncAuthState(): Promise<void> {
     const { data } = await this.supabase.client.auth.getSession();
     this.auth.syncFromSession(!!data.session);
