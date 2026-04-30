@@ -95,6 +95,10 @@
     outline: 2px solid var(--accent-2);
     outline-offset: 3px;
   }
+
+  &:hover {
+    background: #E2E6EC;
+  }
 }
 
 .app-header__profile-menu {
