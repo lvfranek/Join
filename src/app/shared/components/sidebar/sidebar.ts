@@ -22,7 +22,7 @@ interface LegalItem {
     '(document:click)': 'closeLegalMenu()',
     '(document:keydown.escape)': 'closeLegalMenu()',
   },
-  imports: [NgOptimizedImage, RouterLink, RouterLinkActive, Brand, TuiButton, TuiHintDirective],
+  imports: [RouterLink, RouterLinkActive, Brand, TuiButton, TuiHintDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss',
