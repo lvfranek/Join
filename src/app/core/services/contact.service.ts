@@ -96,8 +96,18 @@ export class ContactService {
   }
 
   async remove(id: string): Promise<void> {
-    const { error } = await this.supabase.client.from(this.table).delete().eq('id', id);
+    const { data, error } = await this.supabase.client
+      .from(this.table)
+      .delete()
+      .eq('id', id)
+      .select('id');
+
     if (error) throw error;
+    if (!data || data.length === 0) {
+      throw new Error(
+        `Contact ${id} could not be deleted. Likely missing RLS DELETE policy or the row no longer exists.`,
+      );
+    }
     this.contactsState.update((list) => list.filter((entry) => entry.id !== id));
   }
 
