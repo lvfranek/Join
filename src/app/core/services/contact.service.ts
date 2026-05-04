@@ -193,7 +193,6 @@ export class ContactService {
       return;
     }
 
-    const { error } = await this.supabase.client.from(this.table).delete().eq('id', id);
     const { data, error } = await this.supabase.client
       .from(this.table)
       .delete()
