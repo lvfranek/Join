@@ -30,6 +30,14 @@
       <div class="content__inner" [class.content__inner--flush]="isFlushRoute()">
         <router-outlet />
       </div>
+    <main
+      class="content"
+      [class.content--summary]="isSummaryView()"
+      [class.content--flush]="isContactsView()"
+      [class.content--full]="isBoardView()"
+      [class.content--light-scrollbar]="isPublicTextView()"
+    >
+      <router-outlet />
     </main>
 
     @if (isCompact() && isSidebarHidden() && isAuthenticated()) {

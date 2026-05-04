@@ -1,8 +1,5 @@
 .privacy-policy {
-  height: 100%;
-  max-height: calc(100vh - var(--layout-header-height));
   padding: clamp(60px, 7vw, 120px);
-  overflow-y: auto;
   font-family: var(--font-family-base);
 }
 
@@ -13,8 +10,30 @@
 }
 
 .back-arrow {
+  --t-size: 32px;
+
   flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  min-height: 22px;
+  color: var(--color-accent-secondary);
+  border-radius: var(--radius-pill);
+  transition:
+    color 100ms ease-in-out,
+    transform 100ms ease-in-out;
+
+  --tui-background-hover: transparent;
+  --tui-background-active: transparent;
 }
+
+.back-arrow:hover,
+.back-arrow:focus-visible {
+  background-color: transparent;
+  color: var(--color-accent-secondary-hover);
+  transform: scale(1.08);
+}
+
 h1 {
   margin: 0;
   color: var(--neutral-1000);

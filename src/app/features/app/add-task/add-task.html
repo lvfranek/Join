@@ -16,7 +16,10 @@
                 </div>
                 <div class="small-container-left">
                     <p class="input-headlines">Due date<span class="redcross">*</span></p>
-                    <input type="text" placeholder="dd/mm/yyyy">
+                    <div class="date-input-wrap">
+                        <input type="text" placeholder="dd/mm/yyyy">
+                        <img src="/icons/add-task/calendar.svg" alt="Calendar" class="date-input-icon">
+                    </div>
                 </div>
             </div>
 
@@ -54,13 +57,14 @@
                 <div class="small-container-right">
                     <p class="input-headlines">Subtasks</p>
                     <input type="text" placeholder="Add new subtask">
+                    <span class="required-text required-text--mobile"><span class="redcross">*</span>This field is required</span>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="bottom-container">
-        <div>
+        <div class="required-text-wrap">
             <span class="required-text"><span class="redcross">*</span>This field is required</span>
         </div>
 

@@ -18,7 +18,7 @@
   block-size: var(--layout-header-height);
   padding-inline: 94px 32px;
   background: #fff;
-  box-shadow: 0 4px 8px rgb(0 0 0 / 0.12);
+  box-shadow: var(--shadow-xs);
 }
 
 .app-header__left {
@@ -94,6 +94,10 @@
     outline: 2px solid var(--accent-2);
     outline-offset: 3px;
   }
+
+  &:hover {
+    background: #E2E6EC;
+  }
 }
 
 .app-header__profile-menu {
@@ -106,21 +110,28 @@
   padding-block: 8px;
   border-radius: 12px 0 12px 12px;
   background: var(--brand-primary-500);
-  box-shadow: 0 4px 10px rgb(0 0 0 / 0.18);
+  box-shadow: var(--shadow-md);
   z-index: 10;
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
   transform: translateY(-24px);
   transform-origin: top right;
   transition:
     opacity 150ms ease,
-    transform 180ms ease;
+    transform 180ms ease,
+    visibility 0s linear 180ms;
 }
 
 .app-header__profile-menu--open {
   opacity: 1;
+  visibility: visible;
   pointer-events: auto;
   transform: translateY(0);
+  transition:
+    opacity 150ms ease,
+    transform 180ms ease,
+    visibility 0s linear 0s;
 }
 
 .app-header__profile-menu-item {
@@ -174,5 +185,12 @@
 
   .app-header__profile-menu-item--mobile-only {
     display: flex;
+  }
+
+  .app-header__avatar {
+    inline-size: 40px;
+    block-size: 40px;
+    border-width: 2px;
+    font-size: 14px;
   }
 }

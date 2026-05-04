@@ -1,16 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { SupabaseService } from '../../../core/services/supabase.service';
-import { Summary } from './summary';
+import { Greeting } from './greeting';
 
-describe('Summary', () => {
-  let component: Summary;
-  let fixture: ComponentFixture<Summary>;
+describe('Greeting', () => {
+  let component: Greeting;
+  let fixture: ComponentFixture<Greeting>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Summary],
+      imports: [Greeting],
       providers: [
+        provideRouter([]),
         {
           provide: SupabaseService,
           useValue: {
@@ -33,7 +35,7 @@ describe('Summary', () => {
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(Summary);
+    fixture = TestBed.createComponent(Greeting);
     component = fixture.componentInstance;
     fixture.detectChanges();
     await fixture.whenStable();

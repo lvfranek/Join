@@ -6,6 +6,12 @@
     height: 100%;
 }
 
+:host(.add-task-modal__content) .add-task {
+    min-height: 740px;
+    height: auto;
+    padding: 60px 74px 48px;
+}
+
 .left-elements {
     display: flex;
     flex-direction: column;
@@ -21,7 +27,7 @@
 
 input {
     width: 100%;
-    font-size: 20px;
+    font-size: var(--font-size-xl);
     padding: 12px 21px;
     border-radius: 10px;
     background: white;
@@ -37,7 +43,7 @@ input {
 
 .input-headlines {
     font-weight: 400;
-    font-size: 20px;
+    font-size: var(--font-size-xl);
     margin-bottom: 5px;
     color: var(--brand-primary-500);
 }
@@ -91,9 +97,13 @@ h1 {
 }
 
 .required-text {
-    font-size: 20px;
+    font-size: var(--font-size-xl);
     font-weight: 400;
     color: black;
+}
+
+.required-text--mobile {
+    display: none;
 }
 
 .lower-buttons {
@@ -110,7 +120,7 @@ h1 {
     display: inline-block;
     cursor: pointer;
     color: #2a3647;
-    font-size: 20px;
+    font-size: var(--font-size-xl);
     padding: 15px 16px;
     text-decoration: none;
     display: flex;
@@ -160,7 +170,7 @@ h1 {
     display: inline-block;
     cursor: pointer;
     color: #ffffff;
-    font-size: 20px;
+    font-size: var(--font-size-xl);
     font-weight: 700;
     padding: 15px 20px;
     text-decoration: none;
@@ -193,6 +203,14 @@ h1 {
     width: 100%;
 }
 
+.date-input-wrap {
+    position: relative;
+}
+
+.date-input-icon {
+    display: none;
+}
+
 
 // PRIORITY BUTTONS
 .high-white,
@@ -221,7 +239,7 @@ h1 {
     box-shadow: 0px 0px 4px 0px #0000001A;
 
     >span {
-        font-size: 20px;
+        font-size: var(--font-size-xl);
         font-weight: 400;
         color: black;
     }
@@ -240,6 +258,7 @@ h1 {
 
     >span {
         color: white;
+        font-weight: 700;
     }
 }
 
@@ -256,6 +275,7 @@ h1 {
 
     >span {
         color: white;
+        font-weight: 700;
     }
 }
 
@@ -272,6 +292,7 @@ h1 {
 
     >span {
         color: white;
+        font-weight: 700;
     }
 }
 
@@ -289,7 +310,7 @@ select {
     border: 1px solid #D1D1D1;
     background: white;
     color: black;
-    font-size: 20px;
+    font-size: var(--font-size-xl);
 }
 
 select:hover {
@@ -297,16 +318,43 @@ select:hover {
 }
 
 @media (max-width: 800px) {
-    .summary {
-        padding: 0px;
+    :host(.add-task-modal__content) .add-task {
+        min-height: 0;
+        padding: 28px 18px 0;
     }
 
-    .right-elements {
-        display: none;
+    .add-task {
+        padding: 14px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        overflow: hidden;
+        min-height: 0;
+        padding-bottom: 0px;
+    }
+
+    .content {
+        padding-bottom: 112px;
+    }
+
+    .add-task>div:first-child {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        min-height: 0;
     }
 
     .left-elements {
         width: 100%;
+        flex: none;
+        max-width: none;
+    }
+
+    .right-elements {
+        width: 100%;
+        flex: none;
+        max-width: none;
     }
 
     h1 {
@@ -317,5 +365,98 @@ select:hover {
         flex-direction: column;
         align-items: start;
         gap: 10px;
+    }
+
+    .middle-container {
+        flex-direction: column;
+        gap: 24px;
+        justify-content: start;
+        height: auto;
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .middleline {
+        display: none;
+    }
+
+    .bottom-container {
+        justify-content: end;
+        align-items: center;
+        flex-shrink: 0;
+        position: sticky;
+        bottom: 0;
+        background: #F6F7F8;
+        height: 80px;
+        padding: 0;
+        box-sizing: border-box;
+        z-index: 2;
+    }
+
+    .lower-buttons {
+        background: transparent;
+        gap: 24px;
+    }
+
+
+    .input-headlines {
+        font-size: var(--font-size-md);
+    }
+
+    input {
+        font-size: var(--font-size-md);
+        height: 40px;
+    }
+
+    .date-input-wrap {
+        input {
+            padding-right: 48px;
+        }
+    }
+
+    .date-input-icon {
+        display: block;
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 18px;
+        height: 18px;
+        pointer-events: none;
+    }
+
+    .required-text {
+        font-size: var(--font-size-md);
+    }
+
+    .required-text--mobile {
+        display: inline-block;
+        margin-top: 8px;
+    }
+
+    .required-text-wrap {
+        display: none;
+    }
+
+    .priority-button-low,
+    .priority-button-medium,
+    .priority-button-urgent {
+        span {
+            font-size: var(--font-size-md);
+        }
+    }
+
+    .create-task-button {
+        span {
+            font-size: 18px;
+        }
+    }
+
+    .clear-button {
+        span {
+            font-size: 18px;
+        }
     }
 }

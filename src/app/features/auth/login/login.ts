@@ -13,6 +13,8 @@ import { SupabaseService } from '../../../core/services/supabase.service';
   styleUrl: './login.scss',
 })
 export class Login {
+  private static readonly GREETING_BREAKPOINT = 1180;
+
   private readonly auth = inject(AuthService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -71,11 +73,17 @@ export class Login {
 
     this.auth.setAuthenticated(true);
     this.isSubmitting.set(false);
-    await this.router.navigateByUrl('/summary');
+    await this.router.navigateByUrl(this.resolvePostLoginRoute());
   }
 
   protected continueAsGuest(): void {
     this.auth.loginAsGuest();
     void this.router.navigateByUrl('/summary');
+    this.auth.setGuestAuthenticated();
+    void this.router.navigateByUrl(this.resolvePostLoginRoute());
+  }
+
+  private resolvePostLoginRoute(): string {
+    return window.innerWidth <= Login.GREETING_BREAKPOINT ? '/greeting' : '/summary';
   }
 }

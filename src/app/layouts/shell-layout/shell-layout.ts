@@ -48,10 +48,10 @@ export class ShellLayout {
   protected readonly isAuthenticated = this.auth.isAuthenticated;
 
   protected readonly bottomNavItems: readonly BottomNavItem[] = [
-    { label: 'Summary', path: '/summary', iconPath: '/icons/Summary.png' },
-    { label: 'Add Task', path: '/add-task', iconPath: '/icons/Add task.png' },
-    { label: 'Board', path: '/board', iconPath: '/icons/Board.png' },
-    { label: 'Contacts', path: '/contacts', iconPath: '/icons/Contacts.png' },
+    { label: 'Summary', path: '/summary', iconPath: '/icons/Summary.svg' },
+    { label: 'Add Task', path: '/add-task', iconPath: '/icons/Add task.svg' },
+    { label: 'Board', path: '/board', iconPath: '/icons/Board.svg' },
+    { label: 'Contacts', path: '/contacts', iconPath: '/icons/Contacts.svg' },
   ];
 
   constructor() {
@@ -80,10 +80,35 @@ export class ShellLayout {
   }
 
   protected isBottomNavActive(path: string): boolean {
+    if (path === '/summary' && this.currentUrl().startsWith('/greeting')) {
+      return true;
+    }
+
     return this.currentUrl().startsWith(path);
   }
 
   protected readonly isFlushRoute = computed(() => this.currentUrl().startsWith('/contacts'));
+  protected isSummaryView(): boolean {
+    return this.currentUrl().startsWith('/summary');
+  }
+
+  protected isContactsView(): boolean {
+    return this.currentUrl().startsWith('/contacts');
+  }
+
+  protected isBoardView(): boolean {
+    return this.currentUrl().startsWith('/board');
+  }
+
+  protected isPublicTextView(): boolean {
+    const url = this.currentUrl();
+
+    return (
+      url.startsWith('/help-site') ||
+      url.startsWith('/legal-notice') ||
+      url.startsWith('/privacy-policy')
+    );
+  }
 
   private async syncAuthState(): Promise<void> {
     const { data } = await this.supabase.client.auth.getSession();
