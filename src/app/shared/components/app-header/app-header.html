@@ -1,60 +1,62 @@
 <header class="app-header">
   <div class="app-header__left">
     <p class="app-header__title">Kanban Project Management Tool</p>
-    <img src="./icons/header/header-logo.svg" alt="Header Logo" class="header-logo">
+    <img src="./icons/header/header-logo.svg" alt="Header Logo" class="header-logo" />
   </div>
 
   <div class="app-header__actions">
-    <button class="app-header__help" type="button" routerLink="/help-site" aria-label="Open help">
-      <span class="app-header__help-icon" aria-hidden="true"></span>
-    </button>
-
-    <div class="app-header__profile">
-      <button
-        #profileButton
-        class="app-header__avatar"
-        type="button"
-        aria-label="Open profile menu"
-        [attr.aria-expanded]="isProfileMenuOpen ? 'true' : 'false'"
-        aria-controls="profile-menu"
-        (click)="toggleProfileMenu($event)"
-      >
-        SM
+    @if (isAuthenticated()) {
+      <button class="app-header__help" type="button" routerLink="/help-site" aria-label="Open help">
+        <span class="app-header__help-icon" aria-hidden="true"></span>
       </button>
 
-      <nav
-        id="profile-menu"
-        class="app-header__profile-menu"
-        [class.app-header__profile-menu--open]="isProfileMenuOpen"
-        aria-label="Profile menu"
-        [attr.inert]="isProfileMenuOpen ? null : ''"
-        (click)="keepProfileMenuOpen($event)"
-      >
-        <a
-          class="app-header__profile-menu-item app-header__profile-menu-item--mobile-only"
-          routerLink="/help-site"
-          (click)="closeProfileMenu()"
+      <div class="app-header__profile">
+        <button
+          #profileButton
+          class="app-header__avatar"
+          type="button"
+          aria-label="Open profile menu"
+          [attr.aria-expanded]="isProfileMenuOpen ? 'true' : 'false'"
+          aria-controls="profile-menu"
+          (click)="toggleProfileMenu($event)"
         >
-          Help
-        </a>
-        <a
-          class="app-header__profile-menu-item"
-          routerLink="/legal-notice"
-          (click)="closeProfileMenu()"
-        >
-          Legal Notice
-        </a>
-        <a
-          class="app-header__profile-menu-item"
-          routerLink="/privacy-policy"
-          (click)="closeProfileMenu()"
-        >
-          Privacy Policy
-        </a>
-        <button class="app-header__profile-menu-item" type="button" (click)="logout()">
-          Log out
+          {{ initials() }}
         </button>
-      </nav>
-    </div>
+
+        <nav
+          id="profile-menu"
+          class="app-header__profile-menu"
+          [class.app-header__profile-menu--open]="isProfileMenuOpen"
+          aria-label="Profile menu"
+          [attr.inert]="isProfileMenuOpen ? null : ''"
+          (click)="keepProfileMenuOpen($event)"
+        >
+          <a
+            class="app-header__profile-menu-item app-header__profile-menu-item--mobile-only"
+            routerLink="/help-site"
+            (click)="closeProfileMenu()"
+          >
+            Help
+          </a>
+          <a
+            class="app-header__profile-menu-item"
+            routerLink="/legal-notice"
+            (click)="closeProfileMenu()"
+          >
+            Legal Notice
+          </a>
+          <a
+            class="app-header__profile-menu-item"
+            routerLink="/privacy-policy"
+            (click)="closeProfileMenu()"
+          >
+            Privacy Policy
+          </a>
+          <button class="app-header__profile-menu-item" type="button" (click)="logout()">
+            Log out
+          </button>
+        </nav>
+      </div>
+    }
   </div>
 </header>
