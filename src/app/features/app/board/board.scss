@@ -308,32 +308,123 @@ h1 {
     }
 }
 
-@media (max-width: 850px) {
+@media (max-width: 1024px) {
     .board {
-        padding: 24px;
+        padding: 28px 16px 104px;
+        gap: 24px;
     }
 
     .top-container {
-        flex-direction: column;
-        align-items: flex-start;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        width: 100%;
+        align-items: center;
+        gap: 22px 12px;
+    }
+
+    h1 {
+        grid-column: 1;
+        min-width: 0;
+        margin: 0;
+        font-size: 47px;
+        line-height: 1.2;
     }
 
     .board-top-actions {
+        display: contents;
+    }
+
+    .board-add-task-button {
+        grid-column: 2;
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        border-radius: 8px;
+        gap: 0;
+
+        span {
+            display: none;
+        }
+
+        img {
+            width: 18px;
+            height: 18px;
+        }
+    }
+
+    .board-search-input-wrap {
+        grid-column: 1 / -1;
         width: 100%;
-        flex-direction: column;
-        align-items: stretch;
     }
 
     .board-search-input {
         width: 100%;
+        min-height: 40px;
+        padding: 8px 48px 8px 16px;
+        border-radius: 10px;
+        font-size: 16px;
     }
 
-    .board-search-input-wrap {
-        width: 100%;
+    .board-search-divider {
+        right: 44px;
+        height: 24px;
+    }
+
+    .board-search-icon {
+        right: 14px;
+        width: 18px;
+        height: 18px;
     }
 
     .board-columns {
-        grid-template-columns: 1fr;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .board-column {
+        gap: 12px;
+    }
+
+    .board-column__header {
+        h2 {
+            font-size: 27px;
+            line-height: 1.2;
+            color: #2a3647;
+        }
+    }
+
+    .board-column__plus-button {
+        .plus-icon-default,
+        .plus-icon-hover {
+            width: 30px;
+            height: 30px;
+        }
+    }
+
+    .board-column__content {
+        height: 48px;
+        border-radius: 10px;
+        font-size: 16px;
+    }
+
+    .board-task-placeholder {
+        width: min(100%, 252px);
+        min-height: 244px;
+        border-radius: 10px;
+        padding: 16px;
+        gap: 12px;
+    }
+
+    .board-task-category {
+        border-radius: 8px;
+        padding: 4px 16px;
+        font-size: 14px;
+    }
+
+    .board-task-title,
+    .board-task-description {
+        font-size: 16px;
     }
 
     .add-task-modal {
