@@ -36,10 +36,18 @@
                 </button>
             </div>
             <div class="board-column__tasks">
-                <article class="board-task-placeholder">
+                <button class="board-task-placeholder" type="button" (click)="openTaskDialog({
+                        id: 'task-1',
+                        category: 'Category',
+                        title: 'Implement user authentication flow',
+                        description: 'Set up OAuth2 login with Google and GitHub, including token refresh and session management for all protected routes.',
+                        subtasksLabel: 'Subtasks',
+                        priority: 'medium'
+                    })" aria-label="Open task details">
                     <div class="board-task-category">Category</div>
                     <div class="board-task-title">Implement user authentication flow</div>
-                    <div class="board-task-description">Set up OAuth2 login with Google and GitHub, including token refresh and session management for all protected routes.</div>
+                    <div class="board-task-description">Set up OAuth2 login with Google and GitHub, including token
+                        refresh and session management for all protected routes.</div>
                     <div class="board-task-subtasks">Subtasks</div>
                     <div class="board-task-assigned-to-and-priority">
                         <div class="users">
@@ -49,7 +57,7 @@
                             <img src="./icons/board/medium.svg" alt="Medium">
                         </div>
                     </div>
-                </article>
+                </button>
             </div>
         </article>
 
@@ -75,4 +83,205 @@
             <div class="board-column__content">No tasks done</div>
         </article>
     </section>
+
+    @if (isTaskDialogOpen()) {
+    <div class="board-task-overlay" [class.board-task-overlay--closing]="isTaskDialogClosing()"
+        (click)="closeTaskDialog()"></div>
+
+    <dialog class="board-task-dialog" [class.board-task-dialog--closing]="isTaskDialogClosing()" open
+        aria-label="Task details">
+        @if (selectedTask(); as task) {
+        <div class="board-task-dialog__content">
+            <button class="board-task-dialog__close" type="button" (click)="closeTaskDialog()"
+                aria-label="Close task details">
+                <img src="/icons/contacts-dialog/close.svg" alt="Close Icon" aria-hidden="true" />
+            </button>
+
+            @if (!isTaskDialogEditMode()) {
+            <div class="dialog-top">
+                <div class="board-task-dialog__category">{{ task.category }}</div>
+            </div>
+
+            <h2 class="board-task-dialog__title">{{ task.title }}</h2>
+            <p class="board-task-dialog__description">{{ task.description }}</p>
+
+            <div class="board-task-dialog__meta">
+                <div class="board-task-dialog__meta-row">
+                    <span class="board-task-dialog__meta-label">Due date:</span>
+                    <span class="board-task-due-date">{{ formatDialogDueDate(dialogDueDate()) }}</span>
+                </div>
+                <div class="board-task-dialog__meta-row">
+                    <span class="board-task-dialog__meta-label">Priority:</span>
+                    <div class="priority-with-image">
+                        <span class="board-task-dialog__priority">{{ task.priority }}</span>
+                        <img src="./icons/board/medium.svg" alt="Priority Icon">
+                    </div>
+                </div>
+                <div class="board-task-dialog__meta-row">
+                    <span class="board-task-dialog__meta-label">Assigned to:</span>
+                </div>
+                <div class="board-task-dialog__meta-row-2">
+                    <span class="contact-card-avatar">EM</span>
+                    <span class="contact-card-text">Emmanuel Mauer</span>
+                </div>
+                <div class="board-task-dialog__meta-row-2">
+                    <span class="contact-card-avatar">MB</span>
+                    <span class="contact-card-text">Marcel Bauer</span>
+                </div>
+                <div class="board-task-dialog__meta-row">
+                    <span class="board-task-dialog__meta-label">Subtasks:</span>
+                </div>
+                @for (subtask of dialogSubtasks(); track $index) {
+                <div class="board-task-dialog__meta-row-2">
+                    <button
+                        class="checkmark-hover"
+                        type="button"
+                        (click)="toggleDialogSubtask($index)"
+                        [attr.aria-checked]="subtask.completed"
+                        role="checkbox"
+                        [attr.aria-label]="'Toggle subtask: ' + subtask.title"
+                    >
+                        <img
+                            [src]="subtask.completed ? './icons/board/checked.svg' : './icons/board/unchecked.svg'"
+                            [alt]="subtask.completed ? 'Checked icon' : 'Unchecked icon'"
+                        >
+                    </button>
+                    <span class="contact-card-text">{{ subtask.title }}</span>
+                </div>
+                }
+                <div class="edit-and-delete">
+                    <button class="delete-button">
+                        <img class="dialog-action-icon" src="./icons/board/delete.svg" alt="Delete Icon">
+                        <span class="button-text-bottom">Delete</span>
+                    </button>
+                    <div class="grey-seperator"></div>
+                    <button class="delete-button" type="button" (click)="startTaskEdit()">
+                        <img class="dialog-action-icon" src="./icons/board/edit.svg" alt="Edit Icon">
+                        <span class="button-text-bottom">Edit</span>
+                    </button>
+                </div>
+            </div>
+            } @else {
+            <div class="task-edit-mode">
+                <div class="task-edit-field">
+                    <label class="task-edit-label" for="task-title-edit">Title</label>
+                    <input
+                        #titleInput
+                        id="task-title-edit"
+                        class="task-edit-input"
+                        type="text"
+                        [value]="editTitle()"
+                        (input)="editTitle.set(titleInput.value)"
+                        placeholder="Enter a title"
+                    />
+                </div>
+
+                <div class="task-edit-field">
+                    <label class="task-edit-label" for="task-description-edit">Description</label>
+                    <textarea
+                        #descriptionInput
+                        id="task-description-edit"
+                        class="task-edit-textarea"
+                        [value]="editDescription()"
+                        (input)="editDescription.set(descriptionInput.value)"
+                        placeholder="Enter a Description"
+                    ></textarea>
+                </div>
+
+                <div class="task-edit-field">
+                    <label class="task-edit-label" for="task-due-date-edit">Due date</label>
+                    <input
+                        #dueDateInput
+                        id="task-due-date-edit"
+                        class="task-edit-input"
+                        type="date"
+                        [value]="editDueDate()"
+                        (input)="editDueDate.set(dueDateInput.value)"
+                    />
+                </div>
+
+                <div class="task-edit-field">
+                    <span class="task-edit-label">Priority</span>
+                    <div class="task-edit-priority-buttons">
+                        <button
+                            class="task-edit-priority-button task-edit-priority-button--urgent"
+                            [class.task-edit-priority-button--active]="editPriority() === 'urgent'"
+                            type="button"
+                            (click)="setEditPriority('urgent')"
+                        >
+                            <span>Urgent</span>
+                            <img src="./icons/board/urgent.svg" alt="Urgent" />
+                        </button>
+                        <button
+                            class="task-edit-priority-button task-edit-priority-button--medium"
+                            [class.task-edit-priority-button--active]="editPriority() === 'medium'"
+                            type="button"
+                            (click)="setEditPriority('medium')"
+                        >
+                            <span>Medium</span>
+                            <img src="./icons/board/medium.svg" alt="Medium" />
+                        </button>
+                        <button
+                            class="task-edit-priority-button task-edit-priority-button--low"
+                            [class.task-edit-priority-button--active]="editPriority() === 'low'"
+                            type="button"
+                            (click)="setEditPriority('low')"
+                        >
+                            <span>Low</span>
+                            <img src="./icons/board/low.svg" alt="Low" />
+                        </button>
+                    </div>
+                </div>
+
+                <div class="task-edit-field">
+                    <label class="task-edit-label" for="task-assigned-to-edit">Assigned to</label>
+                    <select
+                        #assigneeSelect
+                        id="task-assigned-to-edit"
+                        class="task-edit-select"
+                        (change)="addAssignedContact(assigneeSelect.value); assigneeSelect.selectedIndex = 0"
+                    >
+                        <option value="">Select contacts to assign</option>
+                        @for (contact of assignableContacts; track contact.id) {
+                        <option [value]="contact.id">{{ contact.name }}</option>
+                        }
+                    </select>
+
+                    <div class="task-edit-assignees-row">
+                        @for (contact of selectedAssignedContacts(); track contact.id) {
+                        <span class="contact-card-avatar">{{ contact.initials }}</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="task-edit-field">
+                    <label class="task-edit-label" for="task-subtask-edit">Subtasks</label>
+                    <input
+                        #subtaskInput
+                        id="task-subtask-edit"
+                        class="task-edit-input"
+                        type="text"
+                        placeholder="Add new subtask"
+                        (keydown.enter)="addEditSubtask(subtaskInput.value); subtaskInput.value = ''; $event.preventDefault()"
+                    />
+
+                    <ul class="task-edit-subtasks-list">
+                        @for (subtask of editSubtasks(); track $index) {
+                        <li>{{ subtask }}</li>
+                        }
+                    </ul>
+                </div>
+
+                <div class="task-edit-actions">
+                    <button class="task-edit-ok-button" type="button" (click)="saveTaskEdits()">
+                        <span>Ok</span>
+                        <img src="./icons/add-task/check.svg" alt="Check" />
+                    </button>
+                </div>
+            </div>
+            }
+        </div>
+        }
+    </dialog>
+    }
 </section>
