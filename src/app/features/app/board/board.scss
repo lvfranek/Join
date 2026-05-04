@@ -747,6 +747,7 @@ h1 {
 
     h1 {
         grid-column: 1;
+        grid-row: 1;
         min-width: 0;
         margin: 0;
         font-size: 47px;
@@ -759,6 +760,7 @@ h1 {
 
     .board-add-task-button {
         grid-column: 2;
+        grid-row: 1;
         width: 32px;
         height: 32px;
         padding: 0;
@@ -777,6 +779,7 @@ h1 {
 
     .board-search-input-wrap {
         grid-column: 1 / -1;
+        grid-row: 2;
         width: 100%;
     }
 
