@@ -1,4 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { inject } from '@angular/core';
+import { TaskRecord, TaskService, TaskStatus } from '../../../core/services/task.service';
 import {
   CdkDragEnd,
   CdkDragDrop,
@@ -31,6 +33,12 @@ type AssignableContact = {
 
 import { AddTask } from '../add-task/add-task';
 
+type BoardColumn = {
+  id: TaskStatus;
+  title: string;
+  emptyText: string;
+};
+
 @Component({
   selector: 'app-board',
   imports: [AddTask, DragDropModule],
@@ -43,6 +51,16 @@ import { AddTask } from '../add-task/add-task';
   },
 })
 export class BoardWorkspaceView {
+  private readonly taskService = inject(TaskService);
+
+  readonly boardColumns: BoardColumn[] = [
+    { id: 'todo', title: 'To do', emptyText: 'No tasks to do' },
+    { id: 'inProgress', title: 'In progress', emptyText: 'No tasks in progress' },
+    { id: 'awaitFeedback', title: 'Await feedback', emptyText: 'No tasks awaiting feedback' },
+    { id: 'done', title: 'Done', emptyText: 'No tasks done' },
+  ];
+
+  readonly tasks = this.taskService.tasks;
   readonly connectedDropListIds = [
     'board-todo-tasks',
     'board-in-progress-tasks',
@@ -111,7 +129,7 @@ export class BoardWorkspaceView {
   readonly isTaskDetailPanelOpen = signal(false);
   readonly isTaskDetailPanelClosing = signal(false);
   readonly isTaskDetailEditActive = signal(false);
-  readonly selectedTask = signal<BoardTask | null>(null);
+  readonly selectedTask = signal<TaskRecord | null>(null);
   readonly taskDetailSubtasks = signal<DialogSubtask[]>([]);
   readonly taskDetailDueDate = signal('2023-05-10');
   readonly editTitle = signal('');
@@ -138,6 +156,18 @@ export class BoardWorkspaceView {
   private activeDragPointerY: number | null = null;
   private activeDragElement: HTMLElement | null = null;
 
+  tasksForColumn(status: TaskStatus): TaskRecord[] {
+    return this.tasks().filter((task) => task.status === status);
+  }
+
+  getPriorityIconPath(priority: 'low' | 'medium' | 'urgent'): string {
+    return `./icons/board/${priority}.svg`;
+  }
+
+  getSubtaskSummary(task: TaskRecord): string {
+    return `${task.subtasks.length}/${task.subtasks.length} Subtasks`;
+  }
+
   openAddTaskDialog(): void {
     this.resetTaskDetailPanelState();
     this.isAddTaskDialogOpen.set(true);
@@ -147,15 +177,12 @@ export class BoardWorkspaceView {
     this.isAddTaskDialogOpen.set(false);
   }
 
-  openTaskDetailPanel(task: BoardTask): void {
+  openTaskDetailPanel(task: TaskRecord): void {
     this.closeAddTaskDialog();
     this.selectedTask.set(task);
     this.isTaskDetailEditActive.set(false);
-    this.taskDetailSubtasks.set([
-      { title: 'Implement Recipe Recommendation', completed: true },
-      { title: 'Implement Recipe Search Filters', completed: false },
-    ]);
-    this.taskDetailDueDate.set('2023-05-10');
+    this.taskDetailSubtasks.set(task.subtasks.map((title) => ({ title, completed: false })));
+    this.taskDetailDueDate.set(task.dueDate);
     this.isTaskDetailPanelClosing.set(false);
     this.isTaskDetailPanelOpen.set(true);
   }
