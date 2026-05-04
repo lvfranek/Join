@@ -187,9 +187,10 @@
     display: flex;
   }
 
-    .app-header__avatar {
-      height: 40px;
-      width: auto;
-      border: 2px solid var(--brand-primary-500);
-    }
+  .app-header__avatar {
+    inline-size: 40px;
+    block-size: 40px;
+    border-width: 2px;
+    font-size: 14px;
+  }
 }
