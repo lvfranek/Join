@@ -110,6 +110,7 @@ h1 {
     display: flex;
     flex-direction: column;
     gap: 16px;
+    min-height: 320px;
 }
 
 .board-column__header {
@@ -189,6 +190,28 @@ h1 {
     display: flex;
     flex-direction: column;
     gap: 16px;
+    flex: 1 1 auto;
+    min-height: 180px;
+    border-radius: 10px;
+    padding: 4px;
+}
+
+.board-column__tasks--empty {
+    flex: 0 0 48px;
+    height: 48px;
+    min-height: 48px;
+    box-sizing: border-box;
+    display: grid;
+    place-items: center;
+    border: 1px dashed #a8a8a8;
+    background: #e7e7e7;
+    box-shadow: 0px 0px 4px 0px #00000029;
+    color: #a8a8a8;
+    font-size: 16px;
+    font-weight: 400;
+    text-align: center;
+    padding: 0 16px;
+    gap: 0;
 }
 
 .board-task-placeholder {
@@ -833,6 +856,21 @@ h1 {
         gap: 12px;
     }
 
+    .board-column__tasks {
+        flex-direction: row;
+        align-items: stretch;
+        overflow-x: auto;
+        overflow-y: hidden;
+        min-height: 260px;
+        padding: 4px 4px 10px;
+    }
+
+    .board-column__tasks--empty {
+        height: 48px;
+        min-height: 48px;
+        overflow: hidden;
+    }
+
     .board-column__header {
         h2 {
             font-size: 27px;
@@ -856,7 +894,8 @@ h1 {
     }
 
     .board-task-placeholder {
-        width: min(100%, 252px);
+        flex: 0 0 252px;
+        width: 252px;
         min-height: 244px;
         border-radius: 10px;
         padding: 16px;
