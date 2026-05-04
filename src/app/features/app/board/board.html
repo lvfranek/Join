@@ -8,7 +8,7 @@
                 <span class="board-search-divider" aria-hidden="true"></span>
                 <img class="board-search-icon" src="/icons/board/search.svg" alt="search" />
             </div>
-            <button class="board-add-task-button" type="button">
+            <button class="board-add-task-button" type="button" (click)="openAddTaskDialog()">
                 <span>Add task</span>
                 <img src="/icons/board/add.svg" alt="add task" />
             </button>
@@ -19,7 +19,7 @@
         <article class="board-column">
             <div class="board-column__header">
                 <h2>To do</h2>
-                <button class="board-column__plus-button" type="button" aria-label="Add task to To do">
+                <button class="board-column__plus-button" type="button" aria-label="Add task to To do" (click)="openAddTaskDialog()">
                     <img class="plus-icon-default" src="/icons/board/plus button.svg" alt="" aria-hidden="true" />
                     <img class="plus-icon-hover" src="/icons/board/plus button hover.svg" alt="" aria-hidden="true" />
                 </button>
@@ -30,7 +30,7 @@
         <article class="board-column">
             <div class="board-column__header">
                 <h2>In progress</h2>
-                <button class="board-column__plus-button" type="button" aria-label="Add task to In progress">
+                <button class="board-column__plus-button" type="button" aria-label="Add task to In progress" (click)="openAddTaskDialog()">
                     <img class="plus-icon-default" src="/icons/board/plus button.svg" alt="" aria-hidden="true" />
                     <img class="plus-icon-hover" src="/icons/board/plus button hover.svg" alt="" aria-hidden="true" />
                 </button>
@@ -56,7 +56,7 @@
         <article class="board-column">
             <div class="board-column__header">
                 <h2>Await feedback</h2>
-                <button class="board-column__plus-button" type="button" aria-label="Add task to Await feedback">
+                <button class="board-column__plus-button" type="button" aria-label="Add task to Await feedback" (click)="openAddTaskDialog()">
                     <img class="plus-icon-default" src="/icons/board/plus button.svg" alt="" aria-hidden="true" />
                     <img class="plus-icon-hover" src="/icons/board/plus button hover.svg" alt="" aria-hidden="true" />
                 </button>
@@ -67,7 +67,7 @@
         <article class="board-column">
             <div class="board-column__header">
                 <h2>Done</h2>
-                <button class="board-column__plus-button" type="button" aria-label="Add task to Done">
+                <button class="board-column__plus-button" type="button" aria-label="Add task to Done" (click)="openAddTaskDialog()">
                     <img class="plus-icon-default" src="/icons/board/plus button.svg" alt="" aria-hidden="true" />
                     <img class="plus-icon-hover" src="/icons/board/plus button hover.svg" alt="" aria-hidden="true" />
                 </button>
@@ -75,4 +75,13 @@
             <div class="board-column__content">No tasks done</div>
         </article>
     </section>
+
+    @if (isAddTaskDialogOpen) {
+        <div class="add-task-modal" role="dialog" aria-modal="true" aria-label="Add Task" (click)="closeAddTaskDialog()">
+            <div class="add-task-modal__panel" (click)="$event.stopPropagation()">
+                <button class="add-task-modal__close" type="button" aria-label="Close add task" (click)="closeAddTaskDialog()">&times;</button>
+                <app-add-task class="add-task-modal__content"></app-add-task>
+            </div>
+        </div>
+    }
 </section>
