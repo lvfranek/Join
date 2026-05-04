@@ -980,7 +980,7 @@
   }
 
   .add-contact-button {
-  position: fixed;
+    position: fixed;
     right: max(16px, env(safe-area-inset-right));
     bottom: calc(6.5rem + env(safe-area-inset-bottom));
     z-index: 4;
@@ -1025,14 +1025,6 @@
     padding: 15px clamp(8px, 4vw, 24px);
     gap: clamp(18px, 7vw, 35px);
     border-radius: 10px;
-  }
-
-  .contact-card__name {
-    font-size: clamp(16px, 4.3vw, 20px);
-  }
-
-  .contact-card__email {
-    font-size: clamp(12px, 3.5vw, 16px);
   }
 
   .contact-detail {
