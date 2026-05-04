@@ -16,71 +16,42 @@
     </div>
 
     <section class="board-columns">
+        @for (column of boardColumns; track column.id) {
         <article class="board-column">
             <div class="board-column__header">
-                <h2>To do</h2>
-                <button class="board-column__plus-button" type="button" aria-label="Add task to To do" (click)="openAddTaskDialog()">
+                <h2>{{ column.title }}</h2>
+                <button class="board-column__plus-button" type="button" [attr.aria-label]="'Add task to ' + column.title" (click)="openAddTaskDialog()">
                     <img class="plus-icon-default" src="/icons/board/plus button.svg" alt="" aria-hidden="true" />
                     <img class="plus-icon-hover" src="/icons/board/plus button hover.svg" alt="" aria-hidden="true" />
                 </button>
             </div>
-            <div class="board-column__content">No tasks to do</div>
-        </article>
 
-        <article class="board-column">
-            <div class="board-column__header">
-                <h2>In progress</h2>
-                <button class="board-column__plus-button" type="button" aria-label="Add task to In progress" (click)="openAddTaskDialog()">
-                    <img class="plus-icon-default" src="/icons/board/plus button.svg" alt="" aria-hidden="true" />
-                    <img class="plus-icon-hover" src="/icons/board/plus button hover.svg" alt="" aria-hidden="true" />
-                </button>
-            </div>
+            @if (tasksForColumn(column.id).length) {
             <div class="board-column__tasks">
-                <button class="board-task-placeholder" type="button" (click)="openTaskDetailPanel({
-                        id: 'task-1',
-                        category: 'Category',
-                        title: 'Implement user authentication flow',
-                        description: 'Set up OAuth2 login with Google and GitHub, including token refresh and session management for all protected routes.',
-                        priority: 'medium'
-                    })" aria-label="Open task details">
-                    <div class="board-task-category">Category</div>
-                    <div class="board-task-title">Implement user authentication flow</div>
-                    <div class="board-task-description">Set up OAuth2 login with Google and GitHub, including token
-                        refresh and session management for all protected routes.</div>
-                    <div class="board-task-subtasks">Subtasks</div>
+                @for (task of tasksForColumn(column.id); track task.id) {
+                <button class="board-task-placeholder" type="button" (click)="openTaskDetailPanel(task)" aria-label="Open task details">
+                    <div class="board-task-category">{{ task.category }}</div>
+                    <div class="board-task-title">{{ task.title }}</div>
+                    <div class="board-task-description">{{ task.description }}</div>
+                    <div class="board-task-subtasks">{{ getSubtaskSummary(task) }}</div>
                     <div class="board-task-assigned-to-and-priority">
                         <div class="users">
-                            <span>AB</span>
+                            @for (assignee of task.assignees.slice(0, 3); track assignee.id) {
+                            <span [style.background-color]="assignee.color">{{ assignee.initials }}</span>
+                            }
                         </div>
                         <div class="priority">
-                            <img src="./icons/board/medium.svg" alt="Medium">
+                            <img [src]="getPriorityIconPath(task.priority)" [alt]="task.priority">
                         </div>
                     </div>
                 </button>
+                }
             </div>
+            } @else {
+            <div class="board-column__content">{{ column.emptyText }}</div>
+            }
         </article>
-
-        <article class="board-column">
-            <div class="board-column__header">
-                <h2>Await feedback</h2>
-                <button class="board-column__plus-button" type="button" aria-label="Add task to Await feedback" (click)="openAddTaskDialog()">
-                    <img class="plus-icon-default" src="/icons/board/plus button.svg" alt="" aria-hidden="true" />
-                    <img class="plus-icon-hover" src="/icons/board/plus button hover.svg" alt="" aria-hidden="true" />
-                </button>
-            </div>
-            <div class="board-column__content">No tasks awaiting feedback</div>
-        </article>
-
-        <article class="board-column">
-            <div class="board-column__header">
-                <h2>Done</h2>
-                <button class="board-column__plus-button" type="button" aria-label="Add task to Done" (click)="openAddTaskDialog()">
-                    <img class="plus-icon-default" src="/icons/board/plus button.svg" alt="" aria-hidden="true" />
-                    <img class="plus-icon-hover" src="/icons/board/plus button hover.svg" alt="" aria-hidden="true" />
-                </button>
-            </div>
-            <div class="board-column__content">No tasks done</div>
-        </article>
+        }
     </section>
 
     @if (isTaskDetailPanelOpen()) {
@@ -119,14 +90,12 @@
                 <div class="btd-panel__detail-row">
                     <span class="btd-panel__detail-label">Assigned to:</span>
                 </div>
+                @for (assignee of task.assignees; track assignee.id) {
                 <div class="btd-panel__detail-row--contact">
-                    <span class="btd-assignee-avatar">EM</span>
-                    <span class="btd-assignee-name">Emmanuel Mauer</span>
+                    <span class="btd-assignee-avatar" [style.background-color]="assignee.color">{{ assignee.initials }}</span>
+                    <span class="btd-assignee-name">{{ assignee.name }}</span>
                 </div>
-                <div class="btd-panel__detail-row--contact">
-                    <span class="btd-assignee-avatar">MB</span>
-                    <span class="btd-assignee-name">Marcel Bauer</span>
-                </div>
+                }
                 <div class="btd-panel__detail-row">
                     <span class="btd-panel__detail-label">Subtasks:</span>
                 </div>
@@ -288,7 +257,7 @@
         <div class="add-task-modal" role="dialog" aria-modal="true" aria-label="Add Task" (click)="closeAddTaskDialog()">
             <div class="add-task-modal__panel" (click)="$event.stopPropagation()">
                 <button class="add-task-modal__close" type="button" aria-label="Close add task" (click)="closeAddTaskDialog()">&times;</button>
-                <app-add-task class="add-task-modal__content"></app-add-task>
+                <app-add-task class="add-task-modal__content" (taskCreated)="closeAddTaskDialog()"></app-add-task>
             </div>
         </div>
     }

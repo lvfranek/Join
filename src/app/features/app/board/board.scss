@@ -256,6 +256,27 @@ h1 {
     align-items: center;
 }
 
+.users {
+    display: flex;
+    align-items: center;
+}
+
+.users span {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    color: #ffffff;
+    font-size: 12px;
+    line-height: 1;
+
+    + span {
+        margin-left: -8px;
+    }
+}
+
 .btd-overlay {
     position: fixed;
     top: 0;
