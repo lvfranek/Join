@@ -52,7 +52,7 @@ export const routes: Routes = [
       {
         path: 'board',
         canMatch: [authGuard],
-        loadComponent: () => import('./features/app/board/board').then((m) => m.Board),
+        loadComponent: () => import('./features/app/board/board').then((m) => m.BoardWorkspaceView),
       },
       {
         path: 'contacts',

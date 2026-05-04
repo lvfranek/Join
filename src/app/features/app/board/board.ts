@@ -26,16 +26,16 @@ type AssignableContact = {
   templateUrl: './board.html',
   styleUrl: './board.scss',
   host: {
-    '(document:keydown.escape)': 'closeTaskDialog()',
+    '(document:keydown.escape)': 'closeTaskDetailPanel()',
   },
 })
-export class Board {
-  readonly isTaskDialogOpen = signal(false);
-  readonly isTaskDialogClosing = signal(false);
-  readonly isTaskDialogEditMode = signal(false);
+export class BoardWorkspaceView {
+  readonly isTaskDetailPanelOpen = signal(false);
+  readonly isTaskDetailPanelClosing = signal(false);
+  readonly isTaskDetailEditActive = signal(false);
   readonly selectedTask = signal<BoardTask | null>(null);
-  readonly dialogSubtasks = signal<DialogSubtask[]>([]);
-  readonly dialogDueDate = signal('2023-05-10');
+  readonly taskDetailSubtasks = signal<DialogSubtask[]>([]);
+  readonly taskDetailDueDate = signal('2023-05-10');
   readonly editTitle = signal('');
   readonly editDescription = signal('');
   readonly editDueDate = signal('');
@@ -57,19 +57,19 @@ export class Board {
 
   private readonly dialogAnimationDuration = 400;
 
-  openTaskDialog(task: BoardTask): void {
+  openTaskDetailPanel(task: BoardTask): void {
     this.selectedTask.set(task);
-    this.isTaskDialogEditMode.set(false);
-    this.dialogSubtasks.set([
+    this.isTaskDetailEditActive.set(false);
+    this.taskDetailSubtasks.set([
       { title: 'Implement Recipe Recommendation', completed: true },
       { title: 'Implement Recipe Search Filters', completed: false },
     ]);
-    this.dialogDueDate.set('2023-05-10');
-    this.isTaskDialogClosing.set(false);
-    this.isTaskDialogOpen.set(true);
+    this.taskDetailDueDate.set('2023-05-10');
+    this.isTaskDetailPanelClosing.set(false);
+    this.isTaskDetailPanelOpen.set(true);
   }
 
-  startTaskEdit(): void {
+  beginTaskDetailEdit(): void {
     const task = this.selectedTask();
     if (!task) {
       return;
@@ -77,14 +77,14 @@ export class Board {
 
     this.editTitle.set(task.title);
     this.editDescription.set(task.description);
-    this.editDueDate.set(this.dialogDueDate());
+    this.editDueDate.set(this.taskDetailDueDate());
     this.editPriority.set(task.priority);
     this.editAssignedContactIds.set(['em', 'mb']);
-    this.editSubtasks.set(this.dialogSubtasks().map((subtask) => subtask.title));
-    this.isTaskDialogEditMode.set(true);
+    this.editSubtasks.set(this.taskDetailSubtasks().map((subtask) => subtask.title));
+    this.isTaskDetailEditActive.set(true);
   }
 
-  saveTaskEdits(): void {
+  saveTaskDetailEdits(): void {
     const currentTask = this.selectedTask();
     if (!currentTask) {
       return;
@@ -97,14 +97,14 @@ export class Board {
       priority: this.editPriority(),
     });
 
-    this.dialogDueDate.set(this.editDueDate() || this.dialogDueDate());
-    this.dialogSubtasks.set(
+    this.taskDetailDueDate.set(this.editDueDate() || this.taskDetailDueDate());
+    this.taskDetailSubtasks.set(
       this.editSubtasks()
         .map((title) => title.trim())
         .filter((title) => title.length > 0)
         .map((title) => ({ title, completed: false })),
     );
-    this.isTaskDialogEditMode.set(false);
+    this.isTaskDetailEditActive.set(false);
   }
 
   setEditPriority(priority: 'low' | 'medium' | 'urgent'): void {
@@ -130,7 +130,7 @@ export class Board {
     this.editSubtasks.update((subtasks) => [...subtasks, normalized]);
   }
 
-  formatDialogDueDate(isoDate: string): string {
+  formatTaskDetailDueDate(isoDate: string): string {
     if (!isoDate) {
       return '--/--/----';
     }
@@ -143,8 +143,8 @@ export class Board {
     return `${day}/${month}/${year}`;
   }
 
-  toggleDialogSubtask(index: number): void {
-    this.dialogSubtasks.update((subtasks) =>
+  toggleTaskDetailSubtask(index: number): void {
+    this.taskDetailSubtasks.update((subtasks) =>
       subtasks.map((subtask, currentIndex) =>
         currentIndex === index
           ? {
@@ -156,18 +156,18 @@ export class Board {
     );
   }
 
-  closeTaskDialog(): void {
-    if (!this.isTaskDialogOpen()) {
+  closeTaskDetailPanel(): void {
+    if (!this.isTaskDetailPanelOpen()) {
       return;
     }
 
-    this.isTaskDialogEditMode.set(false);
-    this.isTaskDialogClosing.set(true);
+    this.isTaskDetailEditActive.set(false);
+    this.isTaskDetailPanelClosing.set(true);
     setTimeout(() => {
-      this.isTaskDialogOpen.set(false);
-      this.isTaskDialogClosing.set(false);
+      this.isTaskDetailPanelOpen.set(false);
+      this.isTaskDetailPanelClosing.set(false);
       this.selectedTask.set(null);
-      this.dialogSubtasks.set([]);
+      this.taskDetailSubtasks.set([]);
     }, this.dialogAnimationDuration);
   }
 }
