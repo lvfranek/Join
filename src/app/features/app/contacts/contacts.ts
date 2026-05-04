@@ -71,6 +71,13 @@ export class Contacts implements OnInit {
 
   contactGroups = computed<ContactGroup[]>(() => this.groupContacts(this.contacts()));
 
+  constructor() {
+    effect(() => {
+      if (!this.selectedContact) return;
+      const stillExists = this.contacts().some((c) => c.id === this.selectedContact!.id);
+      if (!stillExists) {
+        this.selectedContact = null;
+
   selectedContact = computed<Contact | null>(
     () => this.contacts().find((c) => c.id === this.selectedContactId()) ?? null,
   );
@@ -354,6 +361,7 @@ export class Contacts implements OnInit {
 
     try {
       const created = await this.contactService.create(payload);
+      this.selectedContact = this.toContact(created);
       this.selectedContactId.set(created.id);
 
       this.closeDialog();
@@ -371,6 +379,11 @@ export class Contacts implements OnInit {
       return;
     }
 
+    const idToDelete = this.selectedContact.id;
+    this.selectedContact = null;
+    this.isMobileActionsOpen.set(false);
+    try {
+      await this.contactService.remove(idToDelete);
     try {
       await this.contactService.remove(id);
       this.selectedContactId.set(null);
@@ -389,6 +402,9 @@ export class Contacts implements OnInit {
 
     try {
       await this.contactService.remove(editingContactId);
+
+      if (this.selectedContact?.id === editingContactId) {
+        this.selectedContact = null;
       if (this.selectedContactId() === editingContactId) {
         this.selectedContactId.set(null);
       }
@@ -410,12 +426,20 @@ export class Contacts implements OnInit {
       return;
     }
 
+    const currentContact = this.contacts().find((contact) => contact.id === editingContactId);
+
+    if (!currentContact) {
+      return;
+    }
+
     try {
       const updated = await this.contactService.update(editingContactId, {
         ...this.splitName(this.newContactName()),
         email: this.newContactEmail().trim(),
         phone: this.newContactPhone().trim(),
       });
+      this.selectedContact = this.toContact(updated);
+
       this.selectedContactId.set(updated.id);
       this.closeDialog();
     } catch (error) {
