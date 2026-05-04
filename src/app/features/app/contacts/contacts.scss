@@ -258,6 +258,8 @@
 .contact-detail__actions {
   display: flex;
   gap: var(--space-4);
+  align-items: center;
+  margin-top: auto;
 }
 
 .contact-detail__mobile-actions {
@@ -265,6 +267,7 @@
 }
 
 .contact-action {
+  width: 72px;
   border: 0;
   padding: 0;
   background: transparent;
@@ -272,12 +275,15 @@
   font-size: var(--font-size-md);
   font-weight: var(--font-weight-regular);
   cursor: pointer;
+
   display: inline-flex;
   align-items: center;
+  justify-content: flex-start;
   gap: var(--space-2);
+
   transition:
-    color 100ms ease-in-out,
-    font-weight 100ms ease-in-out;
+    color 120ms ease,
+    font-weight 120ms ease;
 }
 
 .contact-action:hover {
@@ -286,17 +292,20 @@
 }
 
 .contact-action__icon {
-  width: 18px;
-  height: 18px;
   background-color: currentColor;
   display: inline-block;
+  flex: 0 0 auto;
 }
 
 .contact-action__icon--edit {
+  width: 19px;
+  height: 19px;
   mask: url('/icons/edit.svg') center / contain no-repeat;
 }
 
 .contact-action__icon--delete {
+  width: 16px;
+  height: 18px;
   mask: url('/icons/delete.svg') center / contain no-repeat;
 }
 
