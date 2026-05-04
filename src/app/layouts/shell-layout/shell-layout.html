@@ -26,10 +26,6 @@
   <div class="main">
     <app-header />
 
-    <main class="content">
-      <div class="content__inner" [class.content__inner--flush]="isFlushRoute()">
-        <router-outlet />
-      </div>
     <main
       class="content"
       [class.content--summary]="isSummaryView()"
