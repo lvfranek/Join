@@ -1,24 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
-import { inject } from '@angular/core';
-import { TaskRecord, TaskService, TaskStatus } from '../../../core/services/task.service';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import {
   CdkDragEnd,
   CdkDragDrop,
   CdkDragMove,
   CdkDragStart,
   DragDropModule,
-  moveItemInArray,
-  transferArrayItem,
 } from '@angular/cdk/drag-drop';
-
-type BoardTask = {
-  id: string;
-  category: string;
-  title: string;
-  description: string;
-  assigneeInitials: string;
-  priority: 'low' | 'medium' | 'urgent';
-};
+import { TaskRecord, TaskService, TaskStatus } from '../../../core/services/task.service';
 
 type DialogSubtask = {
   title: string;
@@ -52,6 +40,10 @@ type BoardColumn = {
 })
 export class BoardWorkspaceView {
   private readonly taskService = inject(TaskService);
+  private readonly dialogAnimationDuration = 400;
+  private autoScrollFrameId: number | null = null;
+  private activeDragPointerY: number | null = null;
+  private activeDragElement: HTMLElement | null = null;
 
   readonly boardColumns: BoardColumn[] = [
     { id: 'todo', title: 'To do', emptyText: 'No tasks to do' },
@@ -61,69 +53,12 @@ export class BoardWorkspaceView {
   ];
 
   readonly tasks = this.taskService.tasks;
-  readonly connectedDropListIds = [
+  readonly connectedDropListIds: string[] = [
     'board-todo-tasks',
     'board-in-progress-tasks',
     'board-await-feedback-tasks',
     'board-done-tasks',
   ];
-
-  readonly todoTasks = signal<BoardTask[]>([
-    {
-      id: 'task-todo-1',
-      category: 'UI/UX',
-      title: 'Draft onboarding empty states',
-      description:
-        'Create first-pass visuals for empty board, empty contacts, and loading transitions.',
-      assigneeInitials: 'LS',
-      priority: 'low',
-    },
-  ]);
-
-  readonly inProgressTasks = signal<BoardTask[]>([
-    {
-      id: 'task-1',
-      category: 'Category',
-      title: 'Implement user authentication flow',
-      description:
-        'Set up OAuth2 login with Google and GitHub, including token refresh and session management for all protected routes.',
-      assigneeInitials: 'AB',
-      priority: 'medium',
-    },
-    {
-      id: 'task-progress-2',
-      category: 'Backend',
-      title: 'Sync contact updates with Supabase',
-      description:
-        'Persist contact edits and deletions through service layer and verify optimistic updates.',
-      assigneeInitials: 'EM',
-      priority: 'urgent',
-    },
-  ]);
-
-  readonly awaitFeedbackTasks = signal<BoardTask[]>([
-    {
-      id: 'task-feedback-1',
-      category: 'QA',
-      title: 'Verify mobile contact actions menu',
-      description:
-        'Run tablet and mobile interaction checks for contact detail actions and hover states.',
-      assigneeInitials: 'AB',
-      priority: 'medium',
-    },
-  ]);
-
-  readonly doneTasks = signal<BoardTask[]>([
-    {
-      id: 'task-done-1',
-      category: 'Docs',
-      title: 'Document responsive contact behavior',
-      description:
-        'Capture final hover, avatar, and dialog behavior updates for the team handover notes.',
-      assigneeInitials: 'MB',
-      priority: 'low',
-    },
-  ]);
 
   readonly isAddTaskDialogOpen = signal(false);
   readonly isTaskDetailPanelOpen = signal(false);
@@ -151,13 +86,20 @@ export class BoardWorkspaceView {
     return this.assignableContacts.filter((contact) => selectedIds.includes(contact.id));
   });
 
-  private readonly dialogAnimationDuration = 400;
-  private autoScrollFrameId: number | null = null;
-  private activeDragPointerY: number | null = null;
-  private activeDragElement: HTMLElement | null = null;
-
   tasksForColumn(status: TaskStatus): TaskRecord[] {
     return this.tasks().filter((task) => task.status === status);
+  }
+
+  dropListId(status: TaskStatus): string {
+    if (status === 'inProgress') {
+      return 'board-in-progress-tasks';
+    }
+
+    if (status === 'awaitFeedback') {
+      return 'board-await-feedback-tasks';
+    }
+
+    return `board-${status}-tasks`;
   }
 
   getPriorityIconPath(priority: 'low' | 'medium' | 'urgent'): string {
@@ -187,22 +129,18 @@ export class BoardWorkspaceView {
     this.isTaskDetailPanelOpen.set(true);
   }
 
-  dropTask(event: CdkDragDrop<BoardTask[]>): void {
-    if (event.previousContainer === event.container) {
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-    } else {
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex,
-      );
+  dropTask(event: CdkDragDrop<TaskRecord[]>): void {
+    const movedTask = event.item.data;
+    const targetStatus = this.statusFromDropListId(event.container.id);
+
+    if (!movedTask || !targetStatus) {
+      return;
     }
 
-    this.refreshTaskColumns();
+    this.taskService.moveTask(movedTask.id, targetStatus, event.currentIndex);
   }
 
-  onTaskDragMoved(event: CdkDragMove<BoardTask>): void {
+  onTaskDragMoved(event: CdkDragMove<TaskRecord>): void {
     if (typeof window === 'undefined') {
       return;
     }
@@ -210,12 +148,12 @@ export class BoardWorkspaceView {
     this.activeDragPointerY = event.pointerPosition.y;
   }
 
-  onTaskDragStarted(event: CdkDragStart<BoardTask>): void {
+  onTaskDragStarted(event: CdkDragStart<TaskRecord>): void {
     this.activeDragElement = event.source.element.nativeElement;
     this.startAutoScrollLoop();
   }
 
-  onTaskDragEnded(_event: CdkDragEnd<BoardTask>): void {
+  onTaskDragEnded(_event: CdkDragEnd<TaskRecord>): void {
     this.stopAutoScrollLoop();
     this.activeDragPointerY = null;
     this.activeDragElement = null;
@@ -239,10 +177,6 @@ export class BoardWorkspaceView {
     return typeof window === 'undefined' ? 1200 : window.innerWidth;
   }
 
-  getPriorityIconPath(priority: BoardTask['priority']): string {
-    return `./icons/board/${priority}.svg`;
-  }
-
   beginTaskDetailEdit(): void {
     const task = this.selectedTask();
     if (!task) {
@@ -253,7 +187,7 @@ export class BoardWorkspaceView {
     this.editDescription.set(task.description);
     this.editDueDate.set(this.taskDetailDueDate());
     this.editPriority.set(task.priority);
-    this.editAssignedContactIds.set(['em', 'mb']);
+    this.editAssignedContactIds.set(task.assignees.map((assignee) => assignee.id));
     this.editSubtasks.set(this.taskDetailSubtasks().map((subtask) => subtask.title));
     this.isTaskDetailEditActive.set(true);
   }
@@ -264,24 +198,30 @@ export class BoardWorkspaceView {
       return;
     }
 
-    this.selectedTask.set({
-      ...currentTask,
+    const normalizedSubtasks = this.editSubtasks()
+      .map((title) => title.trim())
+      .filter((title) => title.length > 0);
+
+    const updatedTask = this.taskService.updateTask(currentTask.id, {
       title: this.editTitle().trim() || currentTask.title,
       description: this.editDescription().trim() || currentTask.description,
+      dueDate: this.editDueDate() || this.taskDetailDueDate(),
       priority: this.editPriority(),
+      subtasks: normalizedSubtasks,
     });
 
-    this.taskDetailDueDate.set(this.editDueDate() || this.taskDetailDueDate());
-    this.taskDetailSubtasks.set(
-      this.editSubtasks()
-        .map((title) => title.trim())
-        .filter((title) => title.length > 0)
-        .map((title) => ({ title, completed: false })),
-    );
+    if (updatedTask) {
+      this.selectedTask.set(updatedTask);
+      this.taskDetailDueDate.set(updatedTask.dueDate);
+      this.taskDetailSubtasks.set(
+        updatedTask.subtasks.map((title) => ({ title, completed: false })),
+      );
+    }
+
     this.isTaskDetailEditActive.set(false);
   }
 
-  setEditPriority(priority: 'low' | 'medium' | 'urgent'): void {
+  setEditPriority(priority: TaskRecord['priority']): void {
     this.editPriority.set(priority);
   }
 
@@ -361,11 +301,24 @@ export class BoardWorkspaceView {
     this.taskDetailSubtasks.set([]);
   }
 
-  private refreshTaskColumns(): void {
-    this.todoTasks.set([...this.todoTasks()]);
-    this.inProgressTasks.set([...this.inProgressTasks()]);
-    this.awaitFeedbackTasks.set([...this.awaitFeedbackTasks()]);
-    this.doneTasks.set([...this.doneTasks()]);
+  private statusFromDropListId(listId: string): TaskStatus | null {
+    if (listId === 'board-todo-tasks') {
+      return 'todo';
+    }
+
+    if (listId === 'board-in-progress-tasks') {
+      return 'inProgress';
+    }
+
+    if (listId === 'board-await-feedback-tasks') {
+      return 'awaitFeedback';
+    }
+
+    if (listId === 'board-done-tasks') {
+      return 'done';
+    }
+
+    return null;
   }
 
   private startAutoScrollLoop(): void {

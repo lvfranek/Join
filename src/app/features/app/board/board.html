@@ -15,27 +15,49 @@
         </div>
     </div>
 
-    <section class="board-columns">
+    <section class="board-columns" cdkDropListGroup>
         @for (column of boardColumns; track column.id) {
         <article class="board-column">
             <div class="board-column__header">
                 <h2>{{ column.title }}</h2>
-                <button class="board-column__plus-button" type="button" [attr.aria-label]="'Add task to ' + column.title" (click)="openAddTaskDialog()">
-    <section class="board-columns" cdkDropListGroup>
-        <article class="board-column">
-            <div class="board-column__header">
-                <h2>To do</h2>
-                <button class="board-column__plus-button" type="button" aria-label="Add task to To do"
-                    (click)="openAddTaskDialog()">
+                <button
+                    class="board-column__plus-button"
+                    type="button"
+                    [attr.aria-label]="'Add task to ' + column.title"
+                    (click)="openAddTaskDialog()"
+                >
                     <img class="plus-icon-default" src="/icons/board/plus button.svg" alt="" aria-hidden="true" />
                     <img class="plus-icon-hover" src="/icons/board/plus button hover.svg" alt="" aria-hidden="true" />
                 </button>
             </div>
 
-            @if (tasksForColumn(column.id).length) {
-            <div class="board-column__tasks">
+            <div
+                class="board-column__tasks"
+                [id]="dropListId(column.id)"
+                cdkDropList
+                [class.board-column__tasks--empty]="tasksForColumn(column.id).length === 0"
+                [cdkDropListData]="tasksForColumn(column.id)"
+                [cdkDropListConnectedTo]="connectedDropListIds"
+                [cdkDropListOrientation]="dropListOrientation()"
+                (cdkDropListDropped)="dropTask($event)"
+            >
+                @if (tasksForColumn(column.id).length === 0) {
+                {{ column.emptyText }}
+                }
+
                 @for (task of tasksForColumn(column.id); track task.id) {
-                <button class="board-task-placeholder" type="button" (click)="openTaskDetailPanel(task)" aria-label="Open task details">
+                <button
+                    class="board-task-placeholder"
+                    type="button"
+                    (click)="openTaskDetailPanel(task)"
+                    aria-label="Open task details"
+                    cdkDrag
+                    [cdkDragData]="task"
+                    [cdkDragStartDelay]="dragStartDelay()"
+                    (cdkDragMoved)="onTaskDragMoved($event)"
+                    (cdkDragStarted)="onTaskDragStarted($event)"
+                    (cdkDragEnded)="onTaskDragEnded($event)"
+                >
                     <div class="board-task-category">{{ task.category }}</div>
                     <div class="board-task-title">{{ task.title }}</div>
                     <div class="board-task-description">{{ task.description }}</div>
@@ -45,156 +67,16 @@
                             @for (assignee of task.assignees.slice(0, 3); track assignee.id) {
                             <span [style.background-color]="assignee.color">{{ assignee.initials }}</span>
                             }
-            <div class="board-column__tasks" id="board-todo-tasks" data-drop-zone="todo" cdkDropList
-                [class.board-column__tasks--empty]="todoTasks().length === 0"
-                [cdkDropListData]="todoTasks()" [cdkDropListConnectedTo]="connectedDropListIds"
-                [cdkDropListOrientation]="dropListOrientation()"
-                (cdkDropListDropped)="dropTask($event)">
-                @if (todoTasks().length === 0) {
-                No tasks to do
-                }
-                @for (task of todoTasks(); track task.id) {
-                <button class="board-task-placeholder" type="button" (click)="openTaskDetailPanel(task)"
-                    aria-label="Open task details" cdkDrag [cdkDragStartDelay]="dragStartDelay()"
-                    (cdkDragMoved)="onTaskDragMoved($event)" (cdkDragStarted)="onTaskDragStarted($event)"
-                    (cdkDragEnded)="onTaskDragEnded($event)">
-                    <div class="board-task-category">{{ task.category }}</div>
-                    <div class="board-task-title">{{ task.title }}</div>
-                    <div class="board-task-description">{{ task.description }}</div>
-                    <div class="board-task-subtasks">Subtasks</div>
-                    <div class="board-task-assigned-to-and-priority">
-                        <div class="users">
-                            <span>{{ task.assigneeInitials }}</span>
                         </div>
                         <div class="priority">
-                            <img [src]="getPriorityIconPath(task.priority)" [alt]="task.priority">
+                            <img [src]="getPriorityIconPath(task.priority)" [alt]="task.priority" />
                         </div>
                     </div>
                 </button>
                 }
             </div>
-        </article>
-
-        <article class="board-column">
-            <div class="board-column__header">
-                <h2>In progress</h2>
-                <button class="board-column__plus-button" type="button" aria-label="Add task to In progress"
-                    (click)="openAddTaskDialog()">
-                    <img class="plus-icon-default" src="/icons/board/plus button.svg" alt="" aria-hidden="true" />
-                    <img class="plus-icon-hover" src="/icons/board/plus button hover.svg" alt="" aria-hidden="true" />
-                </button>
-            </div>
-            <div class="board-column__tasks" id="board-in-progress-tasks" data-drop-zone="in-progress" cdkDropList
-                [class.board-column__tasks--empty]="inProgressTasks().length === 0"
-                [cdkDropListData]="inProgressTasks()" [cdkDropListConnectedTo]="connectedDropListIds"
-                [cdkDropListOrientation]="dropListOrientation()"
-                (cdkDropListDropped)="dropTask($event)">
-                @if (inProgressTasks().length === 0) {
-                No tasks in progress
-                }
-                @for (task of inProgressTasks(); track task.id) {
-                <button class="board-task-placeholder" type="button" (click)="openTaskDetailPanel(task)"
-                    aria-label="Open task details" cdkDrag [cdkDragStartDelay]="dragStartDelay()"
-                    (cdkDragMoved)="onTaskDragMoved($event)" (cdkDragStarted)="onTaskDragStarted($event)"
-                    (cdkDragEnded)="onTaskDragEnded($event)">
-                    <div class="board-task-category">{{ task.category }}</div>
-                    <div class="board-task-title">{{ task.title }}</div>
-                    <div class="board-task-description">{{ task.description }}</div>
-                    <div class="board-task-subtasks">Subtasks</div>
-                    <div class="board-task-assigned-to-and-priority">
-                        <div class="users">
-                            <span>{{ task.assigneeInitials }}</span>
-                        </div>
-                        <div class="priority">
-                            <img [src]="getPriorityIconPath(task.priority)" [alt]="task.priority">
-                        </div>
-                    </div>
-                </button>
-                }
-            </div>
-            } @else {
-            <div class="board-column__content">{{ column.emptyText }}</div>
-            }
         </article>
         }
-
-        <article class="board-column">
-            <div class="board-column__header">
-                <h2>Await feedback</h2>
-                <button class="board-column__plus-button" type="button" aria-label="Add task to Await feedback"
-                    (click)="openAddTaskDialog()">
-                    <img class="plus-icon-default" src="/icons/board/plus button.svg" alt="" aria-hidden="true" />
-                    <img class="plus-icon-hover" src="/icons/board/plus button hover.svg" alt="" aria-hidden="true" />
-                </button>
-            </div>
-            <div class="board-column__tasks" id="board-await-feedback-tasks" data-drop-zone="await-feedback"
-                cdkDropList [class.board-column__tasks--empty]="awaitFeedbackTasks().length === 0"
-                [cdkDropListData]="awaitFeedbackTasks()" [cdkDropListConnectedTo]="connectedDropListIds"
-                [cdkDropListOrientation]="dropListOrientation()"
-                (cdkDropListDropped)="dropTask($event)">
-                @if (awaitFeedbackTasks().length === 0) {
-                No tasks awaiting feedback
-                }
-                @for (task of awaitFeedbackTasks(); track task.id) {
-                <button class="board-task-placeholder" type="button" (click)="openTaskDetailPanel(task)"
-                    aria-label="Open task details" cdkDrag [cdkDragStartDelay]="dragStartDelay()"
-                    (cdkDragMoved)="onTaskDragMoved($event)" (cdkDragStarted)="onTaskDragStarted($event)"
-                    (cdkDragEnded)="onTaskDragEnded($event)">
-                    <div class="board-task-category">{{ task.category }}</div>
-                    <div class="board-task-title">{{ task.title }}</div>
-                    <div class="board-task-description">{{ task.description }}</div>
-                    <div class="board-task-subtasks">Subtasks</div>
-                    <div class="board-task-assigned-to-and-priority">
-                        <div class="users">
-                            <span>{{ task.assigneeInitials }}</span>
-                        </div>
-                        <div class="priority">
-                            <img [src]="getPriorityIconPath(task.priority)" [alt]="task.priority">
-                        </div>
-                    </div>
-                </button>
-                }
-            </div>
-        </article>
-
-        <article class="board-column">
-            <div class="board-column__header">
-                <h2>Done</h2>
-                <button class="board-column__plus-button" type="button" aria-label="Add task to Done"
-                    (click)="openAddTaskDialog()">
-                    <img class="plus-icon-default" src="/icons/board/plus button.svg" alt="" aria-hidden="true" />
-                    <img class="plus-icon-hover" src="/icons/board/plus button hover.svg" alt="" aria-hidden="true" />
-                </button>
-            </div>
-            <div class="board-column__tasks" id="board-done-tasks" data-drop-zone="done" cdkDropList
-                [class.board-column__tasks--empty]="doneTasks().length === 0"
-                [cdkDropListData]="doneTasks()" [cdkDropListConnectedTo]="connectedDropListIds"
-                [cdkDropListOrientation]="dropListOrientation()"
-                (cdkDropListDropped)="dropTask($event)">
-                @if (doneTasks().length === 0) {
-                No tasks done
-                }
-                @for (task of doneTasks(); track task.id) {
-                <button class="board-task-placeholder" type="button" (click)="openTaskDetailPanel(task)"
-                    aria-label="Open task details" cdkDrag [cdkDragStartDelay]="dragStartDelay()"
-                    (cdkDragMoved)="onTaskDragMoved($event)" (cdkDragStarted)="onTaskDragStarted($event)"
-                    (cdkDragEnded)="onTaskDragEnded($event)">
-                    <div class="board-task-category">{{ task.category }}</div>
-                    <div class="board-task-title">{{ task.title }}</div>
-                    <div class="board-task-description">{{ task.description }}</div>
-                    <div class="board-task-subtasks">Subtasks</div>
-                    <div class="board-task-assigned-to-and-priority">
-                        <div class="users">
-                            <span>{{ task.assigneeInitials }}</span>
-                        </div>
-                        <div class="priority">
-                            <img [src]="getPriorityIconPath(task.priority)" [alt]="task.priority">
-                        </div>
-                    </div>
-                </button>
-                }
-            </div>
-        </article>
     </section>
 
     @if (isTaskDetailPanelOpen()) {
@@ -353,16 +235,10 @@
     }
 
     @if (isAddTaskDialogOpen()) {
-        <div class="add-task-modal" role="dialog" aria-modal="true" aria-label="Add Task" (click)="closeAddTaskDialog()">
-            <div class="add-task-modal__panel" (click)="$event.stopPropagation()">
-                <button class="add-task-modal__close" type="button" aria-label="Close add task" (click)="closeAddTaskDialog()">&times;</button>
-                <app-add-task class="add-task-modal__content" (taskCreated)="closeAddTaskDialog()"></app-add-task>
-            </div>
     <div class="add-task-modal" role="dialog" aria-modal="true" aria-label="Add Task" (click)="closeAddTaskDialog()">
         <div class="add-task-modal__panel" (click)="$event.stopPropagation()">
-            <button class="add-task-modal__close" type="button" aria-label="Close add task"
-                (click)="closeAddTaskDialog()">&times;</button>
-            <app-add-task class="add-task-modal__content"></app-add-task>
+            <button class="add-task-modal__close" type="button" aria-label="Close add task" (click)="closeAddTaskDialog()">&times;</button>
+            <app-add-task class="add-task-modal__content" (taskCreated)="closeAddTaskDialog()"></app-add-task>
         </div>
     </div>
     }
