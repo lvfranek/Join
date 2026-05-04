@@ -6,6 +6,12 @@
     height: 100%;
 }
 
+:host(.add-task-modal__content) .add-task {
+    min-height: 740px;
+    height: auto;
+    padding: 60px 74px 48px;
+}
+
 .left-elements {
     display: flex;
     flex-direction: column;
@@ -312,6 +318,11 @@ select:hover {
 }
 
 @media (max-width: 800px) {
+    :host(.add-task-modal__content) .add-task {
+        min-height: 0;
+        padding: 28px 18px 0;
+    }
+
     .add-task {
         padding: 14px;
         height: 100%;
