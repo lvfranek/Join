@@ -36,10 +36,17 @@
                 </button>
             </div>
             <div class="board-column__tasks">
-                <article class="board-task-placeholder">
+                <button class="board-task-placeholder" type="button" (click)="openTaskDetailPanel({
+                        id: 'task-1',
+                        category: 'Category',
+                        title: 'Implement user authentication flow',
+                        description: 'Set up OAuth2 login with Google and GitHub, including token refresh and session management for all protected routes.',
+                        priority: 'medium'
+                    })" aria-label="Open task details">
                     <div class="board-task-category">Category</div>
                     <div class="board-task-title">Implement user authentication flow</div>
-                    <div class="board-task-description">Set up OAuth2 login with Google and GitHub, including token refresh and session management for all protected routes.</div>
+                    <div class="board-task-description">Set up OAuth2 login with Google and GitHub, including token
+                        refresh and session management for all protected routes.</div>
                     <div class="board-task-subtasks">Subtasks</div>
                     <div class="board-task-assigned-to-and-priority">
                         <div class="users">
@@ -49,7 +56,7 @@
                             <img src="./icons/board/medium.svg" alt="Medium">
                         </div>
                     </div>
-                </article>
+                </button>
             </div>
         </article>
 
@@ -76,7 +83,208 @@
         </article>
     </section>
 
-    @if (isAddTaskDialogOpen) {
+    @if (isTaskDetailPanelOpen()) {
+    <div class="btd-overlay" [class.btd-overlay--closing]="isTaskDetailPanelClosing()"
+        (click)="closeTaskDetailPanel()"></div>
+
+    <dialog class="btd-panel" [class.btd-panel--closing]="isTaskDetailPanelClosing()" open
+        aria-label="Task details">
+        @if (selectedTask(); as task) {
+        <div class="btd-panel__body">
+            <button class="btd-panel__close-btn" type="button" (click)="closeTaskDetailPanel()"
+                aria-label="Close task details">
+                <img src="/icons/contacts-dialog/close.svg" alt="Close Icon" aria-hidden="true" />
+            </button>
+
+            @if (!isTaskDetailEditActive()) {
+            <div class="btd-panel__top-bar">
+                <div class="btd-panel__category-badge">{{ task.category }}</div>
+            </div>
+
+            <h2 class="btd-panel__heading">{{ task.title }}</h2>
+            <p class="btd-panel__desc">{{ task.description }}</p>
+
+            <div class="btd-panel__details">
+                <div class="btd-panel__detail-row">
+                    <span class="btd-panel__detail-label">Due date:</span>
+                    <span class="btd-due-date">{{ formatTaskDetailDueDate(taskDetailDueDate()) }}</span>
+                </div>
+                <div class="btd-panel__detail-row">
+                    <span class="btd-panel__detail-label">Priority:</span>
+                    <div class="btd-panel__priority-display">
+                        <span class="btd-panel__priority-text">{{ task.priority }}</span>
+                        <img src="./icons/board/medium.svg" alt="Priority Icon">
+                    </div>
+                </div>
+                <div class="btd-panel__detail-row">
+                    <span class="btd-panel__detail-label">Assigned to:</span>
+                </div>
+                <div class="btd-panel__detail-row--contact">
+                    <span class="btd-assignee-avatar">EM</span>
+                    <span class="btd-assignee-name">Emmanuel Mauer</span>
+                </div>
+                <div class="btd-panel__detail-row--contact">
+                    <span class="btd-assignee-avatar">MB</span>
+                    <span class="btd-assignee-name">Marcel Bauer</span>
+                </div>
+                <div class="btd-panel__detail-row">
+                    <span class="btd-panel__detail-label">Subtasks:</span>
+                </div>
+                @for (subtask of taskDetailSubtasks(); track $index) {
+                <div class="btd-panel__detail-row--contact">
+                    <button
+                        class="btd-subtask-check-btn"
+                        type="button"
+                        (click)="toggleTaskDetailSubtask($index)"
+                        [attr.aria-checked]="subtask.completed"
+                        role="checkbox"
+                        [attr.aria-label]="'Toggle subtask: ' + subtask.title"
+                    >
+                        <img
+                            [src]="subtask.completed ? './icons/board/checked.svg' : './icons/board/unchecked.svg'"
+                            [alt]="subtask.completed ? 'Checked icon' : 'Unchecked icon'"
+                        >
+                    </button>
+                    <span class="btd-assignee-name">{{ subtask.title }}</span>
+                </div>
+                }
+                <div class="btd-panel__footer-actions">
+                    <button class="btd-panel__footer-btn">
+                        <img class="btd-panel__footer-btn-icon" src="./icons/board/delete.svg" alt="Delete Icon">
+                        <span class="btd-panel__footer-btn-label">Delete</span>
+                    </button>
+                    <div class="btd-panel__footer-divider"></div>
+                    <button class="btd-panel__footer-btn" type="button" (click)="beginTaskDetailEdit()">
+                        <img class="btd-panel__footer-btn-icon" src="./icons/board/edit.svg" alt="Edit Icon">
+                        <span class="btd-panel__footer-btn-label">Edit</span>
+                    </button>
+                </div>
+            </div>
+            } @else {
+            <div class="btd-edit-form">
+                <div class="btd-edit-form__field">
+                    <label class="btd-edit-form__label" for="task-title-edit">Title</label>
+                    <input
+                        #titleInput
+                        id="task-title-edit"
+                        class="btd-edit-form__input"
+                        type="text"
+                        [value]="editTitle()"
+                        (input)="editTitle.set(titleInput.value)"
+                        placeholder="Enter a title"
+                    />
+                </div>
+
+                <div class="btd-edit-form__field">
+                    <label class="btd-edit-form__label" for="task-description-edit">Description</label>
+                    <textarea
+                        #descriptionInput
+                        id="task-description-edit"
+                        class="btd-edit-form__textarea"
+                        [value]="editDescription()"
+                        (input)="editDescription.set(descriptionInput.value)"
+                        placeholder="Enter a Description"
+                    ></textarea>
+                </div>
+
+                <div class="btd-edit-form__field">
+                    <label class="btd-edit-form__label" for="task-due-date-edit">Due date</label>
+                    <input
+                        #dueDateInput
+                        id="task-due-date-edit"
+                        class="btd-edit-form__input"
+                        type="date"
+                        [value]="editDueDate()"
+                        (input)="editDueDate.set(dueDateInput.value)"
+                    />
+                </div>
+
+                <div class="btd-edit-form__field">
+                    <span class="btd-edit-form__label">Priority</span>
+                    <div class="btd-edit-form__priority-row">
+                        <button
+                            class="btd-edit-form__priority-btn btd-edit-form__priority-btn--urgent"
+                            [class.btd-edit-form__priority-btn--active]="editPriority() === 'urgent'"
+                            type="button"
+                            (click)="setEditPriority('urgent')"
+                        >
+                            <span>Urgent</span>
+                            <img src="./icons/board/urgent.svg" alt="Urgent" />
+                        </button>
+                        <button
+                            class="btd-edit-form__priority-btn btd-edit-form__priority-btn--medium"
+                            [class.btd-edit-form__priority-btn--active]="editPriority() === 'medium'"
+                            type="button"
+                            (click)="setEditPriority('medium')"
+                        >
+                            <span>Medium</span>
+                            <img src="./icons/board/medium.svg" alt="Medium" />
+                        </button>
+                        <button
+                            class="btd-edit-form__priority-btn btd-edit-form__priority-btn--low"
+                            [class.btd-edit-form__priority-btn--active]="editPriority() === 'low'"
+                            type="button"
+                            (click)="setEditPriority('low')"
+                        >
+                            <span>Low</span>
+                            <img src="./icons/board/low.svg" alt="Low" />
+                        </button>
+                    </div>
+                </div>
+
+                <div class="btd-edit-form__field">
+                    <label class="btd-edit-form__label" for="task-assigned-to-edit">Assigned to</label>
+                    <select
+                        #assigneeSelect
+                        id="task-assigned-to-edit"
+                        class="btd-edit-form__select"
+                        (change)="addAssignedContact(assigneeSelect.value); assigneeSelect.selectedIndex = 0"
+                    >
+                        <option value="">Select contacts to assign</option>
+                        @for (contact of assignableContacts; track contact.id) {
+                        <option [value]="contact.id">{{ contact.name }}</option>
+                        }
+                    </select>
+
+                    <div class="btd-edit-form__assignees">
+                        @for (contact of selectedAssignedContacts(); track contact.id) {
+                        <span class="btd-assignee-avatar">{{ contact.initials }}</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="btd-edit-form__field">
+                    <label class="btd-edit-form__label" for="task-subtask-edit">Subtasks</label>
+                    <input
+                        #subtaskInput
+                        id="task-subtask-edit"
+                        class="btd-edit-form__input"
+                        type="text"
+                        placeholder="Add new subtask"
+                        (keydown.enter)="addEditSubtask(subtaskInput.value); subtaskInput.value = ''; $event.preventDefault()"
+                    />
+
+                    <ul class="btd-edit-form__subtask-list">
+                        @for (subtask of editSubtasks(); track $index) {
+                        <li>{{ subtask }}</li>
+                        }
+                    </ul>
+                </div>
+
+                <div class="btd-edit-form__submit-row">
+                    <button class="btd-edit-form__save-btn" type="button" (click)="saveTaskDetailEdits()">
+                        <span>Ok</span>
+                        <img src="./icons/add-task/check.svg" alt="Check" />
+                    </button>
+                </div>
+            </div>
+            }
+        </div>
+        }
+    </dialog>
+    }
+
+    @if (isAddTaskDialogOpen()) {
         <div class="add-task-modal" role="dialog" aria-modal="true" aria-label="Add Task" (click)="closeAddTaskDialog()">
             <div class="add-task-modal__panel" (click)="$event.stopPropagation()">
                 <button class="add-task-modal__close" type="button" aria-label="Close add task" (click)="closeAddTaskDialog()">&times;</button>
