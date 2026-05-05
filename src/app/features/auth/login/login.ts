@@ -22,7 +22,7 @@ import { SupabaseService } from '../../../core/services/supabase.service';
 })
 export class Login {
   private static readonly GREETING_BREAKPOINT = 1180;
-  private static readonly INTRO_HOLD_MS = 1400;
+  private static readonly INTRO_HOLD_MS = 800;
   private static readonly INTRO_SLIDE_DURATION_MS = 820;
   private static readonly INTRO_FADE_BUFFER_MS = 260;
 
