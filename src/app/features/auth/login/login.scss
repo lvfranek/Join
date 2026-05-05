@@ -3,6 +3,60 @@
   min-block-size: 100dvh;
 }
 
+.login-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.login-intro__backdrop {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  opacity: 1;
+  transition: opacity 260ms ease 140ms;
+}
+
+.login-intro__logo-shell {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  transform: translate(-50%, -50%);
+  transition: transform 820ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.login-intro__logo {
+  display: block;
+  block-size: auto;
+  transform: scale(2);
+  transform-origin: center;
+  opacity: 1;
+  transition:
+    transform 820ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 240ms ease 430ms;
+  will-change: transform, opacity;
+}
+
+.login-intro--active {
+  .login-intro__backdrop {
+    opacity: 0;
+  }
+
+  .login-intro__logo-shell {
+    transform: translate(
+      calc(-50% + var(--intro-logo-shift-x, 0px)),
+      calc(-50% + var(--intro-logo-shift-y, 0px))
+    );
+  }
+
+  .login-intro__logo {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
 .sr-only {
   position: absolute;
   inline-size: 1px;
@@ -33,9 +87,15 @@
   display: inline-flex;
   text-decoration: none;
 
-  img {
+  .brand__image {
     display: block;
     inline-size: 100px;
+    opacity: 1;
+    transition: opacity 120ms linear;
+  }
+
+  .brand__image--hidden {
+    opacity: 0;
   }
 }
 
@@ -228,6 +288,10 @@
   }
 
   .brand img {
+    inline-size: 72px;
+  }
+
+  .brand .brand__image {
     inline-size: 72px;
   }
 
