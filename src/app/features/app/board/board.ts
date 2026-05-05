@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import {
   CdkDragEnd,
   CdkDragDrop,
@@ -7,6 +7,7 @@ import {
   DragDropModule,
 } from '@angular/cdk/drag-drop';
 import { TaskRecord, TaskService, TaskStatus } from '../../../core/services/task.service';
+import { ContactRecord, ContactService } from '../../../core/services/contact.service';
 
 type DialogSubtask = {
   title: string;
@@ -17,6 +18,7 @@ type AssignableContact = {
   id: string;
   name: string;
   initials: string;
+  color: string;
 };
 
 import { AddTask } from '../add-task/add-task';
@@ -26,6 +28,7 @@ type BoardColumn = {
   title: string;
   emptyText: string;
 };
+type BoardEditRequiredField = 'title' | 'dueDate';
 
 @Component({
   selector: 'app-board',
@@ -34,16 +37,20 @@ type BoardColumn = {
   styleUrl: './board.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
+    '(document:click)': 'closeEditAssignedDropdown()',
     '(document:keydown.escape)': 'closeOpenDialogs()',
     '(window:resize)': 'onWindowResize()',
   },
 })
-export class BoardWorkspaceView {
+export class BoardWorkspaceView implements OnDestroy, OnInit {
   private readonly taskService = inject(TaskService);
+  private readonly contactService = inject(ContactService);
   private readonly dialogAnimationDuration = 400;
+  private readonly taskUpdatedFeedbackDuration = 900;
   private autoScrollFrameId: number | null = null;
   private activeDragPointerY: number | null = null;
   private activeDragElement: HTMLElement | null = null;
+  private taskUpdatedFeedbackTimeout: ReturnType<typeof setTimeout> | null = null;
 
   readonly boardColumns: BoardColumn[] = [
     { id: 'todo', title: 'To do', emptyText: 'No tasks to do' },
@@ -73,21 +80,49 @@ export class BoardWorkspaceView {
   readonly editDueDate = signal('');
   readonly editPriority = signal<'low' | 'medium' | 'urgent'>('medium');
   readonly editAssignedContactIds = signal<string[]>([]);
+  readonly editAssignedSearch = signal('');
+  readonly isEditAssignedDropdownOpen = signal(false);
   readonly editSubtasks = signal<string[]>([]);
+  readonly editSubtaskDraft = signal('');
   readonly editingSubtaskIndex = signal<number | null>(null);
   readonly editingSubtaskValue = signal('');
+  readonly isTaskUpdatedFeedbackVisible = signal(false);
+  readonly isTaskDetailEditSubmitted = signal(false);
+  readonly touchedTaskDetailEditFields = signal<Record<BoardEditRequiredField, boolean>>({
+    title: false,
+    dueDate: false,
+  });
 
-  readonly assignableContacts: AssignableContact[] = [
-    { id: 'em', name: 'Emmanuel Mauer', initials: 'EM' },
-    { id: 'mb', name: 'Marcel Bauer', initials: 'MB' },
-    { id: 'ab', name: 'Aylin Becker', initials: 'AB' },
-    { id: 'ls', name: 'Lina Schmidt', initials: 'LS' },
-  ];
+  readonly assignableContacts = signal<AssignableContact[]>([]);
 
   readonly selectedAssignedContacts = computed(() => {
     const selectedIds = this.editAssignedContactIds();
-    return this.assignableContacts.filter((contact) => selectedIds.includes(contact.id));
+    return this.assignableContacts().filter((contact) => selectedIds.includes(contact.id));
   });
+
+  readonly filteredAssignableContacts = computed(() => {
+    const query = this.editAssignedSearch().trim().toLowerCase();
+    const contacts = this.assignableContacts();
+
+    if (!query) {
+      return contacts;
+    }
+
+    return contacts.filter((contact) => contact.name.toLowerCase().includes(query));
+  });
+
+  async ngOnInit(): Promise<void> {
+    try {
+      const records = await this.contactService.list();
+      this.assignableContacts.set(records.map((record) => this.toAssignableContact(record)));
+    } catch (error) {
+      console.error('Failed to load contacts for board task editing', error);
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.clearTaskUpdatedFeedbackTimeout();
+  }
 
   tasksForColumn(status: TaskStatus): TaskRecord[] {
     return this.tasks().filter((task) => task.status === status);
@@ -201,20 +236,38 @@ export class BoardWorkspaceView {
       return;
     }
 
+    this.mergeAssignableContactsFromTask(task);
     this.editTitle.set(task.title);
     this.editDescription.set(task.description);
     this.editDueDate.set(this.taskDetailDueDate());
     this.editPriority.set(task.priority);
     this.editAssignedContactIds.set(task.assignees.map((assignee) => assignee.id));
+    this.editAssignedSearch.set('');
+    this.isEditAssignedDropdownOpen.set(false);
     this.editSubtasks.set(this.taskDetailSubtasks().map((subtask) => subtask.title));
+    this.editSubtaskDraft.set('');
     this.editingSubtaskIndex.set(null);
     this.editingSubtaskValue.set('');
+    this.isTaskUpdatedFeedbackVisible.set(false);
+    this.isTaskDetailEditSubmitted.set(false);
+    this.touchedTaskDetailEditFields.set({ title: false, dueDate: false });
     this.isTaskDetailEditActive.set(true);
   }
 
   saveTaskDetailEdits(): void {
+    if (this.isTaskUpdatedFeedbackVisible()) {
+      return;
+    }
+
     const currentTask = this.selectedTask();
     if (!currentTask) {
+      return;
+    }
+
+    this.isTaskDetailEditSubmitted.set(true);
+    this.markAllTaskDetailEditFieldsTouched();
+
+    if (!this.isTaskDetailEditFormValid()) {
       return;
     }
 
@@ -223,10 +276,11 @@ export class BoardWorkspaceView {
       .filter((title) => title.length > 0);
 
     const updatedTask = this.taskService.updateTask(currentTask.id, {
-      title: this.editTitle().trim() || currentTask.title,
+      title: this.editTitle().trim(),
       description: this.editDescription().trim() || currentTask.description,
-      dueDate: this.editDueDate() || this.taskDetailDueDate(),
+      dueDate: this.editDueDate(),
       priority: this.editPriority(),
+      assignees: this.selectedAssignedContacts(),
       subtasks: normalizedSubtasks,
     });
 
@@ -253,11 +307,22 @@ export class BoardWorkspaceView {
 
     this.editingSubtaskIndex.set(null);
     this.editingSubtaskValue.set('');
-    this.isTaskDetailEditActive.set(false);
+    this.showTaskUpdatedFeedback();
   }
 
   setEditPriority(priority: TaskRecord['priority']): void {
     this.editPriority.set(priority);
+  }
+
+  markTaskDetailEditTouched(field: BoardEditRequiredField): void {
+    this.touchedTaskDetailEditFields.update((fields) => ({
+      ...fields,
+      [field]: true,
+    }));
+  }
+
+  isTaskDetailEditFieldInvalid(field: BoardEditRequiredField): boolean {
+    return this.shouldShowTaskDetailEditFeedback(field) && !this.hasTaskDetailEditRequiredValue(field);
   }
 
   addAssignedContact(contactId: string): void {
@@ -270,6 +335,45 @@ export class BoardWorkspaceView {
     );
   }
 
+  openEditDueDatePicker(input: HTMLInputElement): void {
+    const dateInput = input as HTMLInputElement & { showPicker?: () => void };
+
+    dateInput.focus();
+    dateInput.showPicker?.();
+  }
+
+  openEditAssignedDropdown(): void {
+    this.isEditAssignedDropdownOpen.set(true);
+  }
+
+  toggleEditAssignedDropdown(event: Event): void {
+    event.stopPropagation();
+    this.isEditAssignedDropdownOpen.update((isOpen) => !isOpen);
+  }
+
+  keepEditAssignedDropdownOpen(event: Event): void {
+    event.stopPropagation();
+  }
+
+  closeEditAssignedDropdown(): void {
+    this.isEditAssignedDropdownOpen.set(false);
+  }
+
+  updateEditAssignedSearch(value: string): void {
+    this.editAssignedSearch.set(value);
+    this.openEditAssignedDropdown();
+  }
+
+  toggleEditAssignedContact(contactId: string): void {
+    this.editAssignedContactIds.update((ids) =>
+      ids.includes(contactId) ? ids.filter((id) => id !== contactId) : [...ids, contactId],
+    );
+  }
+
+  isEditContactAssigned(contactId: string): boolean {
+    return this.editAssignedContactIds().includes(contactId);
+  }
+
   addEditSubtask(subtaskTitle: string): void {
     const normalized = subtaskTitle.trim();
     if (!normalized) {
@@ -277,6 +381,11 @@ export class BoardWorkspaceView {
     }
 
     this.editSubtasks.update((subtasks) => [...subtasks, normalized]);
+    this.editSubtaskDraft.set('');
+  }
+
+  clearEditSubtaskDraft(): void {
+    this.editSubtaskDraft.set('');
   }
 
   startEditingSubtask(index: number): void {
@@ -362,6 +471,7 @@ export class BoardWorkspaceView {
     }
 
     this.isTaskDetailEditActive.set(false);
+    this.isEditAssignedDropdownOpen.set(false);
     this.isTaskDetailPanelClosing.set(true);
     setTimeout(() => {
       this.isTaskDetailPanelOpen.set(false);
@@ -383,6 +493,7 @@ export class BoardWorkspaceView {
     this.isTaskDetailPanelOpen.set(false);
     this.isTaskDetailPanelClosing.set(false);
     this.isTaskDetailEditActive.set(false);
+    this.isEditAssignedDropdownOpen.set(false);
     this.selectedTask.set(null);
     this.taskDetailSubtasks.set([]);
   }
@@ -405,6 +516,101 @@ export class BoardWorkspaceView {
     }
 
     return null;
+  }
+
+  private showTaskUpdatedFeedback(): void {
+    this.clearTaskUpdatedFeedbackTimeout();
+    this.isTaskUpdatedFeedbackVisible.set(true);
+    this.isEditAssignedDropdownOpen.set(false);
+
+    this.taskUpdatedFeedbackTimeout = setTimeout(() => {
+      this.taskUpdatedFeedbackTimeout = null;
+      this.isTaskUpdatedFeedbackVisible.set(false);
+      this.isTaskDetailEditSubmitted.set(false);
+      this.touchedTaskDetailEditFields.set({ title: false, dueDate: false });
+      this.isTaskDetailEditActive.set(false);
+    }, this.taskUpdatedFeedbackDuration);
+  }
+
+  private isTaskDetailEditFormValid(): boolean {
+    return this.hasTaskDetailEditRequiredValue('title') && this.hasTaskDetailEditRequiredValue('dueDate');
+  }
+
+  private markAllTaskDetailEditFieldsTouched(): void {
+    this.touchedTaskDetailEditFields.set({ title: true, dueDate: true });
+  }
+
+  private shouldShowTaskDetailEditFeedback(field: BoardEditRequiredField): boolean {
+    return this.isTaskDetailEditSubmitted() || this.touchedTaskDetailEditFields()[field];
+  }
+
+  private hasTaskDetailEditRequiredValue(field: BoardEditRequiredField): boolean {
+    if (field === 'title') {
+      return this.editTitle().trim().length > 0;
+    }
+
+    return this.editDueDate().trim().length > 0;
+  }
+
+  private clearTaskUpdatedFeedbackTimeout(): void {
+    if (this.taskUpdatedFeedbackTimeout) {
+      clearTimeout(this.taskUpdatedFeedbackTimeout);
+      this.taskUpdatedFeedbackTimeout = null;
+    }
+  }
+
+  private mergeAssignableContactsFromTask(task: TaskRecord): void {
+    this.assignableContacts.update((contacts) => {
+      const knownIds = new Set(contacts.map((contact) => contact.id));
+      const missingContacts = task.assignees.filter((assignee) => !knownIds.has(assignee.id));
+
+      if (!missingContacts.length) {
+        return contacts;
+      }
+
+      return [
+        ...contacts,
+        ...missingContacts.map((assignee) => ({
+          id: assignee.id,
+          name: assignee.name,
+          initials: assignee.initials,
+          color: assignee.color,
+        })),
+      ];
+    });
+  }
+
+  private toAssignableContact(record: ContactRecord): AssignableContact {
+    const name = [record.first_name, record.last_name].filter(Boolean).join(' ').trim();
+
+    return {
+      id: record.id,
+      name,
+      initials: this.getInitials(name),
+      color: this.getAvatarColor(record.id),
+    };
+  }
+
+  private getInitials(name: string): string {
+    return name
+      .trim()
+      .split(' ')
+      .filter(Boolean)
+      .map((word) => word[0])
+      .join('')
+      .slice(0, 2)
+      .toUpperCase();
+  }
+
+  private getAvatarColor(seed: string): string {
+    const colors = ['#ff7a00', '#9327ff', '#6e52ff', '#fc71ff', '#ffbb2b', '#1fd7c1', '#462f8a', '#ff4646'];
+    let hash = 0;
+
+    for (let i = 0; i < seed.length; i++) {
+      hash = (hash * 31 + seed.charCodeAt(i)) | 0;
+    }
+
+    return colors[Math.abs(hash) % colors.length];
   }
 
   private getCompletedSubtaskCount(task: TaskRecord): number {
