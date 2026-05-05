@@ -60,7 +60,7 @@
                     (cdkDragStarted)="onTaskDragStarted($event)"
                     (cdkDragEnded)="onTaskDragEnded($event)"
                 >
-                    <div class="board-task-category">{{ task.category }}</div>
+                    <div class="board-task-category" [style.background-color]="getCategoryColor(task.category)">{{ task.category }}</div>
                     <div class="board-task-title">{{ task.title }}</div>
                     <div class="board-task-description">{{ task.description }}</div>
                     @if (task.subtasks.length > 0) {
@@ -102,7 +102,7 @@
 
             @if (!isTaskDetailEditActive()) {
             <div class="btd-panel__top-bar">
-                <div class="btd-panel__category-badge">{{ task.category }}</div>
+                <div class="btd-panel__category-badge" [style.background-color]="getCategoryColor(task.category)">{{ task.category }}</div>
             </div>
 
             <h2 class="btd-panel__heading">{{ task.title }}</h2>

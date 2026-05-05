@@ -144,6 +144,18 @@ export class BoardWorkspaceView implements OnDestroy, OnInit {
     return `./icons/board/${priority}.svg`;
   }
 
+  getCategoryColor(category: string): string {
+    if (category === 'Technical Task') {
+      return '#1DD7C1';
+    }
+
+    if (category === 'User Story') {
+      return '#2338FF';
+    }
+
+    return '#2338FF';
+  }
+
   getSubtaskSummary(task: TaskRecord): string {
     const completedCount = this.getCompletedSubtaskCount(task);
     return `${completedCount}/${task.subtasks.length} Subtasks`;
