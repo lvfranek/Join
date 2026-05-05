@@ -66,6 +66,7 @@ export class BoardWorkspaceView {
   readonly isTaskDetailEditActive = signal(false);
   readonly selectedTask = signal<TaskRecord | null>(null);
   readonly taskDetailSubtasks = signal<DialogSubtask[]>([]);
+  readonly subtaskCompletionByTaskId = signal<Record<string, boolean[]>>({});
   readonly taskDetailDueDate = signal('2023-05-10');
   readonly editTitle = signal('');
   readonly editDescription = signal('');
@@ -73,6 +74,8 @@ export class BoardWorkspaceView {
   readonly editPriority = signal<'low' | 'medium' | 'urgent'>('medium');
   readonly editAssignedContactIds = signal<string[]>([]);
   readonly editSubtasks = signal<string[]>([]);
+  readonly editingSubtaskIndex = signal<number | null>(null);
+  readonly editingSubtaskValue = signal('');
 
   readonly assignableContacts: AssignableContact[] = [
     { id: 'em', name: 'Emmanuel Mauer', initials: 'EM' },
@@ -107,7 +110,16 @@ export class BoardWorkspaceView {
   }
 
   getSubtaskSummary(task: TaskRecord): string {
-    return `${task.subtasks.length}/${task.subtasks.length} Subtasks`;
+    const completedCount = this.getCompletedSubtaskCount(task);
+    return `${completedCount}/${task.subtasks.length} Subtasks`;
+  }
+
+  getSubtaskProgress(task: TaskRecord): number {
+    if (task.subtasks.length === 0) {
+      return 0;
+    }
+
+    return (this.getCompletedSubtaskCount(task) / task.subtasks.length) * 100;
   }
 
   openAddTaskDialog(): void {
@@ -121,9 +133,15 @@ export class BoardWorkspaceView {
 
   openTaskDetailPanel(task: TaskRecord): void {
     this.closeAddTaskDialog();
+    const completionState = this.getTaskSubtaskCompletion(task);
     this.selectedTask.set(task);
     this.isTaskDetailEditActive.set(false);
-    this.taskDetailSubtasks.set(task.subtasks.map((title) => ({ title, completed: false })));
+    this.taskDetailSubtasks.set(
+      task.subtasks.map((title, index) => ({
+        title,
+        completed: completionState[index] ?? false,
+      })),
+    );
     this.taskDetailDueDate.set(task.dueDate);
     this.isTaskDetailPanelClosing.set(false);
     this.isTaskDetailPanelOpen.set(true);
@@ -189,6 +207,8 @@ export class BoardWorkspaceView {
     this.editPriority.set(task.priority);
     this.editAssignedContactIds.set(task.assignees.map((assignee) => assignee.id));
     this.editSubtasks.set(this.taskDetailSubtasks().map((subtask) => subtask.title));
+    this.editingSubtaskIndex.set(null);
+    this.editingSubtaskValue.set('');
     this.isTaskDetailEditActive.set(true);
   }
 
@@ -211,13 +231,28 @@ export class BoardWorkspaceView {
     });
 
     if (updatedTask) {
+      const currentCompletionState = this.getTaskSubtaskCompletion(currentTask);
+      const resizedCompletionState = normalizedSubtasks.map(
+        (_subtask, index) => currentCompletionState[index] ?? false,
+      );
+
+      this.subtaskCompletionByTaskId.update((state) => ({
+        ...state,
+        [updatedTask.id]: resizedCompletionState,
+      }));
+
       this.selectedTask.set(updatedTask);
       this.taskDetailDueDate.set(updatedTask.dueDate);
       this.taskDetailSubtasks.set(
-        updatedTask.subtasks.map((title) => ({ title, completed: false })),
+        updatedTask.subtasks.map((title, index) => ({
+          title,
+          completed: resizedCompletionState[index] ?? false,
+        })),
       );
     }
 
+    this.editingSubtaskIndex.set(null);
+    this.editingSubtaskValue.set('');
     this.isTaskDetailEditActive.set(false);
   }
 
@@ -244,6 +279,46 @@ export class BoardWorkspaceView {
     this.editSubtasks.update((subtasks) => [...subtasks, normalized]);
   }
 
+  startEditingSubtask(index: number): void {
+    const subtask = this.editSubtasks()[index];
+    if (subtask === undefined) {
+      return;
+    }
+
+    this.editingSubtaskIndex.set(index);
+    this.editingSubtaskValue.set(subtask);
+  }
+
+  saveEditingSubtask(): void {
+    const index = this.editingSubtaskIndex();
+    const normalized = this.editingSubtaskValue().trim();
+
+    if (index === null) {
+      return;
+    }
+
+    if (!normalized) {
+      this.removeEditSubtask(index);
+      return;
+    }
+
+    this.editSubtasks.update((subtasks) =>
+      subtasks.map((subtask, currentIndex) => (currentIndex === index ? normalized : subtask)),
+    );
+
+    this.editingSubtaskIndex.set(null);
+    this.editingSubtaskValue.set('');
+  }
+
+  removeEditSubtask(index: number): void {
+    this.editSubtasks.update((subtasks) => subtasks.filter((_subtask, currentIndex) => currentIndex !== index));
+
+    if (this.editingSubtaskIndex() === index) {
+      this.editingSubtaskIndex.set(null);
+      this.editingSubtaskValue.set('');
+    }
+  }
+
   formatTaskDetailDueDate(isoDate: string): string {
     if (!isoDate) {
       return '--/--/----';
@@ -268,6 +343,17 @@ export class BoardWorkspaceView {
           : subtask,
       ),
     );
+
+    const task = this.selectedTask();
+    if (!task) {
+      return;
+    }
+
+    const completionState = this.taskDetailSubtasks().map((subtask) => subtask.completed);
+    this.subtaskCompletionByTaskId.update((state) => ({
+      ...state,
+      [task.id]: completionState,
+    }));
   }
 
   closeTaskDetailPanel(): void {
@@ -319,6 +405,21 @@ export class BoardWorkspaceView {
     }
 
     return null;
+  }
+
+  private getCompletedSubtaskCount(task: TaskRecord): number {
+    const completionState = this.getTaskSubtaskCompletion(task);
+    return completionState.filter((isCompleted) => isCompleted).length;
+  }
+
+  private getTaskSubtaskCompletion(task: TaskRecord): boolean[] {
+    const existingState = this.subtaskCompletionByTaskId()[task.id];
+
+    if (!existingState) {
+      return task.subtasks.map(() => false);
+    }
+
+    return task.subtasks.map((_subtask, index) => existingState[index] ?? false);
   }
 
   private startAutoScrollLoop(): void {
