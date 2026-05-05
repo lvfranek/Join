@@ -8,54 +8,35 @@
             <div class="left-elements">
                 <div class="small-container-left">
                     <p class="input-headlines">Title<span class="redcross">*</span></p>
-                    <input
-                        type="text"
-                        placeholder="Enter a title"
-                        [value]="task.title"
+                    <input type="text" placeholder="Enter a title" [value]="task.title"
                         [class.form-control--invalid]="isFieldInvalid('title')"
                         [class.form-control--valid]="isFieldValid('title')"
-                        (input)="updateField('title', $any($event.target).value)"
-                        (blur)="markTouched('title')"
-                        aria-required="true"
-                    >
+                        (input)="updateField('title', $any($event.target).value)" (blur)="markTouched('title')"
+                        aria-required="true">
                     @if (isFieldInvalid('title')) {
-                        <span class="field-error">This field is required</span>
+                    <span class="field-error">This field is required</span>
                     }
                 </div>
                 <div class="small-container-left">
                     <p class="input-headlines">Description</p>
-                    <textarea
-                        placeholder="Enter a description"
-                        class="description"
-                        [value]="task.description"
-                        (input)="updateField('description', $any($event.target).value)"
-                    ></textarea>
+                    <textarea placeholder="Enter a description" class="description" [value]="task.description"
+                        (input)="updateField('description', $any($event.target).value)"></textarea>
                 </div>
                 <div class="small-container-left">
                     <p class="input-headlines">Due date<span class="redcross">*</span></p>
                     <div class="date-input-wrap">
-                        <input
-                            #dueDateInput
-                            type="date"
-                            placeholder="dd/mm/yyyy"
-                            [value]="task.dueDate"
+                        <input class="input-date-placeholder" #dueDateInput type="date" placeholder="dd/mm/yyyy" [value]="task.dueDate"
                             [class.form-control--invalid]="isFieldInvalid('dueDate')"
                             [class.form-control--valid]="isFieldValid('dueDate')"
-                            (input)="updateField('dueDate', $any($event.target).value)"
-                            (blur)="markTouched('dueDate')"
-                            aria-required="true"
-                        >
-                        <button
-                            class="date-input-button"
-                            type="button"
-                            aria-label="Open due date calendar"
-                            (click)="openDueDatePicker(dueDateInput)"
-                        >
+                            (input)="updateField('dueDate', $any($event.target).value)" (blur)="markTouched('dueDate')"
+                            aria-required="true">
+                        <button class="date-input-button" type="button" aria-label="Open due date calendar"
+                            (click)="openDueDatePicker(dueDateInput)">
                             <img src="/icons/add-task/calendar.svg" alt="" class="date-input-icon" aria-hidden="true">
                         </button>
                     </div>
                     @if (isFieldInvalid('dueDate')) {
-                        <span class="field-error">This field is required</span>
+                    <span class="field-error">This field is required</span>
                     }
                 </div>
             </div>
@@ -66,32 +47,23 @@
                 <div class="small-container-right">
                     <p class="input-headlines">Priority</p>
                     <div class="priority-buttons">
-                        <button
-                            class="priority-button-urgent"
-                            [class.priority-button-urgent--selected]="selectedPriority === 'urgent'"
-                            type="button"
-                            (click)="selectPriority('urgent')"
-                        >
+                        <button class="priority-button-urgent"
+                            [class.priority-button-urgent--selected]="selectedPriority === 'urgent'" type="button"
+                            (click)="selectPriority('urgent')">
                             <span>Urgent</span>
                             <img src="./icons/add-task/high.svg" alt="high" class="high">
                             <img src="./icons/add-task/high-white.svg" alt="high-white" class="high-white">
                         </button>
-                        <button
-                            class="priority-button-medium"
-                            [class.priority-button-medium--selected]="selectedPriority === 'medium'"
-                            type="button"
-                            (click)="selectPriority('medium')"
-                        >
+                        <button class="priority-button-medium"
+                            [class.priority-button-medium--selected]="selectedPriority === 'medium'" type="button"
+                            (click)="selectPriority('medium')">
                             <span>Medium</span>
                             <img src="./icons/add-task/medium.svg" alt="medium" class="medium">
                             <img src="./icons/add-task/medium-white.svg" alt="medium-white" class="medium-white">
                         </button>
-                        <button
-                            class="priority-button-low"
-                            [class.priority-button-low--selected]="selectedPriority === 'low'"
-                            type="button"
-                            (click)="selectPriority('low')"
-                        >
+                        <button class="priority-button-low"
+                            [class.priority-button-low--selected]="selectedPriority === 'low'" type="button"
+                            (click)="selectPriority('low')">
                             <span>Low</span>
                             <img src="./icons/add-task/low.svg" alt="low" class="low">
                             <img src="./icons/add-task/low-white.svg" alt="low-white" class="low-white">
@@ -102,81 +74,53 @@
                     <p class="input-headlines">Assigned to</p>
                     <div class="assigned-select" (click)="keepAssignedDropdownOpen($event)">
                         <div class="assigned-select__input-wrap">
-                            <input
-                                class="assigned-select__input"
-                                type="text"
-                                placeholder="Select contacts to assign"
-                                [value]="assignedToSearch"
-                                (input)="updateAssignedSearch($any($event.target).value)"
-                                (focus)="openAssignedDropdown()"
-                                aria-label="Search assigned contacts"
-                            >
-                            <button
-                                class="assigned-select__toggle"
-                                type="button"
-                                aria-label="Toggle assigned contacts"
+                            <input class="assigned-select__input" type="text" placeholder="Select contacts to assign"
+                                [value]="assignedToSearch" (input)="updateAssignedSearch($any($event.target).value)"
+                                (focus)="openAssignedDropdown()" aria-label="Search assigned contacts">
+                            <button class="assigned-select__toggle" type="button" aria-label="Toggle assigned contacts"
                                 [attr.aria-expanded]="isAssignedDropdownOpen"
-                                (click)="toggleAssignedDropdown($event)"
-                            ></button>
+                                (click)="toggleAssignedDropdown($event)"></button>
                         </div>
 
                         @if (isAssignedDropdownOpen) {
-                            <div class="assigned-select__menu">
-                                @for (contact of filteredContacts; track contact.id) {
-                                    <button
-                                        class="assigned-select__option"
-                                        [class.assigned-select__option--selected]="isContactAssigned(contact.id)"
-                                        type="button"
-                                        (click)="toggleAssignedContact(contact.id)"
-                                    >
-                                        <span
-                                            class="assigned-select__avatar"
-                                            [style.background-color]="contact.color"
-                                        >
-                                            {{ contact.initials }}
-                                        </span>
-                                        <span class="assigned-select__name">{{ contact.name }}</span>
-                                        <span
-                                            class="assigned-select__checkbox"
-                                            [class.assigned-select__checkbox--checked]="isContactAssigned(contact.id)"
-                                            aria-hidden="true"
-                                        ></span>
-                                    </button>
-                                } @empty {
-                                    <div class="assigned-select__empty">No contacts found</div>
-                                }
-                            </div>
+                        <div class="assigned-select__menu">
+                            @for (contact of filteredContacts; track contact.id) {
+                            <button class="assigned-select__option"
+                                [class.assigned-select__option--selected]="isContactAssigned(contact.id)" type="button"
+                                (click)="toggleAssignedContact(contact.id)">
+                                <span class="assigned-select__avatar" [style.background-color]="contact.color">
+                                    {{ contact.initials }}
+                                </span>
+                                <span class="assigned-select__name">{{ contact.name }}</span>
+                                <span class="assigned-select__checkbox"
+                                    [class.assigned-select__checkbox--checked]="isContactAssigned(contact.id)"
+                                    aria-hidden="true"></span>
+                            </button>
+                            } @empty {
+                            <div class="assigned-select__empty">No contacts found</div>
+                            }
+                        </div>
                         }
                     </div>
                     @if (selectedAssignedContacts.length) {
-                        <div class="assigned-selected">
-                            @for (contact of selectedAssignedContacts; track contact.id) {
-                                <span
-                                    class="assigned-selected__avatar"
-                                    [style.background-color]="contact.color"
-                                    [title]="contact.name"
-                                >
-                                    {{ contact.initials }}
-                                </span>
-                            }
-                        </div>
+                    <div class="assigned-selected">
+                        @for (contact of selectedAssignedContacts; track contact.id) {
+                        <span class="assigned-selected__avatar" [style.background-color]="contact.color"
+                            [title]="contact.name">
+                            {{ contact.initials }}
+                        </span>
+                        }
+                    </div>
                     }
                 </div>
                 <div class="small-container-right">
                     <p class="input-headlines">Category<span class="redcross">*</span></p>
-                    <div
-                        class="category-select"
-                        [class.form-control--invalid]="isFieldInvalid('category')"
+                    <div class="category-select" [class.form-control--invalid]="isFieldInvalid('category')"
                         [class.form-control--valid]="isFieldValid('category')"
-                        (click)="keepCategoryDropdownOpen($event)"
-                    >
-                        <button
-                            class="category-select__trigger"
-                            type="button"
-                            [attr.aria-expanded]="isCategoryDropdownOpen"
-                            aria-required="true"
-                            (click)="toggleCategoryDropdown($event)"
-                        >
+                        (click)="keepCategoryDropdownOpen($event)">
+                        <button class="category-select__trigger" type="button"
+                            [attr.aria-expanded]="isCategoryDropdownOpen" aria-required="true"
+                            (click)="toggleCategoryDropdown($event)">
                             <span [class.category-select__placeholder]="!task.category">
                                 {{ task.category || 'Select task category' }}
                             </span>
@@ -184,114 +128,75 @@
                         </button>
 
                         @if (isCategoryDropdownOpen) {
-                            <div class="category-select__menu">
-                                @for (category of categories; track category) {
-                                    <button
-                                        class="category-select__option"
-                                        type="button"
-                                        (click)="selectCategory(category)"
-                                    >
-                                        {{ category }}
-                                    </button>
-                                }
-                            </div>
+                        <div class="category-select__menu">
+                            @for (category of categories; track category) {
+                            <button class="category-select__option" type="button" (click)="selectCategory(category)">
+                                {{ category }}
+                            </button>
+                            }
+                        </div>
                         }
                     </div>
                     @if (isFieldInvalid('category')) {
-                        <span class="field-error">This field is required</span>
+                    <span class="field-error">This field is required</span>
                     }
                 </div>
                 <div class="small-container-right">
                     <p class="input-headlines">Subtasks</p>
                     <div class="subtask-input-wrap">
-                        <input
-                            type="text"
-                            placeholder="Add new subtask"
-                            [value]="task.subtask"
-                            (input)="updateField('subtask', $any($event.target).value)"
-                            (keydown.enter)="addSubtask()"
-                        >
+                        <input type="text" placeholder="Add new subtask" [value]="task.subtask"
+                            (input)="updateField('subtask', $any($event.target).value)" (keydown.enter)="addSubtask()">
                         @if (task.subtask.trim()) {
-                            <div class="subtask-actions">
-                                <button
-                                    class="subtask-action"
-                                    type="button"
-                                    aria-label="Clear subtask"
-                                    (click)="clearSubtaskInput()"
-                                >
-                                    <img src="./icons/add-task/Vector.svg" alt="" aria-hidden="true">
-                                </button>
-                                <span class="subtask-action-divider" aria-hidden="true"></span>
-                                <button
-                                    class="subtask-action subtask-action--confirm"
-                                    type="button"
-                                    aria-label="Add subtask"
-                                    (click)="addSubtask()"
-                                >
-                                    <img src="./icons/add-task/check.svg" alt="" aria-hidden="true">
-                                </button>
-                            </div>
+                        <div class="subtask-actions">
+                            <button class="subtask-action" type="button" aria-label="Clear subtask"
+                                (click)="clearSubtaskInput()">
+                                <img src="./icons/add-task/Vector.svg" alt="" aria-hidden="true">
+                            </button>
+                            <span class="subtask-action-divider" aria-hidden="true"></span>
+                            <button class="subtask-action subtask-action--confirm" type="button"
+                                aria-label="Add subtask" (click)="addSubtask()">
+                                <img src="./icons/add-task/check.svg" alt="" aria-hidden="true">
+                            </button>
+                        </div>
                         }
                     </div>
                     @if (subtasks.length) {
-                        <ul class="subtask-list">
-                            @for (subtask of subtasks; track subtask; let index = $index) {
-                                <li
-                                    class="subtask-list__item"
-                                    [class.subtask-list__item--editing]="editingSubtaskIndex === index"
-                                >
-                                    @if (editingSubtaskIndex === index) {
-                                        <input
-                                            class="subtask-list__edit-input"
-                                            type="text"
-                                            [value]="editingSubtaskValue"
-                                            (input)="updateEditingSubtask($any($event.target).value)"
-                                            (keydown.enter)="saveEditedSubtask()"
-                                        >
-                                        <div class="subtask-list__edit-actions">
-                                            <button
-                                                class="subtask-list__icon-button"
-                                                type="button"
-                                                aria-label="Delete subtask"
-                                                (click)="removeSubtask(index)"
-                                            >
-                                                <img src="./icons/delete.svg" alt="" aria-hidden="true">
-                                            </button>
-                                            <span class="subtask-action-divider" aria-hidden="true"></span>
-                                            <button
-                                                class="subtask-list__icon-button subtask-list__icon-button--confirm"
-                                                type="button"
-                                                aria-label="Save subtask"
-                                                (click)="saveEditedSubtask()"
-                                            >
-                                                <img src="./icons/add-task/check.svg" alt="" aria-hidden="true">
-                                            </button>
-                                        </div>
-                                    } @else {
-                                        <span>{{ subtask }}</span>
-                                        <div class="subtask-list__actions">
-                                            <button
-                                                class="subtask-list__icon-button"
-                                                type="button"
-                                                aria-label="Edit subtask"
-                                                (click)="startEditSubtask(index)"
-                                            >
-                                                <img src="./icons/edit.svg" alt="" aria-hidden="true">
-                                            </button>
-                                            <span class="subtask-action-divider" aria-hidden="true"></span>
-                                            <button
-                                                class="subtask-list__icon-button"
-                                                type="button"
-                                                aria-label="Delete subtask"
-                                                (click)="removeSubtask(index)"
-                                            >
-                                                <img src="./icons/delete.svg" alt="" aria-hidden="true">
-                                            </button>
-                                        </div>
-                                    }
-                                </li>
+                    <ul class="subtask-list">
+                        @for (subtask of subtasks; track subtask; let index = $index) {
+                        <li class="subtask-list__item"
+                            [class.subtask-list__item--editing]="editingSubtaskIndex === index">
+                            @if (editingSubtaskIndex === index) {
+                            <input class="subtask-list__edit-input" type="text" [value]="editingSubtaskValue"
+                                (input)="updateEditingSubtask($any($event.target).value)"
+                                (keydown.enter)="saveEditedSubtask()">
+                            <div class="subtask-list__edit-actions">
+                                <button class="subtask-list__icon-button" type="button" aria-label="Delete subtask"
+                                    (click)="removeSubtask(index)">
+                                    <img src="./icons/delete.svg" alt="" aria-hidden="true">
+                                </button>
+                                <span class="subtask-action-divider" aria-hidden="true"></span>
+                                <button class="subtask-list__icon-button subtask-list__icon-button--confirm"
+                                    type="button" aria-label="Save subtask" (click)="saveEditedSubtask()">
+                                    <img src="./icons/add-task/check.svg" alt="" aria-hidden="true">
+                                </button>
+                            </div>
+                            } @else {
+                            <span>{{ subtask }}</span>
+                            <div class="subtask-list__actions">
+                                <button class="subtask-list__icon-button" type="button" aria-label="Edit subtask"
+                                    (click)="startEditSubtask(index)">
+                                    <img src="./icons/edit.svg" alt="" aria-hidden="true">
+                                </button>
+                                <span class="subtask-action-divider" aria-hidden="true"></span>
+                                <button class="subtask-list__icon-button" type="button" aria-label="Delete subtask"
+                                    (click)="removeSubtask(index)">
+                                    <img src="./icons/delete.svg" alt="" aria-hidden="true">
+                                </button>
+                            </div>
                             }
-                        </ul>
+                        </li>
+                        }
+                    </ul>
                     }
                 </div>
             </div>
@@ -318,9 +223,9 @@
     </div>
 
     @if (isTaskCreatedFeedbackVisible) {
-        <div class="task-created-feedback" role="status" aria-live="polite">
-            <span>Task added to board</span>
-            <img src="/icons/Board.svg" alt="" aria-hidden="true">
-        </div>
+    <div class="task-created-feedback" role="status" aria-live="polite">
+        <span>Task added to board</span>
+        <img src="/icons/Board.svg" alt="" aria-hidden="true">
+    </div>
     }
 </section>

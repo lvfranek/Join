@@ -335,6 +335,10 @@ h1 {
 
 .assigned-select__input {
     padding-right: 52px;
+
+    &::placeholder {
+        color: black;
+    }
 }
 
 .assigned-select__toggle {
