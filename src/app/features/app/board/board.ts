@@ -91,7 +91,6 @@ export class BoardWorkspaceView implements OnDestroy, OnInit {
   readonly editingSubtaskIndex = signal<number | null>(null);
   readonly editingSubtaskValue = signal('');
   readonly isTaskUpdatedFeedbackVisible = signal(false);
-  readonly isTaskDetailEditSubmitted = signal(false);
   readonly boardSearchQuery = signal('');
   readonly touchedTaskDetailEditFields = signal<Record<BoardEditRequiredField, boolean>>({
     title: false,
@@ -306,6 +305,10 @@ export class BoardWorkspaceView implements OnDestroy, OnInit {
     this.isTaskDetailEditSubmitted.set(true);
 
     if (!this.isEditDueDateValid()) {
+      this.markAllTaskDetailEditFieldsTouched();
+      return;
+    }
+
     this.markAllTaskDetailEditFieldsTouched();
 
     if (!this.isTaskDetailEditFormValid()) {
@@ -386,6 +389,8 @@ export class BoardWorkspaceView implements OnDestroy, OnInit {
     }
 
     return '';
+  }
+
   markTaskDetailEditTouched(field: BoardEditRequiredField): void {
     this.touchedTaskDetailEditFields.update((fields) => ({
       ...fields,

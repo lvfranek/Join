@@ -193,25 +193,18 @@
 
                 <div class="btd-edit-form__field">
                     <label class="btd-edit-form__label" for="task-due-date-edit">Due date</label>
-                    <input #dueDateInput id="task-due-date-edit" class="btd-edit-form__input" type="date"
-                        [value]="editDueDate()"
-                        [min]="minDueDate"
-                        max="9999-12-31"
-                        [class.btd-edit-form__input--invalid]="isEditDueDateInvalid()"
-                        (input)="updateEditDueDate(dueDateInput.value)"
-                        (blur)="markEditDueDateTouched()" />
-                    @if (isEditDueDateInvalid()) {
-                    <span class="btd-edit-form__field-error">{{ getEditDueDateError() }}</span>
                     <div class="btd-edit-form__date-wrap">
                         <input
                             #dueDateInput
                             id="task-due-date-edit"
                             class="btd-edit-form__input"
-                            [class.btd-edit-form__input--invalid]="isTaskDetailEditFieldInvalid('dueDate')"
+                            [class.btd-edit-form__input--invalid]="isEditDueDateInvalid()"
                             type="date"
                             [value]="editDueDate()"
-                            (input)="editDueDate.set(dueDateInput.value)"
-                            (blur)="markTaskDetailEditTouched('dueDate')"
+                            [min]="minDueDate"
+                            max="9999-12-31"
+                            (input)="updateEditDueDate(dueDateInput.value)"
+                            (blur)="markEditDueDateTouched()"
                         />
                         <button
                             class="btd-edit-form__date-button"
@@ -222,8 +215,8 @@
                             <img src="/icons/add-task/calendar.svg" alt="" aria-hidden="true" />
                         </button>
                     </div>
-                    @if (isTaskDetailEditFieldInvalid('dueDate')) {
-                    <span class="btd-edit-form__field-error">This field is required</span>
+                    @if (isEditDueDateInvalid()) {
+                    <span class="btd-edit-form__field-error">{{ getEditDueDateError() }}</span>
                     }
                 </div>
 

@@ -57,6 +57,8 @@ describe('Board', () => {
 
     expect(component.isEditDueDateInvalid()).toBe(true);
     expect(component.getEditDueDateError()).toBe('Use a 4-digit year');
+  });
+
   it('should remember the selected column status when opening add task', () => {
     component.openAddTaskDialog('awaitFeedback');
 
