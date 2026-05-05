@@ -316,4 +316,11 @@
         </div>
 
     </div>
+
+    @if (isTaskCreatedFeedbackVisible) {
+        <div class="task-created-feedback" role="status" aria-live="polite">
+            <span>Task added to board</span>
+            <img src="/icons/Board.svg" alt="" aria-hidden="true">
+        </div>
+    }
 </section>
