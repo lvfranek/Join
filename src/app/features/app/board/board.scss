@@ -194,6 +194,24 @@ h1 {
     min-height: 180px;
     border-radius: 10px;
     padding: 4px;
+    transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.board-column__tasks--drop-target {
+    border: 2px dashed #29abe2;
+    background: rgba(41, 171, 226, 0.08);
+}
+
+.board-column__tasks--empty.board-column__tasks--drop-target {
+    flex: 1 1 auto;
+    height: auto;
+    min-height: 180px;
+    padding: 16px;
+    gap: 16px;
+    border: 2px dashed #29abe2;
+    box-shadow: none;
+    background: rgba(41, 171, 226, 0.08);
+    color: #2a3647;
 }
 
 .board-column__tasks--empty {
@@ -215,6 +233,7 @@ h1 {
 }
 
 .board-task-placeholder {
+    --board-drag-tilt: 0deg;
     background: #ffffff;
     border-radius: 24px;
     box-shadow: 0px 0px 10px 3px #00000014;
@@ -227,12 +246,19 @@ h1 {
     display: flex;
     flex-direction: column;
     gap: 12px;
+    rotate: var(--board-drag-tilt);
+    transform-origin: center center;
+    will-change: rotate;
     transition: transform 120ms ease, box-shadow 120ms ease;
 
     &:hover {
         transform: translateY(-2px);
         box-shadow: 0px 6px 12px 0px #00000024;
     }
+}
+
+.board-task-placeholder.cdk-drag-preview {
+    transition: rotate 60ms linear;
 }
 
 .board-task-category {
@@ -1229,6 +1255,7 @@ h1 {
 
     .board-column {
         gap: 12px;
+        min-height: auto;
     }
 
     .board-column__tasks {
@@ -1244,6 +1271,13 @@ h1 {
         height: 48px;
         min-height: 48px;
         overflow: hidden;
+    }
+
+    .board-column__tasks--empty.board-column__tasks--drop-target {
+        flex: 1 1 auto;
+        height: auto;
+        min-height: 160px;
+        overflow: visible;
     }
 
     .board-column__header {

@@ -47,8 +47,14 @@ export class BoardWorkspaceView implements OnDestroy, OnInit {
   private readonly contactService = inject(ContactService);
   private readonly dialogAnimationDuration = 400;
   private readonly taskUpdatedFeedbackDuration = 900;
+  private readonly maxDragTiltDeg = 8;
+  private readonly dragTiltMultiplier = 0.65;
+  private readonly dragTiltSmoothing = 0.35;
+  private readonly dragPreviewSelector = '.board-task-placeholder.cdk-drag-preview';
   private autoScrollFrameId: number | null = null;
+  private activeDragPointerX: number | null = null;
   private activeDragPointerY: number | null = null;
+  private activeDragTiltDeg = 0;
   private activeDragElement: HTMLElement | null = null;
   private taskUpdatedFeedbackTimeout: ReturnType<typeof setTimeout> | null = null;
 
@@ -92,6 +98,8 @@ export class BoardWorkspaceView implements OnDestroy, OnInit {
   readonly editingSubtaskValue = signal('');
   readonly isTaskUpdatedFeedbackVisible = signal(false);
   readonly boardSearchQuery = signal('');
+  readonly isTaskDragActive = signal(false);
+  readonly activeDropListHoverId = signal<string | null>(null);
   readonly touchedTaskDetailEditFields = signal<Record<BoardEditRequiredField, boolean>>({
     title: false,
     dueDate: false,
@@ -222,6 +230,9 @@ export class BoardWorkspaceView implements OnDestroy, OnInit {
     const movedTask = event.item.data;
     const targetStatus = this.statusFromDropListId(event.container.id);
 
+    this.activeDropListHoverId.set(null);
+    this.isTaskDragActive.set(false);
+
     if (!movedTask || !targetStatus) {
       return;
     }
@@ -234,18 +245,62 @@ export class BoardWorkspaceView implements OnDestroy, OnInit {
       return;
     }
 
+    const pointerX = event.pointerPosition.x;
+    if (this.activeDragPointerX !== null) {
+      const pointerDeltaX = pointerX - this.activeDragPointerX;
+      const targetTiltDeg = this.clamp(
+        pointerDeltaX * this.dragTiltMultiplier,
+        -this.maxDragTiltDeg,
+        this.maxDragTiltDeg,
+      );
+
+      this.activeDragTiltDeg += (targetTiltDeg - this.activeDragTiltDeg) * this.dragTiltSmoothing;
+      this.applyDragTilt(this.activeDragTiltDeg);
+    }
+
+    this.activeDragPointerX = pointerX;
     this.activeDragPointerY = event.pointerPosition.y;
   }
 
   onTaskDragStarted(event: CdkDragStart<TaskRecord>): void {
     this.activeDragElement = event.source.element.nativeElement;
+    this.isTaskDragActive.set(true);
+    this.activeDropListHoverId.set(null);
+    this.activeDragPointerX = null;
+    this.activeDragTiltDeg = 0;
+    this.applyDragTilt(0);
     this.startAutoScrollLoop();
   }
 
   onTaskDragEnded(_event: CdkDragEnd<TaskRecord>): void {
     this.stopAutoScrollLoop();
+    this.applyDragTilt(0);
+    this.activeDropListHoverId.set(null);
+    this.isTaskDragActive.set(false);
+    this.activeDragPointerX = null;
     this.activeDragPointerY = null;
+    this.activeDragTiltDeg = 0;
     this.activeDragElement = null;
+  }
+
+  onDropListEntered(dropListId: string): void {
+    if (!this.isTaskDragActive()) {
+      return;
+    }
+
+    this.activeDropListHoverId.set(dropListId);
+  }
+
+  onDropListExited(dropListId: string): void {
+    if (this.activeDropListHoverId() !== dropListId) {
+      return;
+    }
+
+    this.activeDropListHoverId.set(null);
+  }
+
+  isDropListHighlighted(status: TaskStatus): boolean {
+    return this.isTaskDragActive() && this.activeDropListHoverId() === this.dropListId(status);
   }
 
   readonly isMobileBoardView = signal(this.getWindowWidth() <= 1024);
@@ -264,6 +319,25 @@ export class BoardWorkspaceView implements OnDestroy, OnInit {
 
   private getWindowWidth(): number {
     return typeof window === 'undefined' ? 1200 : window.innerWidth;
+  }
+
+  private applyDragTilt(tiltDeg: number): void {
+    if (typeof document === 'undefined') {
+      return;
+    }
+
+    const tiltValue = `${tiltDeg.toFixed(2)}deg`;
+
+    this.activeDragElement?.style.setProperty('--board-drag-tilt', tiltValue);
+    this.getActiveDragPreviewElement()?.style.setProperty('--board-drag-tilt', tiltValue);
+  }
+
+  private getActiveDragPreviewElement(): HTMLElement | null {
+    return document.querySelector<HTMLElement>(this.dragPreviewSelector);
+  }
+
+  private clamp(value: number, min: number, max: number): number {
+    return Math.min(max, Math.max(min, value));
   }
 
   beginTaskDetailEdit(): void {
