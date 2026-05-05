@@ -254,20 +254,36 @@ h1 {
 .date-input-wrap {
     position: relative;
 
-    input {
-        padding-right: 48px;
+    input[type='date'] {
+        padding-right: 52px;
+        cursor: pointer;
+
+        &::-webkit-calendar-picker-indicator {
+            display: none;
+            -webkit-appearance: none;
+        }
     }
+}
+
+.date-input-button {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    transform: translateY(-50%);
 }
 
 .date-input-icon {
     display: block;
-    position: absolute;
-    right: 16px;
-    top: 50%;
-    transform: translateY(-50%);
     width: 18px;
     height: 18px;
-    pointer-events: none;
 }
 
 .assigned-select {
@@ -820,6 +836,11 @@ select:hover {
         min-height: 0;
         overflow-y: auto;
         overflow-x: hidden;
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
     }
 
     .middleline {
@@ -863,8 +884,8 @@ select:hover {
     }
 
     .date-input-wrap {
-        input {
-            padding-right: 48px;
+        input[type='date'] {
+            padding-right: 52px;
         }
     }
 

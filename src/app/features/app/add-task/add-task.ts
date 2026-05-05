@@ -68,6 +68,13 @@ export class AddTask implements OnInit {
     this.task[field] = value;
   }
 
+  openDueDatePicker(input: HTMLInputElement): void {
+    const dateInput = input as HTMLInputElement & { showPicker?: () => void };
+
+    dateInput.focus();
+    dateInput.showPicker?.();
+  }
+
   markTouched(field: RequiredField): void {
     this.touchedFields[field] = true;
   }
