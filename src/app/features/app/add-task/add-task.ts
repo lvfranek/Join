@@ -27,6 +27,7 @@ export class AddTask implements OnInit {
   @Output() readonly taskCreated = new EventEmitter<void>();
 
   readonly categories = ['Technical Task', 'User Story'];
+  readonly minDueDate = this.getTodayIsoDate();
 
   task = {
     title: '',
@@ -85,6 +86,28 @@ export class AddTask implements OnInit {
 
   isFieldValid(field: RequiredField): boolean {
     return this.shouldShowFeedback(field) && this.hasRequiredValue(field);
+  }
+
+  getFieldError(field: RequiredField): string {
+    if (!this.shouldShowFeedback(field)) {
+      return '';
+    }
+
+    if (!this.task[field].trim()) {
+      return 'This field is required';
+    }
+
+    if (field === 'dueDate') {
+      if (!this.hasFourDigitYear(this.task.dueDate)) {
+        return 'Use a 4-digit year';
+      }
+
+      if (this.isDateInPast(this.task.dueDate)) {
+        return 'Date cannot be in the past';
+      }
+    }
+
+    return '';
   }
 
   createTask(): void {
@@ -262,6 +285,10 @@ export class AddTask implements OnInit {
   }
 
   private hasRequiredValue(field: RequiredField): boolean {
+    if (field === 'dueDate') {
+      return this.isDueDateValid(this.task.dueDate);
+    }
+
     return this.task[field].trim().length > 0;
   }
 
@@ -273,6 +300,27 @@ export class AddTask implements OnInit {
     this.touchedFields.title = true;
     this.touchedFields.dueDate = true;
     this.touchedFields.category = true;
+  }
+
+  private isDueDateValid(value: string): boolean {
+    return value.trim().length > 0 && this.hasFourDigitYear(value) && !this.isDateInPast(value);
+  }
+
+  private hasFourDigitYear(value: string): boolean {
+    return /^\d{4}-\d{2}-\d{2}$/.test(value.trim());
+  }
+
+  private isDateInPast(value: string): boolean {
+    return value.trim() < this.minDueDate;
+  }
+
+  private getTodayIsoDate(): string {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
   }
 
   private toAssignedContact(record: ContactRecord): AssignedContact {

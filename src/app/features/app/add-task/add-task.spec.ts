@@ -30,12 +30,28 @@ describe('AddTask', () => {
 
   it('should mark required fields valid after they are filled', () => {
     component.updateField('title', 'Test task');
-    component.updateField('dueDate', '04/05/2026');
+    component.updateField('dueDate', component.minDueDate);
     component.updateField('category', 'Technical Task');
     component.createTask();
 
     expect(component.isFieldValid('title')).toBe(true);
     expect(component.isFieldValid('dueDate')).toBe(true);
     expect(component.isFieldValid('category')).toBe(true);
+  });
+
+  it('should reject past due dates', () => {
+    component.updateField('dueDate', '2000-01-01');
+    component.markTouched('dueDate');
+
+    expect(component.isFieldInvalid('dueDate')).toBe(true);
+    expect(component.getFieldError('dueDate')).toBe('Date cannot be in the past');
+  });
+
+  it('should reject due dates without a 4-digit year', () => {
+    component.updateField('dueDate', '10000-01-01');
+    component.markTouched('dueDate');
+
+    expect(component.isFieldInvalid('dueDate')).toBe(true);
+    expect(component.getFieldError('dueDate')).toBe('Use a 4-digit year');
   });
 });

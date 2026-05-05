@@ -39,6 +39,8 @@
                             type="date"
                             placeholder="dd/mm/yyyy"
                             [value]="task.dueDate"
+                            [min]="minDueDate"
+                            max="9999-12-31"
                             [class.form-control--invalid]="isFieldInvalid('dueDate')"
                             [class.form-control--valid]="isFieldValid('dueDate')"
                             (input)="updateField('dueDate', $any($event.target).value)"
@@ -55,7 +57,7 @@
                         </button>
                     </div>
                     @if (isFieldInvalid('dueDate')) {
-                        <span class="field-error">This field is required</span>
+                        <span class="field-error">{{ getFieldError('dueDate') }}</span>
                     }
                 </div>
             </div>

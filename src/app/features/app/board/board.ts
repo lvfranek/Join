@@ -73,6 +73,9 @@ export class BoardWorkspaceView {
   readonly editPriority = signal<'low' | 'medium' | 'urgent'>('medium');
   readonly editAssignedContactIds = signal<string[]>([]);
   readonly editSubtasks = signal<string[]>([]);
+  readonly isTaskDetailEditSubmitted = signal(false);
+  readonly isEditDueDateTouched = signal(false);
+  readonly minDueDate = this.getTodayIsoDate();
 
   readonly assignableContacts: AssignableContact[] = [
     { id: 'em', name: 'Emmanuel Mauer', initials: 'EM' },
@@ -189,12 +192,20 @@ export class BoardWorkspaceView {
     this.editPriority.set(task.priority);
     this.editAssignedContactIds.set(task.assignees.map((assignee) => assignee.id));
     this.editSubtasks.set(this.taskDetailSubtasks().map((subtask) => subtask.title));
+    this.isTaskDetailEditSubmitted.set(false);
+    this.isEditDueDateTouched.set(false);
     this.isTaskDetailEditActive.set(true);
   }
 
   saveTaskDetailEdits(): void {
     const currentTask = this.selectedTask();
     if (!currentTask) {
+      return;
+    }
+
+    this.isTaskDetailEditSubmitted.set(true);
+
+    if (!this.isEditDueDateValid()) {
       return;
     }
 
@@ -218,11 +229,43 @@ export class BoardWorkspaceView {
       );
     }
 
+    this.isTaskDetailEditSubmitted.set(false);
+    this.isEditDueDateTouched.set(false);
     this.isTaskDetailEditActive.set(false);
   }
 
   setEditPriority(priority: TaskRecord['priority']): void {
     this.editPriority.set(priority);
+  }
+
+  updateEditDueDate(value: string): void {
+    this.editDueDate.set(value);
+  }
+
+  markEditDueDateTouched(): void {
+    this.isEditDueDateTouched.set(true);
+  }
+
+  isEditDueDateInvalid(): boolean {
+    return (this.isTaskDetailEditSubmitted() || this.isEditDueDateTouched()) && !this.isEditDueDateValid();
+  }
+
+  getEditDueDateError(): string {
+    const value = this.editDueDate().trim();
+
+    if (!value) {
+      return 'This field is required';
+    }
+
+    if (!this.hasFourDigitYear(value)) {
+      return 'Use a 4-digit year';
+    }
+
+    if (this.isDateInPast(value)) {
+      return 'Date cannot be in the past';
+    }
+
+    return '';
   }
 
   addAssignedContact(contactId: string): void {
@@ -297,6 +340,8 @@ export class BoardWorkspaceView {
     this.isTaskDetailPanelOpen.set(false);
     this.isTaskDetailPanelClosing.set(false);
     this.isTaskDetailEditActive.set(false);
+    this.isTaskDetailEditSubmitted.set(false);
+    this.isEditDueDateTouched.set(false);
     this.selectedTask.set(null);
     this.taskDetailSubtasks.set([]);
   }
@@ -411,5 +456,27 @@ export class BoardWorkspaceView {
     if (scrollDelta !== 0) {
       window.scrollBy({ top: scrollDelta, left: 0, behavior: 'auto' });
     }
+  }
+
+  private isEditDueDateValid(): boolean {
+    const value = this.editDueDate().trim();
+    return value.length > 0 && this.hasFourDigitYear(value) && !this.isDateInPast(value);
+  }
+
+  private hasFourDigitYear(value: string): boolean {
+    return /^\d{4}-\d{2}-\d{2}$/.test(value.trim());
+  }
+
+  private isDateInPast(value: string): boolean {
+    return value.trim() < this.minDueDate;
+  }
+
+  private getTodayIsoDate(): string {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
   }
 }
