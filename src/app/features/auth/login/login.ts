@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  afterNextRender,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
@@ -14,14 +22,26 @@ import { SupabaseService } from '../../../core/services/supabase.service';
 })
 export class Login {
   private static readonly GREETING_BREAKPOINT = 1180;
+  private static readonly INTRO_HOLD_MS = 1400;
+  private static readonly INTRO_SLIDE_DURATION_MS = 820;
+  private static readonly INTRO_FADE_BUFFER_MS = 260;
 
   private readonly auth = inject(AuthService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly supabase = inject(SupabaseService);
+  private introStartTimeoutId: number | null = null;
+  private introTimeoutId: number | null = null;
+
+  private readonly brandLogo = viewChild<ElementRef<HTMLImageElement>>('brandLogo');
   protected readonly isSubmitting = signal(false);
   protected readonly submitError = signal('');
   protected readonly submitSuccess = signal('');
+  protected readonly showIntroOverlay = signal(true);
+  protected readonly introAnimationActive = signal(false);
+  protected readonly introShiftX = signal(0);
+  protected readonly introShiftY = signal(0);
+  protected readonly introLogoWidth = signal(100);
   protected readonly loginForm = new FormGroup({
     email: new FormControl('', {
       nonNullable: true,
@@ -44,6 +64,29 @@ export class Login {
         replaceUrl: true,
       });
     }
+
+    afterNextRender(() => {
+      this.startIntroAnimation();
+    });
+  }
+
+  protected finishIntroAnimation(): void {
+    if (!this.showIntroOverlay()) {
+      return;
+    }
+
+    if (this.introStartTimeoutId !== null) {
+      window.clearTimeout(this.introStartTimeoutId);
+      this.introStartTimeoutId = null;
+    }
+
+    if (this.introTimeoutId !== null) {
+      window.clearTimeout(this.introTimeoutId);
+      this.introTimeoutId = null;
+    }
+
+    this.showIntroOverlay.set(false);
+    this.introAnimationActive.set(false);
   }
 
   protected hasError(controlName: 'email' | 'password'): boolean {
@@ -81,6 +124,48 @@ export class Login {
     void this.router.navigateByUrl('/summary');
     this.auth.setGuestAuthenticated();
     void this.router.navigateByUrl(this.resolvePostLoginRoute());
+  }
+
+  private startIntroAnimation(): void {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      this.showIntroOverlay.set(false);
+      return;
+    }
+
+    const brandLogo = this.brandLogo()?.nativeElement;
+    if (!brandLogo) {
+      this.showIntroOverlay.set(false);
+      return;
+    }
+
+    this.updateIntroTargetMetrics(brandLogo);
+
+    this.introStartTimeoutId = window.setTimeout(() => {
+      this.updateIntroTargetMetrics(brandLogo);
+      this.introAnimationActive.set(true);
+      this.introStartTimeoutId = null;
+    }, Login.INTRO_HOLD_MS);
+
+    this.introTimeoutId = window.setTimeout(
+      () => {
+        this.finishIntroAnimation();
+      },
+      Login.INTRO_HOLD_MS + Login.INTRO_SLIDE_DURATION_MS + Login.INTRO_FADE_BUFFER_MS,
+    );
+  }
+
+  private updateIntroTargetMetrics(brandLogo: HTMLImageElement): void {
+    const rect = brandLogo.getBoundingClientRect();
+    if (!rect.width || !rect.height) {
+      return;
+    }
+
+    const viewportCenterX = window.innerWidth / 2;
+    const viewportCenterY = window.innerHeight / 2;
+
+    this.introLogoWidth.set(rect.width);
+    this.introShiftX.set(rect.left + rect.width / 2 - viewportCenterX);
+    this.introShiftY.set(rect.top + rect.height / 2 - viewportCenterY);
   }
 
   private resolvePostLoginRoute(): string {

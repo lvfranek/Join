@@ -1,7 +1,31 @@
+@if (showIntroOverlay()) {
+  <div class="login-intro" [class.login-intro--active]="introAnimationActive()" aria-hidden="true">
+    <div class="login-intro__backdrop"></div>
+    <div
+      class="login-intro__logo-shell"
+      [style.--intro-logo-shift-x.px]="introShiftX()"
+      [style.--intro-logo-shift-y.px]="introShiftY()"
+    >
+      <img
+        class="login-intro__logo"
+        src="/logo/Capa1.svg"
+        alt=""
+        [style.inline-size.px]="introLogoWidth()"
+      />
+    </div>
+  </div>
+}
+
 <section class="login-page" aria-labelledby="login-title">
   <header class="login-page__header">
     <a class="brand" routerLink="/" aria-label="Join start page">
-      <img src="/logo/Capa1.svg" alt="Join" />
+      <img
+        #brandLogo
+        class="brand__image"
+        [class.brand__image--hidden]="showIntroOverlay()"
+        src="/logo/Capa1.svg"
+        alt="Join"
+      />
       <span class="sr-only">Go to home page</span>
     </a>
 
