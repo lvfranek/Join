@@ -157,10 +157,23 @@
             </div>
             } @else {
             <div class="btd-edit-form">
+                <div class="btd-edit-form__scroll-content">
                 <div class="btd-edit-form__field">
                     <label class="btd-edit-form__label" for="task-title-edit">Title</label>
-                    <input #titleInput id="task-title-edit" class="btd-edit-form__input" type="text"
-                        [value]="editTitle()" (input)="editTitle.set(titleInput.value)" placeholder="Enter a title" />
+                    <input
+                        #titleInput
+                        id="task-title-edit"
+                        class="btd-edit-form__input"
+                        [class.btd-edit-form__input--invalid]="isTaskDetailEditFieldInvalid('title')"
+                        type="text"
+                        [value]="editTitle()"
+                        (input)="editTitle.set(titleInput.value)"
+                        (blur)="markTaskDetailEditTouched('title')"
+                        placeholder="Enter a title"
+                    />
+                    @if (isTaskDetailEditFieldInvalid('title')) {
+                    <span class="btd-edit-form__field-error">This field is required</span>
+                    }
                 </div>
 
                 <div class="btd-edit-form__field">
@@ -172,8 +185,29 @@
 
                 <div class="btd-edit-form__field">
                     <label class="btd-edit-form__label" for="task-due-date-edit">Due date</label>
-                    <input #dueDateInput id="task-due-date-edit" class="btd-edit-form__input" type="date"
-                        [value]="editDueDate()" (input)="editDueDate.set(dueDateInput.value)" />
+                    <div class="btd-edit-form__date-wrap">
+                        <input
+                            #dueDateInput
+                            id="task-due-date-edit"
+                            class="btd-edit-form__input"
+                            [class.btd-edit-form__input--invalid]="isTaskDetailEditFieldInvalid('dueDate')"
+                            type="date"
+                            [value]="editDueDate()"
+                            (input)="editDueDate.set(dueDateInput.value)"
+                            (blur)="markTaskDetailEditTouched('dueDate')"
+                        />
+                        <button
+                            class="btd-edit-form__date-button"
+                            type="button"
+                            aria-label="Open due date calendar"
+                            (click)="openEditDueDatePicker(dueDateInput)"
+                        >
+                            <img src="/icons/add-task/calendar.svg" alt="" aria-hidden="true" />
+                        </button>
+                    </div>
+                    @if (isTaskDetailEditFieldInvalid('dueDate')) {
+                    <span class="btd-edit-form__field-error">This field is required</span>
+                    }
                 </div>
 
                 <div class="btd-edit-form__field">
@@ -202,26 +236,94 @@
 
                 <div class="btd-edit-form__field">
                     <label class="btd-edit-form__label" for="task-assigned-to-edit">Assigned to</label>
-                    <select #assigneeSelect id="task-assigned-to-edit" class="btd-edit-form__select"
-                        (change)="addAssignedContact(assigneeSelect.value); assigneeSelect.selectedIndex = 0">
-                        <option value="">Select contacts to assign</option>
-                        @for (contact of assignableContacts; track contact.id) {
-                        <option [value]="contact.id">{{ contact.name }}</option>
+                    <div class="btd-edit-form__assigned-select" (click)="keepEditAssignedDropdownOpen($event)">
+                        <div class="btd-edit-form__assigned-input-wrap">
+                            <input
+                                id="task-assigned-to-edit"
+                                class="btd-edit-form__input btd-edit-form__assigned-input"
+                                type="text"
+                                placeholder="Select contacts to assign"
+                                [value]="editAssignedSearch()"
+                                (input)="updateEditAssignedSearch($any($event.target).value)"
+                                (focus)="openEditAssignedDropdown()"
+                            />
+                            <button
+                                class="btd-edit-form__assigned-toggle"
+                                type="button"
+                                aria-label="Toggle assigned contacts"
+                                [attr.aria-expanded]="isEditAssignedDropdownOpen()"
+                                (click)="toggleEditAssignedDropdown($event)"
+                            ></button>
+                        </div>
+
+                        @if (isEditAssignedDropdownOpen()) {
+                        <div class="btd-edit-form__assigned-menu">
+                            @for (contact of filteredAssignableContacts(); track contact.id) {
+                            <button
+                                class="btd-edit-form__assigned-option"
+                                [class.btd-edit-form__assigned-option--selected]="isEditContactAssigned(contact.id)"
+                                type="button"
+                                (click)="toggleEditAssignedContact(contact.id)"
+                            >
+                                <span
+                                    class="btd-assignee-avatar"
+                                    [style.background-color]="contact.color"
+                                >{{ contact.initials }}</span>
+                                <span class="btd-edit-form__assigned-name">{{ contact.name }}</span>
+                                <span
+                                    class="btd-edit-form__assigned-checkbox"
+                                    [class.btd-edit-form__assigned-checkbox--checked]="isEditContactAssigned(contact.id)"
+                                    aria-hidden="true"
+                                ></span>
+                            </button>
+                            } @empty {
+                            <div class="btd-edit-form__assigned-empty">No contacts found</div>
+                            }
+                        </div>
                         }
-                    </select>
+                    </div>
 
                     <div class="btd-edit-form__assignees">
                         @for (contact of selectedAssignedContacts(); track contact.id) {
-                        <span class="btd-assignee-avatar">{{ contact.initials }}</span>
+                        <span class="btd-assignee-avatar" [style.background-color]="contact.color">{{ contact.initials }}</span>
                         }
                     </div>
                 </div>
 
                 <div class="btd-edit-form__field">
                     <label class="btd-edit-form__label" for="task-subtask-edit">Subtasks</label>
-                    <input #subtaskInput id="task-subtask-edit" class="btd-edit-form__input" type="text"
-                        placeholder="Add new subtask"
-                        (keydown.enter)="addEditSubtask(subtaskInput.value); subtaskInput.value = ''; $event.preventDefault()" />
+                    <div class="btd-edit-form__subtask-input-wrap">
+                        <input
+                            id="task-subtask-edit"
+                            class="btd-edit-form__input"
+                            type="text"
+                            placeholder="Add new subtask"
+                            [value]="editSubtaskDraft()"
+                            (input)="editSubtaskDraft.set($any($event.target).value)"
+                            (keydown.enter)="addEditSubtask(editSubtaskDraft()); $event.preventDefault()"
+                        />
+                        @if (editSubtaskDraft().trim()) {
+                        <div class="btd-edit-form__subtask-input-actions">
+                            <button
+                                class="btd-edit-form__subtask-action-btn"
+                                type="button"
+                                aria-label="Clear subtask"
+                                (click)="clearEditSubtaskDraft()"
+                            >
+                                <img src="./icons/add-task/Vector.svg" alt="" aria-hidden="true" />
+                            </button>
+                            <div class="btd-edit-form__subtask-action-divider" aria-hidden="true"></div>
+                            <button
+                                class="btd-edit-form__subtask-action-btn btd-edit-form__subtask-action-btn--confirm"
+                                type="button"
+                                aria-label="Add subtask"
+                                (click)="addEditSubtask(editSubtaskDraft())"
+                            >
+                                <img src="./icons/add-task/check.svg" alt="" aria-hidden="true" />
+                            </button>
+                        </div>
+                        }
+                    </div>
 
                     <ul class="btd-edit-form__subtask-list">
                         @for (subtask of editSubtasks(); track $index) {
@@ -273,6 +375,7 @@
                         }
                     </ul>
                 </div>
+                </div>
 
                 <div class="btd-edit-form__submit-row">
                     <button class="btd-edit-form__save-btn" type="button" (click)="saveTaskDetailEdits()">
@@ -280,6 +383,13 @@
                         <img src="./icons/add-task/check.svg" alt="Check" />
                     </button>
                 </div>
+
+                @if (isTaskUpdatedFeedbackVisible()) {
+                <div class="btd-edit-form__feedback" role="status" aria-live="polite">
+                    <span>Task updated</span>
+                    <img src="/icons/Board.svg" alt="" aria-hidden="true" />
+                </div>
+                }
             </div>
             }
         </div>

@@ -357,8 +357,13 @@ h1 {
     flex-direction: column;
     height: 100%;
     overflow-y: auto;
+    scrollbar-width: none;
     padding: 48px 40px;
     gap: 24px;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
 }
 
 .btd-panel__close-btn {
@@ -550,7 +555,24 @@ h1 {
     flex-direction: column;
     gap: 16px;
     height: 100%;
+    min-height: 0;
+    overflow: hidden;
     padding-top: 10px;
+}
+
+.btd-edit-form__scroll-content {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: 16px;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 4px;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
 }
 
 .btd-edit-form__field {
@@ -590,9 +612,57 @@ h1 {
     }
 }
 
+.btd-edit-form__input--invalid,
+.btd-edit-form__input--invalid:focus {
+    border-color: #ff8190;
+    box-shadow: 0 0 0 2px rgba(255, 129, 144, 0.16);
+}
+
+.btd-edit-form__field-error {
+    display: block;
+    margin-top: -2px;
+    color: #ff5b6b;
+    font-size: 13px;
+    line-height: 1.2;
+}
+
 .btd-edit-form__textarea {
     min-height: 90px;
     resize: vertical;
+}
+
+.btd-edit-form__date-wrap {
+    position: relative;
+
+    input[type='date'] {
+        padding-right: 52px;
+        cursor: pointer;
+
+        &::-webkit-calendar-picker-indicator {
+            display: none;
+            -webkit-appearance: none;
+        }
+    }
+}
+
+.btd-edit-form__date-button {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    transform: translateY(-50%);
+
+    img {
+        width: 18px;
+        height: 18px;
+    }
 }
 
 .btd-edit-form__priority-row {
@@ -660,6 +730,154 @@ h1 {
     gap: 8px;
     overflow-x: auto;
     padding: 2px 0;
+}
+
+.btd-edit-form__assigned-select {
+    position: relative;
+}
+
+.btd-edit-form__assigned-input-wrap {
+    position: relative;
+}
+
+.btd-edit-form__assigned-input {
+    padding-right: 48px;
+
+    &::placeholder {
+        color: #000000;
+    }
+}
+
+.btd-edit-form__assigned-toggle {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    transform: translateY(-50%);
+
+    &::before {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 0;
+        height: 0;
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-top: 6px solid #2a3647;
+        transform: translate(-50%, -35%);
+    }
+}
+
+.btd-edit-form__assigned-toggle[aria-expanded='true']::before {
+    border-top: 0;
+    border-bottom: 6px solid #2a3647;
+    transform: translate(-50%, -45%);
+}
+
+.btd-edit-form__assigned-menu {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(100% + 4px);
+    z-index: 4;
+    max-height: 220px;
+    overflow-y: auto;
+    border-radius: 10px;
+    background: #ffffff;
+    box-shadow: 0 0 14px 0 rgba(0, 0, 0, 0.12);
+}
+
+.btd-edit-form__assigned-option {
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr) 24px;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 56px;
+    padding: 8px 14px;
+    border: 0;
+    background: transparent;
+    color: #000000;
+    cursor: pointer;
+    text-align: left;
+
+    &:hover {
+        background: #eeeeee;
+    }
+}
+
+.btd-edit-form__assigned-option--selected {
+    background: #2a3647;
+    color: #ffffff;
+
+    &:hover {
+        background: #091931;
+    }
+
+    .btd-edit-form__assigned-checkbox {
+        border-color: #ffffff;
+    }
+
+    .btd-edit-form__assigned-checkbox--checked::after {
+        border-color: #ffffff;
+    }
+}
+
+.btd-edit-form__assigned-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.btd-edit-form__assigned-checkbox {
+    position: relative;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #2a3647;
+    border-radius: 4px;
+    background: transparent;
+}
+
+.btd-edit-form__assigned-checkbox--checked::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 0;
+    width: 5px;
+    height: 10px;
+    border: solid #2a3647;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.btd-edit-form__assigned-empty {
+    padding: 14px;
+    color: #a8a8a8;
+}
+
+.btd-edit-form__subtask-input-wrap {
+    position: relative;
+}
+
+.btd-edit-form__subtask-input-wrap input {
+    padding-right: 82px;
+}
+
+.btd-edit-form__subtask-input-actions {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transform: translateY(-50%);
 }
 
 .btd-edit-form__subtask-list {
@@ -734,9 +952,16 @@ h1 {
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    border-radius: 50%;
+
+    &:hover {
+        background: #eeeeee;
+    }
 
     img {
         display: block;
+        width: 14px;
+        height: 14px;
     }
 }
 
@@ -751,9 +976,11 @@ h1 {
 }
 
 .btd-edit-form__submit-row {
-    margin-top: auto;
+    flex: 0 0 auto;
+    margin-top: 0;
     display: flex;
     justify-content: flex-end;
+    padding-top: 4px;
 }
 
 .btd-edit-form__save-btn {
@@ -778,6 +1005,44 @@ h1 {
 
     &:active {
         background: #000000;
+    }
+}
+
+.btd-edit-form__feedback {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    z-index: 1002;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    min-width: 220px;
+    padding: 20px 25px;
+    border-radius: 20px;
+    background: #2a3647;
+    color: #ffffff;
+    font-size: 18px;
+    line-height: 1.2;
+    box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.15);
+    transform: translate(-50%, -50%);
+    animation: btd-edit-feedback-in 160ms ease-out;
+
+    img {
+        width: 24px;
+        height: 24px;
+        filter: brightness(0) invert(1);
+    }
+}
+
+@keyframes btd-edit-feedback-in {
+    from {
+        opacity: 0;
+        transform: translate(-50%, calc(-50% + 24px));
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
     }
 }
 

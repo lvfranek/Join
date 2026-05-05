@@ -38,6 +38,7 @@ export interface TaskUpdate {
   description?: string;
   dueDate?: string;
   priority?: TaskPriority;
+  assignees?: TaskAssignee[];
   subtasks?: string[];
 }
 
