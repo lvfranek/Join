@@ -42,7 +42,7 @@ describe('AddTask', () => {
 
   it('should mark required fields valid after they are filled', () => {
     component.updateField('title', 'Test task');
-    component.updateField('dueDate', '04/05/2026');
+    component.updateField('dueDate', component.minDueDate);
     component.updateField('category', 'Technical Task');
     component.createTask();
 

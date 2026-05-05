@@ -25,6 +25,13 @@
                 <div class="small-container-left">
                     <p class="input-headlines">Due date<span class="redcross">*</span></p>
                     <div class="date-input-wrap">
+                        <input
+                            #dueDateInput
+                            type="date"
+                            placeholder="dd/mm/yyyy"
+                            [value]="task.dueDate"
+                            [min]="minDueDate"
+                            max="9999-12-31"
                         <input class="input-date-placeholder" #dueDateInput type="date" placeholder="dd/mm/yyyy" [value]="task.dueDate"
                             [class.form-control--invalid]="isFieldInvalid('dueDate')"
                             [class.form-control--valid]="isFieldValid('dueDate')"
@@ -36,6 +43,7 @@
                         </button>
                     </div>
                     @if (isFieldInvalid('dueDate')) {
+                        <span class="field-error">{{ getFieldError('dueDate') }}</span>
                     <span class="field-error">This field is required</span>
                     }
                 </div>

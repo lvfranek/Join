@@ -84,6 +84,9 @@ export class BoardWorkspaceView implements OnDestroy, OnInit {
   readonly editAssignedSearch = signal('');
   readonly isEditAssignedDropdownOpen = signal(false);
   readonly editSubtasks = signal<string[]>([]);
+  readonly isTaskDetailEditSubmitted = signal(false);
+  readonly isEditDueDateTouched = signal(false);
+  readonly minDueDate = this.getTodayIsoDate();
   readonly editSubtaskDraft = signal('');
   readonly editingSubtaskIndex = signal<number | null>(null);
   readonly editingSubtaskValue = signal('');
@@ -279,6 +282,8 @@ export class BoardWorkspaceView implements OnDestroy, OnInit {
     this.editAssignedSearch.set('');
     this.isEditAssignedDropdownOpen.set(false);
     this.editSubtasks.set(this.taskDetailSubtasks().map((subtask) => subtask.title));
+    this.isTaskDetailEditSubmitted.set(false);
+    this.isEditDueDateTouched.set(false);
     this.editSubtaskDraft.set('');
     this.editingSubtaskIndex.set(null);
     this.editingSubtaskValue.set('');
@@ -299,6 +304,8 @@ export class BoardWorkspaceView implements OnDestroy, OnInit {
     }
 
     this.isTaskDetailEditSubmitted.set(true);
+
+    if (!this.isEditDueDateValid()) {
     this.markAllTaskDetailEditFieldsTouched();
 
     if (!this.isTaskDetailEditFormValid()) {
@@ -339,6 +346,9 @@ export class BoardWorkspaceView implements OnDestroy, OnInit {
       );
     }
 
+    this.isTaskDetailEditSubmitted.set(false);
+    this.isEditDueDateTouched.set(false);
+    this.isTaskDetailEditActive.set(false);
     this.editingSubtaskIndex.set(null);
     this.editingSubtaskValue.set('');
     this.showTaskUpdatedFeedback();
@@ -348,6 +358,34 @@ export class BoardWorkspaceView implements OnDestroy, OnInit {
     this.editPriority.set(priority);
   }
 
+  updateEditDueDate(value: string): void {
+    this.editDueDate.set(value);
+  }
+
+  markEditDueDateTouched(): void {
+    this.isEditDueDateTouched.set(true);
+  }
+
+  isEditDueDateInvalid(): boolean {
+    return (this.isTaskDetailEditSubmitted() || this.isEditDueDateTouched()) && !this.isEditDueDateValid();
+  }
+
+  getEditDueDateError(): string {
+    const value = this.editDueDate().trim();
+
+    if (!value) {
+      return 'This field is required';
+    }
+
+    if (!this.hasFourDigitYear(value)) {
+      return 'Use a 4-digit year';
+    }
+
+    if (this.isDateInPast(value)) {
+      return 'Date cannot be in the past';
+    }
+
+    return '';
   markTaskDetailEditTouched(field: BoardEditRequiredField): void {
     this.touchedTaskDetailEditFields.update((fields) => ({
       ...fields,
@@ -542,6 +580,8 @@ export class BoardWorkspaceView implements OnDestroy, OnInit {
     this.isTaskDetailPanelOpen.set(false);
     this.isTaskDetailPanelClosing.set(false);
     this.isTaskDetailEditActive.set(false);
+    this.isTaskDetailEditSubmitted.set(false);
+    this.isEditDueDateTouched.set(false);
     this.isEditAssignedDropdownOpen.set(false);
     this.selectedTask.set(null);
     this.taskDetailSubtasks.set([]);
@@ -785,5 +825,27 @@ export class BoardWorkspaceView implements OnDestroy, OnInit {
     if (scrollDelta !== 0) {
       window.scrollBy({ top: scrollDelta, left: 0, behavior: 'auto' });
     }
+  }
+
+  private isEditDueDateValid(): boolean {
+    const value = this.editDueDate().trim();
+    return value.length > 0 && this.hasFourDigitYear(value) && !this.isDateInPast(value);
+  }
+
+  private hasFourDigitYear(value: string): boolean {
+    return /^\d{4}-\d{2}-\d{2}$/.test(value.trim());
+  }
+
+  private isDateInPast(value: string): boolean {
+    return value.trim() < this.minDueDate;
+  }
+
+  private getTodayIsoDate(): string {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
   }
 }
