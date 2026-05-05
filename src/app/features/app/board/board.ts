@@ -68,6 +68,7 @@ export class BoardWorkspaceView implements OnDestroy, OnInit {
   ];
 
   readonly isAddTaskDialogOpen = signal(false);
+  readonly addTaskStatus = signal<TaskStatus>('todo');
   readonly isTaskDetailPanelOpen = signal(false);
   readonly isTaskDetailPanelClosing = signal(false);
   readonly isTaskDetailEditActive = signal(false);
@@ -189,8 +190,9 @@ export class BoardWorkspaceView implements OnDestroy, OnInit {
     return (this.getCompletedSubtaskCount(task) / task.subtasks.length) * 100;
   }
 
-  openAddTaskDialog(): void {
+  openAddTaskDialog(status: TaskStatus = 'todo'): void {
     this.resetTaskDetailPanelState();
+    this.addTaskStatus.set(status);
     this.isAddTaskDialogOpen.set(true);
   }
 
@@ -495,6 +497,21 @@ export class BoardWorkspaceView implements OnDestroy, OnInit {
       ...state,
       [task.id]: completionState,
     }));
+  }
+
+  deleteSelectedTask(): void {
+    const task = this.selectedTask();
+
+    if (!task) {
+      return;
+    }
+
+    this.taskService.deleteTask(task.id);
+    this.subtaskCompletionByTaskId.update((state) => {
+      const { [task.id]: _deletedTaskState, ...remainingState } = state;
+      return remainingState;
+    });
+    this.closeTaskDetailPanel();
   }
 
   closeTaskDetailPanel(): void {
