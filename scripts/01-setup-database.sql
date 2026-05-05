@@ -13,13 +13,22 @@ create table if not exists public.tasks (
   id uuid primary key default gen_random_uuid(),
   title text not null,
   description text,
-  status text default 'todo', -- 'todo', 'in-progress', 'done'
+  status text default 'todo', -- 'todo', 'in-progress', 'await-feedback', 'done'
   priority text default 'medium', -- 'low', 'medium', 'high'
+  due_date date,
+  category text default 'Technical Task',
+  assignees jsonb default '[]'::jsonb,
+  subtasks jsonb default '[]'::jsonb,
   assigned_to uuid references public.users(id) on delete set null,
   created_by uuid references public.users(id) on delete set null,
   created_at timestamp with time zone default now(),
   updated_at timestamp with time zone default now()
 );
+
+alter table public.tasks add column if not exists due_date date;
+alter table public.tasks add column if not exists category text default 'Technical Task';
+alter table public.tasks add column if not exists assignees jsonb default '[]'::jsonb;
+alter table public.tasks add column if not exists subtasks jsonb default '[]'::jsonb;
 
 -- Create contacts table
 create table if not exists public.contacts (

@@ -74,8 +74,12 @@ Login credentials:
 ### `tasks`
 - `id` - UUID
 - `title`, `description`
-- `status` - 'todo' | 'in-progress' | 'done'
+- `status` - 'todo' | 'in-progress' | 'await-feedback' | 'done'
 - `priority` - 'low' | 'medium' | 'high'
+- `due_date` - Deadline (date)
+- `category` - z.B. 'Technical Task' | 'User Story'
+- `assignees` - JSON-Array mit zugewiesenen Kontakten
+- `subtasks` - JSON-Array von Subtask-Titeln
 - `assigned_to` - UUID (user)
 - `created_by` - UUID (user)
 - Timestamps

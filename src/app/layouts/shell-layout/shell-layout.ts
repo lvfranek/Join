@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  OnDestroy,
   computed,
   effect,
   inject,
@@ -12,6 +13,7 @@ import { filter } from 'rxjs/operators';
 import { AuthService } from '../../core/services/auth.service';
 import { ContactService } from '../../core/services/contact.service';
 import { SupabaseService } from '../../core/services/supabase.service';
+import { TaskService } from '../../core/services/task.service';
 import { AppHeader } from '../../shared/components/app-header/app-header';
 import { Sidebar } from '../../shared/components/sidebar/sidebar';
 
@@ -27,23 +29,33 @@ interface BottomNavItem {
   selector: 'app-shell-layout',
   host: {
     '(window:resize)': 'onViewportResize()',
+    '(document:click)': 'onUserActivity()',
+    '(document:keydown)': 'onUserActivity()',
+    '(document:touchstart)': 'onUserActivity()',
+    '(document:mousemove)': 'onUserActivity()',
   },
   imports: [RouterOutlet, AppHeader, Sidebar],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './shell-layout.html',
   styleUrl: './shell-layout.scss',
 })
-export class ShellLayout {
+export class ShellLayout implements OnDestroy {
   private static readonly COMPACT_BREAKPOINT = 1024;
   private static readonly STORAGE_KEY = 'sidebar-mode';
+  private static readonly INACTIVITY_RESET_MS = 30 * 60 * 1000;
+  private static readonly INACTIVITY_WARNING_MS = 28 * 60 * 1000;
 
   protected readonly router = inject(Router);
   private readonly auth = inject(AuthService);
   private readonly supabase = inject(SupabaseService);
   private readonly contactService = inject(ContactService);
+  private readonly taskService = inject(TaskService);
   private readonly viewportWidth = signal(window.innerWidth);
   private readonly sidebarMode = signal<SidebarMode>(ShellLayout.resolveInitialMode());
   private readonly currentUrl = signal(this.router.url);
+  protected readonly isSessionWarningVisible = signal(false);
+  private inactivityTimeoutId: number | null = null;
+  private inactivityWarningTimeoutId: number | null = null;
 
   protected readonly isAuthenticated = this.auth.isAuthenticated;
 
@@ -73,10 +85,20 @@ export class ShellLayout {
       lastMode = mode;
 
       this.contactService.invalidate();
+      this.taskService.invalidate();
       if (mode !== 'none') {
         void this.contactService.list();
+        void this.taskService.list();
+        this.resetInactivityTimer();
+      } else {
+        this.clearInactivityTimer();
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.clearInactivityTimer();
+    this.clearInactivityWarningTimer();
   }
 
   protected isBottomNavActive(path: string): boolean {
@@ -167,5 +189,69 @@ export class ShellLayout {
     if (!wasCompact && this.isCompact()) {
       this.sidebarMode.set('hidden');
     }
+  }
+
+  protected onUserActivity(): void {
+    if (!this.auth.isAuthenticated()) {
+      return;
+    }
+
+    this.isSessionWarningVisible.set(false);
+    this.resetInactivityTimer();
+  }
+
+  protected continueSession(): void {
+    if (!this.auth.isAuthenticated()) {
+      return;
+    }
+
+    this.isSessionWarningVisible.set(false);
+    this.resetInactivityTimer();
+  }
+
+  private resetInactivityTimer(): void {
+    this.clearInactivityTimer();
+    this.clearInactivityWarningTimer();
+
+    this.inactivityWarningTimeoutId = window.setTimeout(() => {
+      this.isSessionWarningVisible.set(true);
+    }, ShellLayout.INACTIVITY_WARNING_MS);
+
+    this.inactivityTimeoutId = window.setTimeout(() => {
+      void this.resetSessionAfterTimeout();
+    }, ShellLayout.INACTIVITY_RESET_MS);
+  }
+
+  private clearInactivityTimer(): void {
+    if (this.inactivityTimeoutId !== null) {
+      window.clearTimeout(this.inactivityTimeoutId);
+      this.inactivityTimeoutId = null;
+    }
+  }
+
+  private clearInactivityWarningTimer(): void {
+    if (this.inactivityWarningTimeoutId !== null) {
+      window.clearTimeout(this.inactivityWarningTimeoutId);
+      this.inactivityWarningTimeoutId = null;
+    }
+  }
+
+  private async resetSessionAfterTimeout(): Promise<void> {
+    this.clearInactivityTimer();
+    this.clearInactivityWarningTimer();
+    this.isSessionWarningVisible.set(false);
+
+    if (!this.auth.isAuthenticated()) {
+      return;
+    }
+
+    if (!this.auth.isGuest()) {
+      await this.supabase.client.auth.signOut();
+    }
+
+    this.auth.logout();
+    this.contactService.invalidate();
+    this.taskService.invalidate();
+    await this.router.navigate(['/login']);
   }
 }

@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import {
   CdkDragEnd,
   CdkDragDrop,
@@ -127,6 +135,12 @@ export class BoardWorkspaceView implements OnDestroy, OnInit {
   });
 
   async ngOnInit(): Promise<void> {
+    try {
+      await this.taskService.list();
+    } catch (error) {
+      console.error('Failed to load tasks for board', error);
+    }
+
     try {
       const records = await this.contactService.list();
       this.assignableContacts.set(records.map((record) => this.toAssignableContact(record)));
@@ -370,7 +384,10 @@ export class BoardWorkspaceView implements OnDestroy, OnInit {
   }
 
   isEditDueDateInvalid(): boolean {
-    return (this.isTaskDetailEditSubmitted() || this.isEditDueDateTouched()) && !this.isEditDueDateValid();
+    return (
+      (this.isTaskDetailEditSubmitted() || this.isEditDueDateTouched()) &&
+      !this.isEditDueDateValid()
+    );
   }
 
   getEditDueDateError(): string {
@@ -399,7 +416,9 @@ export class BoardWorkspaceView implements OnDestroy, OnInit {
   }
 
   isTaskDetailEditFieldInvalid(field: BoardEditRequiredField): boolean {
-    return this.shouldShowTaskDetailEditFeedback(field) && !this.hasTaskDetailEditRequiredValue(field);
+    return (
+      this.shouldShowTaskDetailEditFeedback(field) && !this.hasTaskDetailEditRequiredValue(field)
+    );
   }
 
   addAssignedContact(contactId: string): void {
@@ -497,7 +516,9 @@ export class BoardWorkspaceView implements OnDestroy, OnInit {
   }
 
   removeEditSubtask(index: number): void {
-    this.editSubtasks.update((subtasks) => subtasks.filter((_subtask, currentIndex) => currentIndex !== index));
+    this.editSubtasks.update((subtasks) =>
+      subtasks.filter((_subtask, currentIndex) => currentIndex !== index),
+    );
 
     if (this.editingSubtaskIndex() === index) {
       this.editingSubtaskIndex.set(null);
@@ -627,7 +648,9 @@ export class BoardWorkspaceView implements OnDestroy, OnInit {
   }
 
   private isTaskDetailEditFormValid(): boolean {
-    return this.hasTaskDetailEditRequiredValue('title') && this.hasTaskDetailEditRequiredValue('dueDate');
+    return (
+      this.hasTaskDetailEditRequiredValue('title') && this.hasTaskDetailEditRequiredValue('dueDate')
+    );
   }
 
   private markAllTaskDetailEditFieldsTouched(): void {
@@ -697,7 +720,16 @@ export class BoardWorkspaceView implements OnDestroy, OnInit {
   }
 
   private getAvatarColor(seed: string): string {
-    const colors = ['#ff7a00', '#9327ff', '#6e52ff', '#fc71ff', '#ffbb2b', '#1fd7c1', '#462f8a', '#ff4646'];
+    const colors = [
+      '#ff7a00',
+      '#9327ff',
+      '#6e52ff',
+      '#fc71ff',
+      '#ffbb2b',
+      '#1fd7c1',
+      '#462f8a',
+      '#ff4646',
+    ];
     let hash = 0;
 
     for (let i = 0; i < seed.length; i++) {
@@ -778,8 +810,7 @@ export class BoardWorkspaceView implements OnDestroy, OnInit {
 
     while (current) {
       const styles = window.getComputedStyle(current);
-      const hasScrollableOverflow =
-        styles.overflowY === 'auto' || styles.overflowY === 'scroll';
+      const hasScrollableOverflow = styles.overflowY === 'auto' || styles.overflowY === 'scroll';
       const canScroll = current.scrollHeight > current.clientHeight;
 
       if (hasScrollableOverflow && canScroll) {

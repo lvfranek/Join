@@ -5,6 +5,23 @@
   [class.layout--hidden]="isSidebarHidden()"
   [class.layout--compact]="isCompact()"
 >
+  @if (isSessionWarningVisible()) {
+    <div
+      class="session-warning"
+      role="alertdialog"
+      aria-modal="true"
+      aria-labelledby="session-warning-title"
+    >
+      <div class="session-warning__panel">
+        <h2 id="session-warning-title">Session expires soon</h2>
+        <p>You have been inactive. You will be logged out in less than 2 minutes.</p>
+        <button class="session-warning__button" type="button" (click)="continueSession()">
+          Stay logged in
+        </button>
+      </div>
+    </div>
+  }
+
   <app-sidebar
     [collapsed]="isSidebarCollapsed()"
     [hidden]="isSidebarHidden()"

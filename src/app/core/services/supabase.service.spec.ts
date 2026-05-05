@@ -20,9 +20,8 @@ describe('SupabaseService', () => {
   });
 
   it('should have valid Supabase credentials in environment', () => {
-    const { url, anonKey } = service.client.options.auth.storageKey;
-    console.log('Supabase URL configured:', !!service.client.rest.url);
-    console.log('Supabase client initialized:', !!service.client);
+    expect(service.client.options).toBeTruthy();
+    expect(service.client.options.auth).toBeTruthy();
   });
 
   it('should be able to connect to Supabase', async () => {
