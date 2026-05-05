@@ -4,7 +4,14 @@
 
         <div class="board-top-actions">
             <div class="board-search-input-wrap">
-                <input class="board-search-input" type="text" placeholder="Find Task" />
+                <input
+                    class="board-search-input"
+                    type="text"
+                    placeholder="Find Task"
+                    [value]="boardSearchQuery()"
+                    (input)="updateBoardSearchQuery($any($event.target).value)"
+                    aria-label="Find task"
+                />
                 <span class="board-search-divider" aria-hidden="true"></span>
                 <img class="board-search-icon" src="/icons/board/search.svg" alt="search" />
             </div>
@@ -44,7 +51,7 @@
                 (cdkDropListDropped)="dropTask($event)"
             >
                 @if (tasksForColumn(column.id).length === 0) {
-                {{ column.emptyText }}
+                {{ hasBoardSearchQuery() ? 'No tasks found' : column.emptyText }}
                 }
 
                 @for (task of tasksForColumn(column.id); track task.id) {
@@ -54,6 +61,7 @@
                     (click)="openTaskDetailPanel(task)"
                     aria-label="Open task details"
                     cdkDrag
+                    [cdkDragDisabled]="hasBoardSearchQuery()"
                     [cdkDragData]="task"
                     [cdkDragStartDelay]="dragStartDelay()"
                     (cdkDragMoved)="onTaskDragMoved($event)"
