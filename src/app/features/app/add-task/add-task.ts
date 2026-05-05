@@ -1,8 +1,8 @@
-import { Component, EventEmitter, HostListener, OnInit, Output, inject } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { ContactRecord, ContactService } from '../../../core/services/contact.service';
-import { TaskService } from '../../../core/services/task.service';
+import { TaskService, TaskStatus } from '../../../core/services/task.service';
 
 type RequiredField = 'title' | 'dueDate' | 'category';
 type Priority = 'urgent' | 'medium' | 'low';
@@ -19,11 +19,12 @@ type AssignedContact = {
   templateUrl: './add-task.html',
   styleUrl: './add-task.scss',
 })
-export class AddTask implements OnInit {
+export class AddTask implements OnDestroy, OnInit {
   private readonly contactService = inject(ContactService);
   private readonly taskService = inject(TaskService);
   private readonly router = inject(Router);
 
+  @Input() initialStatus: TaskStatus = 'todo';
   @Output() readonly taskCreated = new EventEmitter<void>();
 
   readonly categories = ['Technical Task', 'User Story'];
@@ -47,12 +48,14 @@ export class AddTask implements OnInit {
   editingSubtaskValue = '';
   isAssignedDropdownOpen = false;
   isCategoryDropdownOpen = false;
+  isTaskCreatedFeedbackVisible = false;
 
   private readonly touchedFields: Record<RequiredField, boolean> = {
     title: false,
     dueDate: false,
     category: false,
   };
+  private taskCreatedFeedbackTimeout: ReturnType<typeof setTimeout> | null = null;
 
   isSubmitted = false;
 
@@ -63,6 +66,10 @@ export class AddTask implements OnInit {
     } catch (error) {
       console.error('Failed to load contacts for add task', error);
     }
+  }
+
+  ngOnDestroy(): void {
+    this.clearTaskCreatedFeedbackTimeout();
   }
 
   updateField(field: keyof typeof this.task, value: string): void {
@@ -111,6 +118,10 @@ export class AddTask implements OnInit {
   }
 
   createTask(): void {
+    if (this.isTaskCreatedFeedbackVisible) {
+      return;
+    }
+
     this.isSubmitted = true;
     this.markAllRequiredFieldsTouched();
 
@@ -123,16 +134,37 @@ export class AddTask implements OnInit {
       description: this.task.description.trim(),
       dueDate: this.task.dueDate.trim(),
       category: this.task.category.trim(),
+      status: this.initialStatus,
       priority: this.selectedPriority ?? 'medium',
       assignees: this.selectedAssignedContacts,
       subtasks: [...this.subtasks],
     });
 
-    this.clearTask();
-    this.taskCreated.emit();
+    this.showTaskCreatedFeedback();
+  }
 
-    if (this.router.url === '/add-task') {
-      void this.router.navigateByUrl('/board');
+  private showTaskCreatedFeedback(): void {
+    const shouldNavigateToBoard = this.router.url === '/add-task';
+
+    this.clearTaskCreatedFeedbackTimeout();
+    this.isTaskCreatedFeedbackVisible = true;
+
+    this.taskCreatedFeedbackTimeout = setTimeout(() => {
+      this.taskCreatedFeedbackTimeout = null;
+      this.isTaskCreatedFeedbackVisible = false;
+      this.clearTask();
+      this.taskCreated.emit();
+
+      if (shouldNavigateToBoard) {
+        void this.router.navigateByUrl('/board');
+      }
+    }, 1200);
+  }
+
+  private clearTaskCreatedFeedbackTimeout(): void {
+    if (this.taskCreatedFeedbackTimeout) {
+      clearTimeout(this.taskCreatedFeedbackTimeout);
+      this.taskCreatedFeedbackTimeout = null;
     }
   }
 
@@ -153,6 +185,7 @@ export class AddTask implements OnInit {
     this.editingSubtaskValue = '';
     this.isAssignedDropdownOpen = false;
     this.isCategoryDropdownOpen = false;
+    this.isTaskCreatedFeedbackVisible = false;
     this.isSubmitted = false;
     this.touchedFields.title = false;
     this.touchedFields.dueDate = false;

@@ -16,7 +16,7 @@
                         <img class="editdark" src="./icons/summary/edit dark.svg" alt="pen-icon dark">
                     </div>
                     <div class="right-element">
-                        <h1>1</h1>
+                        <h1>{{ todoCount() }}</h1>
                         <span class="container-text">To-Do</span>
                     </div>
                 </div>
@@ -27,7 +27,7 @@
                         <img class="check-dark" src="./icons/summary/check-dark.svg" alt="check-dark">
                     </div>
                     <div class="right-element">
-                        <h1>1</h1>
+                        <h1>{{ doneCount() }}</h1>
                         <span class="container-text">Done</span>
                     </div>
                 </div>
@@ -39,13 +39,13 @@
                         <img class="urgent" src="./icons/summary/urgent-summary.svg" alt="urgent">
                     </div>
                     <div class="right-element">
-                        <h1>1</h1>
+                        <h1>{{ urgentCount() }}</h1>
                         <span class="container-text">Urgent</span>
                     </div>
                 </div>
                 <div class="seperator-line"></div>
                 <div class="date-and-deadline">
-                    <span class="date">October 16, 2022</span>
+                    <span class="date">{{ upcomingDeadline() }}</span>
                     <span class="deadline-text">Upcoming Deadline</span>
                 </div>
             </div>
@@ -53,21 +53,21 @@
             <div class="tasks-counters-bottom">
                 <div class="tasks-container">
                     <div class="right-element">
-                        <h1>5</h1>
+                        <h1>{{ totalCount() }}</h1>
                         <span class="container-text">Tasks In<br>Board</span>
                     </div>
                 </div>
 
                 <div class="tasks-container">
                     <div class="right-element">
-                        <h1>2</h1>
+                        <h1>{{ inProgressCount() }}</h1>
                         <span class="container-text">Tasks In<br>Progress</span>
                     </div>
                 </div>
 
                 <div class="tasks-container">
                     <div class="right-element">
-                        <h1>2</h1>
+                        <h1>{{ feedbackCount() }}</h1>
                         <span class="container-text">Awaiting<br>Feedback</span>
                     </div>
                 </div>

@@ -38,6 +38,7 @@ export interface TaskUpdate {
   description?: string;
   dueDate?: string;
   priority?: TaskPriority;
+  assignees?: TaskAssignee[];
   subtasks?: string[];
 }
 
@@ -79,6 +80,10 @@ export class TaskService {
     );
 
     return updatedTask;
+  }
+
+  deleteTask(taskId: string): void {
+    this.tasksState.update((tasks) => tasks.filter((task) => task.id !== taskId));
   }
 
   moveTask(taskId: string, targetStatus: TaskStatus, targetIndex: number): void {
