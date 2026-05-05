@@ -20,6 +20,7 @@
         <article class="board-column">
             <div class="board-column__header">
                 <h2>{{ column.title }}</h2>
+                @if (column.id !== 'done') {
                 <button
                     class="board-column__plus-button"
                     type="button"
@@ -29,6 +30,7 @@
                     <img class="plus-icon-default" src="/icons/board/plus button.svg" alt="" aria-hidden="true" />
                     <img class="plus-icon-hover" src="/icons/board/plus button hover.svg" alt="" aria-hidden="true" />
                 </button>
+                }
             </div>
 
             <div
@@ -61,7 +63,14 @@
                     <div class="board-task-category">{{ task.category }}</div>
                     <div class="board-task-title">{{ task.title }}</div>
                     <div class="board-task-description">{{ task.description }}</div>
-                    <div class="board-task-subtasks">{{ getSubtaskSummary(task) }}</div>
+                    @if (task.subtasks.length > 0) {
+                    <div class="board-task-subtasks">
+                        <div class="board-task-subtasks__bar" aria-hidden="true">
+                            <div class="board-task-subtasks__bar-fill" [style.width.%]="getSubtaskProgress(task)"></div>
+                        </div>
+                        <span class="board-task-subtasks__text">{{ getSubtaskSummary(task) }}</span>
+                    </div>
+                    }
                     <div class="board-task-assigned-to-and-priority">
                         <div class="users">
                             @for (assignee of task.assignees.slice(0, 3); track assignee.id) {
@@ -216,7 +225,51 @@
 
                     <ul class="btd-edit-form__subtask-list">
                         @for (subtask of editSubtasks(); track $index) {
-                        <li>{{ subtask }}</li>
+                        <li class="btd-edit-form__subtask-item" [class.btd-edit-form__subtask-item--editing]="editingSubtaskIndex() === $index">
+                            @if (editingSubtaskIndex() === $index) {
+                            <input
+                                #subtaskEditInput
+                                class="btd-edit-form__subtask-input"
+                                type="text"
+                                [value]="editingSubtaskValue()"
+                                (input)="editingSubtaskValue.set(subtaskEditInput.value)"
+                                (keydown.enter)="saveEditingSubtask(); $event.preventDefault()"
+                            />
+                            } @else {
+                            <span class="btd-edit-form__subtask-text">{{ subtask }}</span>
+                            }
+
+                            <div class="btd-edit-form__subtask-actions">
+                                <button
+                                    class="btd-edit-form__subtask-action-btn"
+                                    type="button"
+                                    [attr.aria-label]="'Delete subtask ' + subtask"
+                                    (click)="removeEditSubtask($index)"
+                                >
+                                    <img src="./icons/board/delete.svg" alt="" aria-hidden="true" />
+                                </button>
+                                <div class="btd-edit-form__subtask-action-divider" aria-hidden="true"></div>
+                                @if (editingSubtaskIndex() === $index) {
+                                <button
+                                    class="btd-edit-form__subtask-action-btn btd-edit-form__subtask-action-btn--confirm"
+                                    type="button"
+                                    [attr.aria-label]="'Save subtask ' + subtask"
+                                    (click)="saveEditingSubtask()"
+                                >
+                                    <img src="./icons/board/check.svg" alt="" aria-hidden="true" />
+                                </button>
+                                } @else {
+                                <button
+                                    class="btd-edit-form__subtask-action-btn"
+                                    type="button"
+                                    [attr.aria-label]="'Edit subtask ' + subtask"
+                                    (click)="startEditingSubtask($index)"
+                                >
+                                    <img src="./icons/board/edit.svg" alt="" aria-hidden="true" />
+                                </button>
+                                }
+                            </div>
+                        </li>
                         }
                     </ul>
                 </div>
