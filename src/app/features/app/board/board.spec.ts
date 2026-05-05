@@ -32,6 +32,34 @@ describe('Board', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should remember the selected column status when opening add task', () => {
+    component.openAddTaskDialog('awaitFeedback');
+
+    expect(component.addTaskStatus()).toBe('awaitFeedback');
+    expect(component.isAddTaskDialogOpen()).toBe(true);
+  });
+
+  it('should delete the selected task and close the detail panel', () => {
+    const task = taskService.createTask({
+      title: 'Delete me',
+      description: 'Remove this card',
+      dueDate: '2026-05-10',
+      category: 'Technical Task',
+      priority: 'medium',
+      assignees: [],
+      subtasks: ['Cleanup state'],
+    });
+
+    component.openTaskDetailPanel(task);
+    component.toggleTaskDetailSubtask(0);
+
+    component.deleteSelectedTask();
+
+    expect(taskService.tasks().some((entry) => entry.id === task.id)).toBe(false);
+    expect(component.subtaskCompletionByTaskId()[task.id]).toBeUndefined();
+    expect(component.isTaskDetailPanelClosing()).toBe(true);
+  });
+
   it('should filter tasks in all board columns by the search query', () => {
     taskService.createTask({
       title: 'Build login flow',
@@ -55,8 +83,8 @@ describe('Board', () => {
 
     component.updateBoardSearchQuery('feedback');
 
-    expect(component.tasksForColumn('todo')).toHaveSize(0);
-    expect(component.tasksForColumn('awaitFeedback')).toHaveSize(1);
+    expect(component.tasksForColumn('todo').length).toBe(0);
+    expect(component.tasksForColumn('awaitFeedback').length).toBe(1);
     expect(component.tasksForColumn('awaitFeedback')[0].title).toBe('Collect user feedback');
   });
 
@@ -72,9 +100,9 @@ describe('Board', () => {
     });
 
     component.updateBoardSearchQuery('smoke');
-    expect(component.tasksForColumn('todo')).toHaveSize(1);
+    expect(component.tasksForColumn('todo').length).toBe(1);
 
     component.updateBoardSearchQuery('marty');
-    expect(component.tasksForColumn('todo')).toHaveSize(1);
+    expect(component.tasksForColumn('todo').length).toBe(1);
   });
 });

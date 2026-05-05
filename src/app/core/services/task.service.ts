@@ -82,6 +82,10 @@ export class TaskService {
     return updatedTask;
   }
 
+  deleteTask(taskId: string): void {
+    this.tasksState.update((tasks) => tasks.filter((task) => task.id !== taskId));
+  }
+
   moveTask(taskId: string, targetStatus: TaskStatus, targetIndex: number): void {
     this.tasksState.update((tasks) => {
       const taskToMove = tasks.find((task) => task.id === taskId);

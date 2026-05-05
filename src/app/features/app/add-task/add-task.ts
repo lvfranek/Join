@@ -1,8 +1,8 @@
-import { Component, EventEmitter, HostListener, OnDestroy, OnInit, Output, inject } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { ContactRecord, ContactService } from '../../../core/services/contact.service';
-import { TaskService } from '../../../core/services/task.service';
+import { TaskService, TaskStatus } from '../../../core/services/task.service';
 
 type RequiredField = 'title' | 'dueDate' | 'category';
 type Priority = 'urgent' | 'medium' | 'low';
@@ -24,6 +24,7 @@ export class AddTask implements OnDestroy, OnInit {
   private readonly taskService = inject(TaskService);
   private readonly router = inject(Router);
 
+  @Input() initialStatus: TaskStatus = 'todo';
   @Output() readonly taskCreated = new EventEmitter<void>();
 
   readonly categories = ['Technical Task', 'User Story'];
@@ -110,6 +111,7 @@ export class AddTask implements OnDestroy, OnInit {
       description: this.task.description.trim(),
       dueDate: this.task.dueDate.trim(),
       category: this.task.category.trim(),
+      status: this.initialStatus,
       priority: this.selectedPriority ?? 'medium',
       assignees: this.selectedAssignedContacts,
       subtasks: [...this.subtasks],
