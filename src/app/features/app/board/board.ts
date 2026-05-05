@@ -88,12 +88,24 @@ export class BoardWorkspaceView implements OnDestroy, OnInit {
   readonly editingSubtaskValue = signal('');
   readonly isTaskUpdatedFeedbackVisible = signal(false);
   readonly isTaskDetailEditSubmitted = signal(false);
+  readonly boardSearchQuery = signal('');
   readonly touchedTaskDetailEditFields = signal<Record<BoardEditRequiredField, boolean>>({
     title: false,
     dueDate: false,
   });
 
   readonly assignableContacts = signal<AssignableContact[]>([]);
+
+  readonly filteredTasks = computed(() => {
+    const query = this.normalizeSearchValue(this.boardSearchQuery());
+    const tasks = this.tasks();
+
+    if (!query) {
+      return tasks;
+    }
+
+    return tasks.filter((task) => this.doesTaskMatchSearch(task, query));
+  });
 
   readonly selectedAssignedContacts = computed(() => {
     const selectedIds = this.editAssignedContactIds();
@@ -125,7 +137,15 @@ export class BoardWorkspaceView implements OnDestroy, OnInit {
   }
 
   tasksForColumn(status: TaskStatus): TaskRecord[] {
-    return this.tasks().filter((task) => task.status === status);
+    return this.filteredTasks().filter((task) => task.status === status);
+  }
+
+  updateBoardSearchQuery(value: string): void {
+    this.boardSearchQuery.set(value);
+  }
+
+  hasBoardSearchQuery(): boolean {
+    return this.boardSearchQuery().trim().length > 0;
   }
 
   dropListId(status: TaskStatus): string {
@@ -638,6 +658,24 @@ export class BoardWorkspaceView implements OnDestroy, OnInit {
     }
 
     return task.subtasks.map((_subtask, index) => existingState[index] ?? false);
+  }
+
+  private doesTaskMatchSearch(task: TaskRecord, query: string): boolean {
+    const searchableValues = [
+      task.title,
+      task.description,
+      task.category,
+      task.dueDate,
+      task.priority,
+      ...task.subtasks,
+      ...task.assignees.flatMap((assignee) => [assignee.name, assignee.initials]),
+    ];
+
+    return searchableValues.some((value) => this.normalizeSearchValue(value).includes(query));
+  }
+
+  private normalizeSearchValue(value: string): string {
+    return value.trim().toLowerCase();
   }
 
   private startAutoScrollLoop(): void {
