@@ -4,6 +4,8 @@
   [class.layout--collapsed]="isSidebarCollapsed()"
   [class.layout--hidden]="isSidebarHidden()"
   [class.layout--compact]="isCompact()"
+  [class.layout--ready]="isReady()"
+  [class.layout--auth-pending]="!isAuthResolved()"
 >
   @if (isSessionWarningVisible()) {
     <div

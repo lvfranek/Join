@@ -7,7 +7,14 @@
   display: grid;
   position: relative;
   block-size: 100%;
-  transition: grid-template-columns 0.18s ease;
+
+  &--ready {
+    transition: grid-template-columns 0.18s ease;
+  }
+
+  &--auth-pending {
+    visibility: hidden;
+  }
 }
 
 .session-warning {
