@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnDestroy,
+  afterNextRender,
   computed,
   effect,
   inject,
@@ -57,6 +58,8 @@ export class ShellLayout implements OnDestroy {
   private inactivityTimeoutId: number | null = null;
   private inactivityWarningTimeoutId: number | null = null;
 
+  protected readonly isReady = signal(false);
+  protected readonly isAuthResolved = signal(this.auth.isGuest());
   protected readonly isAuthenticated = this.auth.isAuthenticated;
 
   protected readonly bottomNavItems: readonly BottomNavItem[] = [
@@ -67,6 +70,8 @@ export class ShellLayout implements OnDestroy {
   ];
 
   constructor() {
+    afterNextRender(() => this.isReady.set(true));
+
     void this.syncAuthState();
 
     this.router.events
@@ -135,6 +140,7 @@ export class ShellLayout implements OnDestroy {
   private async syncAuthState(): Promise<void> {
     const { data } = await this.supabase.client.auth.getSession();
     this.auth.syncFromSession(!!data.session);
+    this.isAuthResolved.set(true);
   }
 
   private static resolveInitialMode(): SidebarMode {
