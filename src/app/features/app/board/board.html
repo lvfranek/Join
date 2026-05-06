@@ -1,346 +1,538 @@
 <section class="board">
-    <div class="top-container">
-        <h1>Board</h1>
+  <div class="top-container">
+    <h1>Board</h1>
 
-        <div class="board-top-actions">
-            <div class="board-search-input-wrap">
-                <input class="board-search-input" type="text" placeholder="Find Task" [value]="boardSearchQuery()"
-                    (input)="updateBoardSearchQuery($any($event.target).value)" aria-label="Find task" />
-                <span class="board-search-divider" aria-hidden="true"></span>
-                <img class="board-search-icon" src="/icons/board/search.svg" alt="search" />
-            </div>
-            <button class="board-add-task-button" type="button" (click)="openAddTaskDialog()">
-                <span>Add task</span>
-                <img src="/icons/board/add.svg" alt="add task" />
+    <div class="board-top-actions">
+      <div class="board-search-input-wrap">
+        <input
+          class="board-search-input"
+          type="text"
+          placeholder="Find Task"
+          [value]="boardSearchQuery()"
+          (input)="updateBoardSearchQuery($any($event.target).value)"
+          aria-label="Find task"
+        />
+        <span class="board-search-divider" aria-hidden="true"></span>
+        <img class="board-search-icon" src="/icons/board/search.svg" alt="search" />
+      </div>
+      <button class="board-add-task-button" type="button" (click)="openAddTaskDialog()">
+        <span>Add task</span>
+        <img src="/icons/board/add.svg" alt="add task" />
+      </button>
+    </div>
+  </div>
+
+  <section class="board-columns" cdkDropListGroup>
+    @for (column of boardColumns; track column.id) {
+      <article class="board-column">
+        <div class="board-column__header">
+          <h2>{{ column.title }}</h2>
+          @if (column.id !== 'done') {
+            <button
+              class="board-column__plus-button"
+              type="button"
+              [attr.aria-label]="'Add task to ' + column.title"
+              (click)="openAddTaskDialog(column.id)"
+            >
+              <img
+                class="plus-icon-default"
+                src="/icons/board/plus button.svg"
+                alt=""
+                aria-hidden="true"
+              />
+              <img
+                class="plus-icon-hover"
+                src="/icons/board/plus button hover.svg"
+                alt=""
+                aria-hidden="true"
+              />
             </button>
+          }
         </div>
-    </div>
 
-    <section class="board-columns" cdkDropListGroup>
-        @for (column of boardColumns; track column.id) {
-        <article class="board-column">
-            <div class="board-column__header">
-                <h2>{{ column.title }}</h2>
-                @if (column.id !== 'done') {
-                <button class="board-column__plus-button" type="button"
-                    [attr.aria-label]="'Add task to ' + column.title" (click)="openAddTaskDialog(column.id)">
-                    <img class="plus-icon-default" src="/icons/board/plus button.svg" alt="" aria-hidden="true" />
-                    <img class="plus-icon-hover" src="/icons/board/plus button hover.svg" alt="" aria-hidden="true" />
-                </button>
-                }
-            </div>
+        <div
+          class="board-column__tasks"
+          [id]="dropListId(column.id)"
+          cdkDropList
+          [class.board-column__tasks--empty]="tasksForColumn(column.id).length === 0"
+          [class.board-column__tasks--drop-target]="isDropListHighlighted(column.id)"
+          [cdkDropListData]="tasksForColumn(column.id)"
+          [cdkDropListConnectedTo]="connectedDropListIds"
+          [cdkDropListOrientation]="dropListOrientation()"
+          (cdkDropListEntered)="onDropListEntered(dropListId(column.id))"
+          (cdkDropListExited)="onDropListExited(dropListId(column.id))"
+          (cdkDropListDropped)="dropTask($event)"
+        >
+          @if (tasksForColumn(column.id).length === 0 && !isDropListHighlighted(column.id)) {
+            {{ hasBoardSearchQuery() ? 'No tasks found' : column.emptyText }}
+          }
 
-            <div class="board-column__tasks" [id]="dropListId(column.id)" cdkDropList
-                [class.board-column__tasks--empty]="tasksForColumn(column.id).length === 0"
-                [class.board-column__tasks--drop-target]="isDropListHighlighted(column.id)"
-                [cdkDropListData]="tasksForColumn(column.id)" [cdkDropListConnectedTo]="connectedDropListIds"
-                [cdkDropListOrientation]="dropListOrientation()" (cdkDropListEntered)="onDropListEntered(dropListId(column.id))"
-                (cdkDropListExited)="onDropListExited(dropListId(column.id))" (cdkDropListDropped)="dropTask($event)">
-                @if (tasksForColumn(column.id).length === 0 && !isDropListHighlighted(column.id)) {
-                {{ hasBoardSearchQuery() ? 'No tasks found' : column.emptyText }}
-                }
-
-                @for (task of tasksForColumn(column.id); track task.id) {
-                <button class="board-task-placeholder" type="button" (click)="openTaskDetailPanel(task)"
-                    aria-label="Open task details" cdkDrag [cdkDragPreviewClass]="'board-task-placeholder'"
-                    [cdkDragDisabled]="hasBoardSearchQuery()" [cdkDragData]="task"
-                    [cdkDragStartDelay]="dragStartDelay()" (cdkDragMoved)="onTaskDragMoved($event)"
-                    (cdkDragStarted)="onTaskDragStarted($event)" (cdkDragEnded)="onTaskDragEnded($event)">
-                    <div class="board-task-category" [style.background-color]="getCategoryColor(task.category)">{{
-                        task.category }}</div>
-                    <div class="board-task-title">{{ task.title }}</div>
-                    <div class="board-task-description">{{ task.description }}</div>
-                    @if (task.subtasks.length > 0) {
-                    <div class="board-task-subtasks">
-                        <div class="board-task-subtasks__bar" aria-hidden="true">
-                            <div class="board-task-subtasks__bar-fill" [style.width.%]="getSubtaskProgress(task)"></div>
-                        </div>
-                        <span class="board-task-subtasks__text">{{ getSubtaskSummary(task) }}</span>
-                    </div>
-                    }
-                    <div class="board-task-assigned-to-and-priority">
-                        <div class="users">
-                            @for (assignee of task.assignees.slice(0, 3); track assignee.id) {
-                            <span [style.background-color]="assignee.color">{{ assignee.initials }}</span>
-                            }
-                        </div>
-                        <div class="priority">
-                            <img [src]="getPriorityIconPath(task.priority)" [alt]="task.priority" />
-                        </div>
-                    </div>
-                </button>
-                }
-            </div>
-        </article>
-        }
-    </section>
-
-    @if (isTaskDetailPanelOpen()) {
-    <div class="btd-overlay" [class.btd-overlay--closing]="isTaskDetailPanelClosing()" (click)="closeTaskDetailPanel()">
-    </div>
-
-    <dialog class="btd-panel" [class.btd-panel--closing]="isTaskDetailPanelClosing()" open aria-label="Task details">
-        @if (selectedTask(); as task) {
-        <div class="btd-panel__body">
-            <button class="btd-panel__close-btn" type="button" (click)="closeTaskDetailPanel()"
-                aria-label="Close task details">
-                <img src="/icons/contacts-dialog/close.svg" alt="Close Icon" aria-hidden="true" />
+          @for (task of tasksForColumn(column.id); track task.id) {
+            <button
+              class="board-task-placeholder"
+              type="button"
+              (click)="openTaskDetailPanel(task)"
+              aria-label="Open task details"
+              cdkDrag
+              [cdkDragPreviewClass]="'board-task-placeholder'"
+              [cdkDragDisabled]="hasBoardSearchQuery()"
+              [cdkDragData]="task"
+              [cdkDragStartDelay]="dragStartDelay()"
+              (cdkDragMoved)="onTaskDragMoved($event)"
+              (cdkDragStarted)="onTaskDragStarted($event)"
+              (cdkDragEnded)="onTaskDragEnded($event)"
+            >
+              <div
+                class="board-task-category"
+                [style.background-color]="getCategoryColor(task.category)"
+              >
+                {{ task.category }}
+              </div>
+              <div class="board-task-title">{{ task.title }}</div>
+              <div class="board-task-description">{{ task.description }}</div>
+              @if (task.subtasks.length > 0) {
+                <div class="board-task-subtasks">
+                  <div class="board-task-subtasks__bar" aria-hidden="true">
+                    <div
+                      class="board-task-subtasks__bar-fill"
+                      [style.width.%]="getSubtaskProgress(task)"
+                    ></div>
+                  </div>
+                  <span class="board-task-subtasks__text">{{ getSubtaskSummary(task) }}</span>
+                </div>
+              }
+              <div class="board-task-assigned-to-and-priority">
+                <div class="users">
+                  @for (assignee of task.assignees.slice(0, 3); track assignee.id) {
+                    <span [style.background-color]="assignee.color">{{ assignee.initials }}</span>
+                  }
+                  @if (task.assignees.length > 3) {
+                    <span class="users__overflow-badge">+{{ task.assignees.length - 3 }}</span>
+                  }
+                </div>
+                <div class="priority">
+                  <img [src]="getPriorityIconPath(task.priority)" [alt]="task.priority" />
+                </div>
+              </div>
             </button>
+          }
+        </div>
+      </article>
+    }
+  </section>
 
-            @if (!isTaskDetailEditActive()) {
+  @if (isTaskDetailPanelOpen()) {
+    <div
+      class="btd-overlay"
+      [class.btd-overlay--closing]="isTaskDetailPanelClosing()"
+      (click)="closeTaskDetailPanel()"
+    ></div>
+
+    <dialog
+      class="btd-panel"
+      [class.btd-panel--closing]="isTaskDetailPanelClosing()"
+      open
+      aria-label="Task details"
+    >
+      @if (selectedTask(); as task) {
+        <div class="btd-panel__body">
+          <button
+            class="btd-panel__close-btn"
+            type="button"
+            (click)="closeTaskDetailPanel()"
+            aria-label="Close task details"
+          >
+            <img src="/icons/contacts-dialog/close.svg" alt="Close Icon" aria-hidden="true" />
+          </button>
+
+          @if (!isTaskDetailEditActive()) {
             <div class="btd-panel__top-bar">
-                <div class="btd-panel__category-badge" [style.background-color]="getCategoryColor(task.category)">{{
-                    task.category }}</div>
+              <div
+                class="btd-panel__category-badge"
+                [style.background-color]="getCategoryColor(task.category)"
+              >
+                {{ task.category }}
+              </div>
             </div>
 
             <h2 class="btd-panel__heading">{{ task.title }}</h2>
             <p class="btd-panel__desc">{{ task.description }}</p>
 
             <div class="btd-panel__details">
-                <div class="btd-panel__detail-row">
-                    <span class="btd-panel__detail-label">Due date:</span>
-                    <span class="btd-due-date">{{ formatTaskDetailDueDate(taskDetailDueDate()) }}</span>
+              <div class="btd-panel__detail-row">
+                <span class="btd-panel__detail-label">Due date:</span>
+                <span class="btd-due-date">{{ formatTaskDetailDueDate(taskDetailDueDate()) }}</span>
+              </div>
+              <div class="btd-panel__detail-row">
+                <span class="btd-panel__detail-label">Priority:</span>
+                <div class="btd-panel__priority-display">
+                  <span class="btd-panel__priority-text">{{ task.priority }}</span>
+                  <img src="./icons/board/medium.svg" alt="Priority Icon" />
                 </div>
-                <div class="btd-panel__detail-row">
-                    <span class="btd-panel__detail-label">Priority:</span>
-                    <div class="btd-panel__priority-display">
-                        <span class="btd-panel__priority-text">{{ task.priority }}</span>
-                        <img src="./icons/board/medium.svg" alt="Priority Icon">
-                    </div>
-                </div>
-                <div class="btd-panel__detail-row">
-                    <span class="btd-panel__detail-label">Assigned to:</span>
-                </div>
-                @for (assignee of task.assignees; track assignee.id) {
+              </div>
+              <div class="btd-panel__detail-row">
+                <span class="btd-panel__detail-label">Assigned to:</span>
+              </div>
+              @for (assignee of task.assignees; track assignee.id) {
                 <div class="btd-panel__detail-row--contact">
-                    <span class="btd-assignee-avatar" [style.background-color]="assignee.color">{{ assignee.initials
-                        }}</span>
-                    <span class="btd-assignee-name">{{ assignee.name }}</span>
+                  <span class="btd-assignee-avatar" [style.background-color]="assignee.color">{{
+                    assignee.initials
+                  }}</span>
+                  <span class="btd-assignee-name">{{ assignee.name }}</span>
                 </div>
-                }
-                <div class="btd-panel__detail-row">
-                    <span class="btd-panel__detail-label">Subtasks:</span>
-                </div>
-                @for (subtask of taskDetailSubtasks(); track $index) {
+              }
+              <div class="btd-panel__detail-row">
+                <span class="btd-panel__detail-label">Subtasks:</span>
+              </div>
+              @for (subtask of taskDetailSubtasks(); track $index) {
                 <div class="btd-panel__detail-row--contact">
-                    <button class="btd-subtask-check-btn" type="button" (click)="toggleTaskDetailSubtask($index)"
-                        [attr.aria-checked]="subtask.completed" role="checkbox"
-                        [attr.aria-label]="'Toggle subtask: ' + subtask.title">
-                        <img [src]="subtask.completed ? './icons/board/checked.svg' : './icons/board/unchecked.svg'"
-                            [alt]="subtask.completed ? 'Checked icon' : 'Unchecked icon'">
-                    </button>
-                    <span class="btd-assignee-name">{{ subtask.title }}</span>
+                  <button
+                    class="btd-subtask-check-btn"
+                    type="button"
+                    (click)="toggleTaskDetailSubtask($index)"
+                    [attr.aria-checked]="subtask.completed"
+                    role="checkbox"
+                    [attr.aria-label]="'Toggle subtask: ' + subtask.title"
+                  >
+                    <img
+                      [src]="
+                        subtask.completed
+                          ? './icons/board/checked.svg'
+                          : './icons/board/unchecked.svg'
+                      "
+                      [alt]="subtask.completed ? 'Checked icon' : 'Unchecked icon'"
+                    />
+                  </button>
+                  <span class="btd-assignee-name">{{ subtask.title }}</span>
                 </div>
-                }
-                <div class="btd-panel__footer-actions">
-                    <button class="btd-panel__footer-btn" type="button" (click)="deleteSelectedTask()">
-                        <img class="btd-panel__footer-btn-icon" src="./icons/board/delete.svg" alt="Delete Icon">
-                        <span class="btd-panel__footer-btn-label">Delete</span>
-                    </button>
-                    <div class="btd-panel__footer-divider"></div>
-                    <button class="btd-panel__footer-btn" type="button" (click)="beginTaskDetailEdit()">
-                        <img class="btd-panel__footer-btn-icon" src="./icons/board/edit.svg" alt="Edit Icon">
-                        <span class="btd-panel__footer-btn-label">Edit</span>
-                    </button>
-                </div>
+              }
+              <div class="btd-panel__footer-actions">
+                <button class="btd-panel__footer-btn" type="button" (click)="deleteSelectedTask()">
+                  <img
+                    class="btd-panel__footer-btn-icon"
+                    src="./icons/board/delete.svg"
+                    alt="Delete Icon"
+                  />
+                  <span class="btd-panel__footer-btn-label">Delete</span>
+                </button>
+                <div class="btd-panel__footer-divider"></div>
+                <button class="btd-panel__footer-btn" type="button" (click)="beginTaskDetailEdit()">
+                  <img
+                    class="btd-panel__footer-btn-icon"
+                    src="./icons/board/edit.svg"
+                    alt="Edit Icon"
+                  />
+                  <span class="btd-panel__footer-btn-label">Edit</span>
+                </button>
+              </div>
             </div>
-            } @else {
+          } @else {
             <div class="btd-edit-form">
-                <div class="btd-edit-form__scroll-content">
-                    <div class="btd-edit-form__field">
-                        <label class="btd-edit-form__label" for="task-title-edit">Title</label>
-                        <input #titleInput id="task-title-edit" class="btd-edit-form__input"
-                            [class.btd-edit-form__input--invalid]="isTaskDetailEditFieldInvalid('title')" type="text"
-                            [value]="editTitle()" (input)="editTitle.set(titleInput.value)"
-                            (blur)="markTaskDetailEditTouched('title')" placeholder="Enter a title" />
-                        @if (isTaskDetailEditFieldInvalid('title')) {
-                        <span class="btd-edit-form__field-error">This field is required</span>
-                        }
-                    </div>
-
-                    <div class="btd-edit-form__field">
-                        <label class="btd-edit-form__label" for="task-description-edit">Description</label>
-                        <textarea #descriptionInput id="task-description-edit" class="btd-edit-form__textarea"
-                            [value]="editDescription()" (input)="editDescription.set(descriptionInput.value)"
-                            placeholder="Enter a Description"></textarea>
-                    </div>
-
-                    <div class="btd-edit-form__field">
-                        <label class="btd-edit-form__label" for="task-due-date-edit">Due date</label>
-                        <div class="btd-edit-form__date-wrap">
-                            <input #dueDateInput id="task-due-date-edit" class="btd-edit-form__input"
-                                [class.btd-edit-form__input--invalid]="isEditDueDateInvalid()" type="date"
-                                [value]="editDueDate()" [min]="minDueDate" max="9999-12-31"
-                                (input)="updateEditDueDate(dueDateInput.value)" (blur)="markEditDueDateTouched()" />
-                            <button class="btd-edit-form__date-button" type="button" aria-label="Open due date calendar"
-                                (click)="openEditDueDatePicker(dueDateInput)">
-                                <img src="/icons/add-task/calendar.svg" alt="" aria-hidden="true" />
-                            </button>
-                        </div>
-                        @if (isEditDueDateInvalid()) {
-                        <span class="btd-edit-form__field-error">{{ getEditDueDateError() }}</span>
-                        }
-                    </div>
-
-                    <div class="btd-edit-form__field">
-                        <span class="btd-edit-form__label">Priority</span>
-                        <div class="btd-edit-form__priority-row">
-                            <button class="btd-edit-form__priority-btn btd-edit-form__priority-btn--urgent"
-                                [class.btd-edit-form__priority-btn--active]="editPriority() === 'urgent'" type="button"
-                                (click)="setEditPriority('urgent')">
-                                <span>Urgent</span>
-                                <img src="./icons/board/urgent.svg" alt="Urgent" />
-                            </button>
-                            <button class="btd-edit-form__priority-btn btd-edit-form__priority-btn--medium"
-                                [class.btd-edit-form__priority-btn--active]="editPriority() === 'medium'" type="button"
-                                (click)="setEditPriority('medium')">
-                                <span>Medium</span>
-                                <img src="./icons/board/medium.svg" alt="Medium" />
-                            </button>
-                            <button class="btd-edit-form__priority-btn btd-edit-form__priority-btn--low"
-                                [class.btd-edit-form__priority-btn--active]="editPriority() === 'low'" type="button"
-                                (click)="setEditPriority('low')">
-                                <span>Low</span>
-                                <img src="./icons/board/low.svg" alt="Low" />
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="btd-edit-form__field">
-                        <label class="btd-edit-form__label" for="task-assigned-to-edit">Assigned to</label>
-                        <div class="btd-edit-form__assigned-select" (click)="keepEditAssignedDropdownOpen($event)">
-                            <div class="btd-edit-form__assigned-input-wrap">
-                                <input id="task-assigned-to-edit"
-                                    class="btd-edit-form__input btd-edit-form__assigned-input" type="text"
-                                    placeholder="Select contacts to assign" [value]="editAssignedSearch()"
-                                    (input)="updateEditAssignedSearch($any($event.target).value)"
-                                    (focus)="openEditAssignedDropdown()" />
-                                <button class="btd-edit-form__assigned-toggle" type="button"
-                                    aria-label="Toggle assigned contacts"
-                                    [attr.aria-expanded]="isEditAssignedDropdownOpen()"
-                                    (click)="toggleEditAssignedDropdown($event)"></button>
-                            </div>
-
-                            @if (isEditAssignedDropdownOpen()) {
-                            <div class="btd-edit-form__assigned-menu">
-                                @for (contact of filteredAssignableContacts(); track contact.id) {
-                                <button class="btd-edit-form__assigned-option"
-                                    [class.btd-edit-form__assigned-option--selected]="isEditContactAssigned(contact.id)"
-                                    type="button" (click)="toggleEditAssignedContact(contact.id)">
-                                    <span class="btd-assignee-avatar" [style.background-color]="contact.color">{{
-                                        contact.initials }}</span>
-                                    <span class="btd-edit-form__assigned-name">{{ contact.name }}</span>
-                                    <span class="btd-edit-form__assigned-checkbox"
-                                        [class.btd-edit-form__assigned-checkbox--checked]="isEditContactAssigned(contact.id)"
-                                        aria-hidden="true"></span>
-                                </button>
-                                } @empty {
-                                <div class="btd-edit-form__assigned-empty">No contacts found</div>
-                                }
-                            </div>
-                            }
-                        </div>
-
-                        <div class="btd-edit-form__assignees">
-                            @for (contact of selectedAssignedContacts(); track contact.id) {
-                            <span class="btd-assignee-avatar" [style.background-color]="contact.color">{{
-                                contact.initials }}</span>
-                            }
-                        </div>
-                    </div>
-
-                    <div class="btd-edit-form__field">
-                        <label class="btd-edit-form__label" for="task-subtask-edit">Subtasks</label>
-                        <div class="btd-edit-form__subtask-input-wrap">
-                            <input id="task-subtask-edit" class="btd-edit-form__input" type="text"
-                                placeholder="Add new subtask" [value]="editSubtaskDraft()"
-                                (input)="editSubtaskDraft.set($any($event.target).value)"
-                                (keydown.enter)="addEditSubtask(editSubtaskDraft()); $event.preventDefault()" />
-                            @if (editSubtaskDraft().trim()) {
-                            <div class="btd-edit-form__subtask-input-actions">
-                                <button class="btd-edit-form__subtask-action-btn" type="button"
-                                    aria-label="Clear subtask" (click)="clearEditSubtaskDraft()">
-                                    <img src="./icons/add-task/Vector.svg" alt="" aria-hidden="true" />
-                                </button>
-                                <div class="btd-edit-form__subtask-action-divider" aria-hidden="true"></div>
-                                <button
-                                    class="btd-edit-form__subtask-action-btn btd-edit-form__subtask-action-btn--confirm"
-                                    type="button" aria-label="Add subtask" (click)="addEditSubtask(editSubtaskDraft())">
-                                    <img src="./icons/add-task/check.svg" alt="" aria-hidden="true" />
-                                </button>
-                            </div>
-                            }
-                        </div>
-
-                        <ul class="btd-edit-form__subtask-list">
-                            @for (subtask of editSubtasks(); track $index) {
-                            <li class="btd-edit-form__subtask-item"
-                                [class.btd-edit-form__subtask-item--editing]="editingSubtaskIndex() === $index">
-                                @if (editingSubtaskIndex() === $index) {
-                                <input #subtaskEditInput class="btd-edit-form__subtask-input" type="text"
-                                    [value]="editingSubtaskValue()"
-                                    (input)="editingSubtaskValue.set(subtaskEditInput.value)"
-                                    (keydown.enter)="saveEditingSubtask(); $event.preventDefault()" />
-                                } @else {
-                                <span class="btd-edit-form__subtask-text">{{ subtask }}</span>
-                                }
-
-                                <div class="btd-edit-form__subtask-actions">
-                                    <button class="btd-edit-form__subtask-action-btn" type="button"
-                                        [attr.aria-label]="'Delete subtask ' + subtask"
-                                        (click)="removeEditSubtask($index)">
-                                        <img src="./icons/board/delete.svg" alt="" aria-hidden="true" />
-                                    </button>
-                                    <div class="btd-edit-form__subtask-action-divider" aria-hidden="true"></div>
-                                    @if (editingSubtaskIndex() === $index) {
-                                    <button
-                                        class="btd-edit-form__subtask-action-btn btd-edit-form__subtask-action-btn--confirm"
-                                        type="button" [attr.aria-label]="'Save subtask ' + subtask"
-                                        (click)="saveEditingSubtask()">
-                                        <img src="./icons/board/check.svg" alt="" aria-hidden="true" />
-                                    </button>
-                                    } @else {
-                                    <button class="btd-edit-form__subtask-action-btn" type="button"
-                                        [attr.aria-label]="'Edit subtask ' + subtask"
-                                        (click)="startEditingSubtask($index)">
-                                        <img src="./icons/board/edit.svg" alt="" aria-hidden="true" />
-                                    </button>
-                                    }
-                                </div>
-                            </li>
-                            }
-                        </ul>
-                    </div>
+              <div class="btd-edit-form__scroll-content">
+                <div class="btd-edit-form__field">
+                  <label class="btd-edit-form__label" for="task-title-edit">Title</label>
+                  <input
+                    #titleInput
+                    id="task-title-edit"
+                    class="btd-edit-form__input"
+                    [class.btd-edit-form__input--invalid]="isTaskDetailEditFieldInvalid('title')"
+                    type="text"
+                    [value]="editTitle()"
+                    (input)="editTitle.set(titleInput.value)"
+                    (blur)="markTaskDetailEditTouched('title')"
+                    placeholder="Enter a title"
+                  />
+                  @if (isTaskDetailEditFieldInvalid('title')) {
+                    <span class="btd-edit-form__field-error">This field is required</span>
+                  }
                 </div>
 
-                <div class="btd-edit-form__submit-row">
-                    <button class="btd-edit-form__save-btn" type="button" (click)="saveTaskDetailEdits()">
-                        <span>Ok</span>
-                        <img src="./icons/add-task/check.svg" alt="Check" />
+                <div class="btd-edit-form__field">
+                  <label class="btd-edit-form__label" for="task-description-edit"
+                    >Description</label
+                  >
+                  <textarea
+                    #descriptionInput
+                    id="task-description-edit"
+                    class="btd-edit-form__textarea"
+                    [value]="editDescription()"
+                    (input)="editDescription.set(descriptionInput.value)"
+                    placeholder="Enter a Description"
+                  ></textarea>
+                </div>
+
+                <div class="btd-edit-form__field">
+                  <label class="btd-edit-form__label" for="task-due-date-edit">Due date</label>
+                  <div class="btd-edit-form__date-wrap">
+                    <input
+                      #dueDateInput
+                      id="task-due-date-edit"
+                      class="btd-edit-form__input"
+                      [class.btd-edit-form__input--invalid]="isEditDueDateInvalid()"
+                      type="date"
+                      [value]="editDueDate()"
+                      [min]="minDueDate"
+                      max="9999-12-31"
+                      (input)="updateEditDueDate(dueDateInput.value)"
+                      (blur)="markEditDueDateTouched()"
+                    />
+                    <button
+                      class="btd-edit-form__date-button"
+                      type="button"
+                      aria-label="Open due date calendar"
+                      (click)="openEditDueDatePicker(dueDateInput)"
+                    >
+                      <img src="/icons/add-task/calendar.svg" alt="" aria-hidden="true" />
                     </button>
+                  </div>
+                  @if (isEditDueDateInvalid()) {
+                    <span class="btd-edit-form__field-error">{{ getEditDueDateError() }}</span>
+                  }
                 </div>
 
-                @if (isTaskUpdatedFeedbackVisible()) {
+                <div class="btd-edit-form__field">
+                  <span class="btd-edit-form__label">Priority</span>
+                  <div class="btd-edit-form__priority-row">
+                    <button
+                      class="btd-edit-form__priority-btn btd-edit-form__priority-btn--urgent"
+                      [class.btd-edit-form__priority-btn--active]="editPriority() === 'urgent'"
+                      type="button"
+                      (click)="setEditPriority('urgent')"
+                    >
+                      <span>Urgent</span>
+                      <img src="./icons/board/urgent.svg" alt="Urgent" />
+                    </button>
+                    <button
+                      class="btd-edit-form__priority-btn btd-edit-form__priority-btn--medium"
+                      [class.btd-edit-form__priority-btn--active]="editPriority() === 'medium'"
+                      type="button"
+                      (click)="setEditPriority('medium')"
+                    >
+                      <span>Medium</span>
+                      <img src="./icons/board/medium.svg" alt="Medium" />
+                    </button>
+                    <button
+                      class="btd-edit-form__priority-btn btd-edit-form__priority-btn--low"
+                      [class.btd-edit-form__priority-btn--active]="editPriority() === 'low'"
+                      type="button"
+                      (click)="setEditPriority('low')"
+                    >
+                      <span>Low</span>
+                      <img src="./icons/board/low.svg" alt="Low" />
+                    </button>
+                  </div>
+                </div>
+
+                <div class="btd-edit-form__field">
+                  <label class="btd-edit-form__label" for="task-assigned-to-edit"
+                    >Assigned to</label
+                  >
+                  <div
+                    class="btd-edit-form__assigned-select"
+                    (click)="keepEditAssignedDropdownOpen($event)"
+                  >
+                    <div class="btd-edit-form__assigned-input-wrap">
+                      <input
+                        id="task-assigned-to-edit"
+                        class="btd-edit-form__input btd-edit-form__assigned-input"
+                        type="text"
+                        placeholder="Select contacts to assign"
+                        [value]="editAssignedSearch()"
+                        (input)="updateEditAssignedSearch($any($event.target).value)"
+                        (focus)="openEditAssignedDropdown()"
+                      />
+                      <button
+                        class="btd-edit-form__assigned-toggle"
+                        type="button"
+                        aria-label="Toggle assigned contacts"
+                        [attr.aria-expanded]="isEditAssignedDropdownOpen()"
+                        (click)="toggleEditAssignedDropdown($event)"
+                      ></button>
+                    </div>
+
+                    @if (isEditAssignedDropdownOpen()) {
+                      <div class="btd-edit-form__assigned-menu">
+                        @for (contact of filteredAssignableContacts(); track contact.id) {
+                          <button
+                            class="btd-edit-form__assigned-option"
+                            [class.btd-edit-form__assigned-option--selected]="
+                              isEditContactAssigned(contact.id)
+                            "
+                            type="button"
+                            (click)="toggleEditAssignedContact(contact.id)"
+                          >
+                            <span
+                              class="btd-assignee-avatar"
+                              [style.background-color]="contact.color"
+                              >{{ contact.initials }}</span
+                            >
+                            <span class="btd-edit-form__assigned-name">{{ contact.name }}</span>
+                            <span
+                              class="btd-edit-form__assigned-checkbox"
+                              [class.btd-edit-form__assigned-checkbox--checked]="
+                                isEditContactAssigned(contact.id)
+                              "
+                              aria-hidden="true"
+                            ></span>
+                          </button>
+                        } @empty {
+                          <div class="btd-edit-form__assigned-empty">No contacts found</div>
+                        }
+                      </div>
+                    }
+                  </div>
+
+                  <div class="btd-edit-form__assignees">
+                    @for (contact of selectedAssignedContacts(); track contact.id) {
+                      <span class="btd-assignee-avatar" [style.background-color]="contact.color">{{
+                        contact.initials
+                      }}</span>
+                    }
+                  </div>
+                </div>
+
+                <div class="btd-edit-form__field">
+                  <label class="btd-edit-form__label" for="task-subtask-edit">Subtasks</label>
+                  <div class="btd-edit-form__subtask-input-wrap">
+                    <input
+                      id="task-subtask-edit"
+                      class="btd-edit-form__input"
+                      type="text"
+                      placeholder="Add new subtask"
+                      [value]="editSubtaskDraft()"
+                      (input)="editSubtaskDraft.set($any($event.target).value)"
+                      (keydown.enter)="addEditSubtask(editSubtaskDraft()); $event.preventDefault()"
+                    />
+                    @if (editSubtaskDraft().trim()) {
+                      <div class="btd-edit-form__subtask-input-actions">
+                        <button
+                          class="btd-edit-form__subtask-action-btn"
+                          type="button"
+                          aria-label="Clear subtask"
+                          (click)="clearEditSubtaskDraft()"
+                        >
+                          <img src="./icons/add-task/Vector.svg" alt="" aria-hidden="true" />
+                        </button>
+                        <div class="btd-edit-form__subtask-action-divider" aria-hidden="true"></div>
+                        <button
+                          class="btd-edit-form__subtask-action-btn btd-edit-form__subtask-action-btn--confirm"
+                          type="button"
+                          aria-label="Add subtask"
+                          (click)="addEditSubtask(editSubtaskDraft())"
+                        >
+                          <img src="./icons/add-task/check.svg" alt="" aria-hidden="true" />
+                        </button>
+                      </div>
+                    }
+                  </div>
+
+                  <ul class="btd-edit-form__subtask-list">
+                    @for (subtask of editSubtasks(); track $index) {
+                      <li
+                        class="btd-edit-form__subtask-item"
+                        [class.btd-edit-form__subtask-item--editing]="
+                          editingSubtaskIndex() === $index
+                        "
+                      >
+                        @if (editingSubtaskIndex() === $index) {
+                          <input
+                            #subtaskEditInput
+                            class="btd-edit-form__subtask-input"
+                            type="text"
+                            [value]="editingSubtaskValue()"
+                            (input)="editingSubtaskValue.set(subtaskEditInput.value)"
+                            (keydown.enter)="saveEditingSubtask(); $event.preventDefault()"
+                          />
+                        } @else {
+                          <span class="btd-edit-form__subtask-text">{{ subtask }}</span>
+                        }
+
+                        <div class="btd-edit-form__subtask-actions">
+                          <button
+                            class="btd-edit-form__subtask-action-btn"
+                            type="button"
+                            [attr.aria-label]="'Delete subtask ' + subtask"
+                            (click)="removeEditSubtask($index)"
+                          >
+                            <img src="./icons/board/delete.svg" alt="" aria-hidden="true" />
+                          </button>
+                          <div
+                            class="btd-edit-form__subtask-action-divider"
+                            aria-hidden="true"
+                          ></div>
+                          @if (editingSubtaskIndex() === $index) {
+                            <button
+                              class="btd-edit-form__subtask-action-btn btd-edit-form__subtask-action-btn--confirm"
+                              type="button"
+                              [attr.aria-label]="'Save subtask ' + subtask"
+                              (click)="saveEditingSubtask()"
+                            >
+                              <img src="./icons/board/check.svg" alt="" aria-hidden="true" />
+                            </button>
+                          } @else {
+                            <button
+                              class="btd-edit-form__subtask-action-btn"
+                              type="button"
+                              [attr.aria-label]="'Edit subtask ' + subtask"
+                              (click)="startEditingSubtask($index)"
+                            >
+                              <img src="./icons/board/edit.svg" alt="" aria-hidden="true" />
+                            </button>
+                          }
+                        </div>
+                      </li>
+                    }
+                  </ul>
+                </div>
+              </div>
+
+              <div class="btd-edit-form__submit-row">
+                <button
+                  class="btd-edit-form__save-btn"
+                  type="button"
+                  (click)="saveTaskDetailEdits()"
+                >
+                  <span>Ok</span>
+                  <img src="./icons/add-task/check.svg" alt="Check" />
+                </button>
+              </div>
+
+              @if (isTaskUpdatedFeedbackVisible()) {
                 <div class="btd-edit-form__feedback" role="status" aria-live="polite">
-                    <span>Task updated</span>
-                    <img src="/icons/Board.svg" alt="" aria-hidden="true" />
+                  <span>Task updated</span>
+                  <img src="/icons/Board.svg" alt="" aria-hidden="true" />
                 </div>
-                }
+              }
             </div>
-            }
+          }
         </div>
-        }
+      }
     </dialog>
-    }
+  }
 
-    @if (isAddTaskDialogOpen()) {
-    <div class="add-task-modal" role="dialog" aria-modal="true" aria-label="Add Task" (click)="closeAddTaskDialog()">
-        <div class="add-task-modal__panel" (click)="$event.stopPropagation()">
-            <button class="add-task-modal__close" type="button" aria-label="Close add task"
-                (click)="closeAddTaskDialog()">&times;</button>
-            <app-add-task class="add-task-modal__content" [initialStatus]="addTaskStatus()"
-                (taskCreated)="closeAddTaskDialog()"></app-add-task>
-        </div>
+  @if (isAddTaskDialogOpen()) {
+    <div
+      class="add-task-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Add Task"
+      (click)="closeAddTaskDialog()"
+    >
+      <div class="add-task-modal__panel" (click)="$event.stopPropagation()">
+        <button
+          class="add-task-modal__close"
+          type="button"
+          aria-label="Close add task"
+          (click)="closeAddTaskDialog()"
+        >
+          &times;
+        </button>
+        <app-add-task
+          class="add-task-modal__content"
+          [initialStatus]="addTaskStatus()"
+          (taskCreated)="closeAddTaskDialog()"
+        ></app-add-task>
+      </div>
     </div>
-    }
+  }
 </section>
