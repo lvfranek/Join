@@ -823,6 +823,10 @@ select:hover {
 }
 
 @media (max-width: 800px) {
+    .add-task {
+        --add-task-mobile-gap: 24px;
+    }
+
     :host(.add-task-modal__content) .add-task {
         min-height: 0;
         padding: 28px 18px 0;
@@ -854,12 +858,14 @@ select:hover {
         width: 100%;
         flex: none;
         max-width: none;
+        gap: var(--add-task-mobile-gap);
     }
 
     .right-elements {
         width: 100%;
         flex: none;
         max-width: none;
+        gap: var(--add-task-mobile-gap);
     }
 
     h1 {
@@ -869,12 +875,13 @@ select:hover {
     .top-container {
         flex-direction: column;
         align-items: start;
-        gap: 10px;
+        gap: var(--add-task-mobile-gap);
+        margin-bottom: var(--add-task-mobile-gap);
     }
 
     .middle-container {
         flex-direction: column;
-        gap: 24px;
+        gap: var(--add-task-mobile-gap);
         justify-content: start;
         height: auto;
         flex: 1 1 auto;
@@ -987,6 +994,9 @@ select:hover {
     .priority-button-low,
     .priority-button-medium,
     .priority-button-urgent {
+        padding-inline: 14px;
+        gap: 6px;
+
         span {
             font-size: var(--font-size-md);
         }
