@@ -60,6 +60,128 @@ type TaskRow = {
   assigned_to?: string | null;
 };
 
+const BRUCE: TaskAssignee = {
+  id: 'guest-1',
+  name: 'Bruce Wayne',
+  initials: 'BW',
+  color: '#462f8a',
+};
+const TONY: TaskAssignee = { id: 'guest-2', name: 'Tony Stark', initials: 'TS', color: '#ff7a00' };
+const HERMIONE: TaskAssignee = {
+  id: 'guest-3',
+  name: 'Hermione Granger',
+  initials: 'HG',
+  color: '#1fd7c1',
+};
+const WALTER: TaskAssignee = {
+  id: 'guest-4',
+  name: 'Walter White',
+  initials: 'WW',
+  color: '#ff4646',
+};
+const LESLIE: TaskAssignee = {
+  id: 'guest-5',
+  name: 'Leslie Knope',
+  initials: 'LK',
+  color: '#ffbb2b',
+};
+
+const GUEST_TASKS: TaskRecord[] = [
+  {
+    id: 'gtask-1',
+    status: 'todo',
+    category: 'User Story',
+    title: 'Set up Wayne Enterprises security system',
+    description:
+      'Upgrade all surveillance cameras and install new biometric access controls across all floors.',
+    dueDate: '2026-06-15',
+    priority: 'urgent',
+    assignees: [BRUCE, TONY],
+    subtasks: ['Audit existing cameras', 'Install biometric scanners', 'Test failover system'],
+  },
+  {
+    id: 'gtask-2',
+    status: 'todo',
+    category: 'Technical Task',
+    title: 'Build Iron Man suit diagnostics dashboard',
+    description:
+      'Create a real-time dashboard showing suit health, power levels, and weapon systems status.',
+    dueDate: '2026-06-20',
+    priority: 'medium',
+    assignees: [TONY],
+    subtasks: ['Design dashboard layout', 'Integrate Jarvis API', 'Add power level widget'],
+  },
+  {
+    id: 'gtask-3',
+    status: 'inProgress',
+    category: 'User Story',
+    title: 'Research new potion ingredients',
+    description:
+      'Investigate rare magical components for the advanced potions curriculum at Hogwarts.',
+    dueDate: '2026-05-30',
+    priority: 'medium',
+    assignees: [HERMIONE],
+    subtasks: ['Visit Diagon Alley', 'Review Ministry of Magic archives'],
+  },
+  {
+    id: 'gtask-4',
+    status: 'inProgress',
+    category: 'Technical Task',
+    title: 'Optimize the Blue Sky formula',
+    description:
+      'Improve purity from 99.1% to 99.9% using updated lab equipment and new synthesis techniques.',
+    dueDate: '2026-05-25',
+    priority: 'urgent',
+    assignees: [WALTER],
+    subtasks: ['Recalibrate heating element', 'Source new methylamine supply', 'Run purity tests'],
+  },
+  {
+    id: 'gtask-5',
+    status: 'awaitFeedback',
+    category: 'User Story',
+    title: 'Plan Pawnee annual harvest festival',
+    description: 'Coordinate vendors, entertainment, and logistics for the Pawnee community event.',
+    dueDate: '2026-07-04',
+    priority: 'low',
+    assignees: [LESLIE, HERMIONE],
+    subtasks: ['Book entertainment', 'Confirm food vendors', 'Print festival map'],
+  },
+  {
+    id: 'gtask-6',
+    status: 'awaitFeedback',
+    category: 'Technical Task',
+    title: 'Deploy new company intranet',
+    description: 'Roll out the revamped Wayne Enterprises intranet to all 3,000 employees.',
+    dueDate: '2026-06-01',
+    priority: 'medium',
+    assignees: [BRUCE, LESLIE],
+    subtasks: ['Migrate existing content', 'Run UAT with 20 pilot users'],
+  },
+  {
+    id: 'gtask-7',
+    status: 'done',
+    category: 'Technical Task',
+    title: 'Integrate repulsor tech into glove prototype',
+    description: 'Miniaturize the Mark-XV repulsor emitter to fit the new lightweight glove frame.',
+    dueDate: '2026-04-10',
+    priority: 'urgent',
+    assignees: [TONY],
+    subtasks: ['Shrink emitter coils', 'Test power output', 'Sign off prototype'],
+  },
+  {
+    id: 'gtask-8',
+    status: 'done',
+    category: 'User Story',
+    title: 'Update employee wellness program',
+    description:
+      "Redesign the corporate wellness offering based on last quarter's survey feedback.",
+    dueDate: '2026-04-30',
+    priority: 'low',
+    assignees: [LESLIE, HERMIONE],
+    subtasks: ['Analyze survey data', 'Draft new program outline', 'Present to HR board'],
+  },
+];
+
 @Injectable({ providedIn: 'root' })
 export class TaskService {
   private readonly supabase = inject(SupabaseService);
@@ -76,7 +198,10 @@ export class TaskService {
 
   async list(forceReload = false): Promise<TaskRecord[]> {
     if (this.auth.isGuest() || !this.auth.isAuthenticated()) {
-      this.loadedState.set(true);
+      if (!this.loadedState()) {
+        this.tasksState.set([...GUEST_TASKS]);
+        this.loadedState.set(true);
+      }
       return this.tasksState();
     }
 
