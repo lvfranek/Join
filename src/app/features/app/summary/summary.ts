@@ -30,12 +30,19 @@ export class Summary implements OnInit {
   );
 
   protected readonly upcomingDeadline = computed(() => {
-    const urgentDates = this.taskService
+    const today = new Date()
+    today.setHours(0, 0, 0, 0);
+
+    const nextDate = this.taskService
       .tasks()
-      .filter((t) => t.priority === 'urgent' && t.dueDate)
-      .map((t) => t.dueDate)
-      .sort();
-    return urgentDates[0] ?? null;
+      .filter((t) => t.status !== 'done')
+      .map((t) => t.dueDate?.trim())
+      .filter((d): d is string => Boolean(d))
+      .map((d) => new Date(d))
+      .filter((d) => !Number.isNaN(d.getTime()) && d >= today)
+      .sort((a, b) => a.getTime() - b.getTime())[0];
+
+    return nextDate ? nextDate.toISOString().slice(0, 10) : null;
   });
 
   async ngOnInit(): Promise<void> {
