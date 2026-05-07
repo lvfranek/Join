@@ -107,7 +107,19 @@
                     <span [style.background-color]="assignee.color">{{ assignee.initials }}</span>
                   }
                   @if (task.assignees.length > 3) {
-                    <span class="users__overflow-badge">+{{ task.assignees.length - 3 }}</span>
+                    <span class="users__overflow-wrap">
+                      <span class="users__overflow-badge">+{{ task.assignees.length - 3 }}</span>
+                      <span class="users__overflow-tooltip" role="tooltip">
+                        @for (assignee of task.assignees.slice(3); track assignee.id) {
+                          <span
+                            class="users__overflow-tooltip-avatar"
+                            [style.background-color]="assignee.color"
+                            [attr.title]="assignee.name"
+                            >{{ assignee.initials }}</span
+                          >
+                        }
+                      </span>
+                    </span>
                   }
                 </div>
                 <div class="priority">
