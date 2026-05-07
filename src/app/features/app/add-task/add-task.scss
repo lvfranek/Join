@@ -84,7 +84,7 @@ textarea.form-control--valid:focus {
     display: block;
     margin-top: 4px;
     color: #ff3d00;
-    font-size: 12px;
+    font-size: 16px;
     line-height: 1.2;
 }
 
@@ -141,6 +141,7 @@ h1 {
     display: flex;
     justify-content: space-between;
     width: 100%;
+    margin-top: 10px;
 }
 
 .required-text {
@@ -597,6 +598,26 @@ h1 {
     margin: 8px 0 0;
     padding: 0;
     list-style: none;
+    max-height: 180px;
+    overflow-y: scroll;
+    padding-right: 4px;
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    scrollbar-color: #c2c9d1 #f1f3f5;
+
+    &::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: #f1f3f5;
+        border-radius: 999px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: #c2c9d1;
+        border-radius: 999px;
+    }
 }
 
 .subtask-list__item {
