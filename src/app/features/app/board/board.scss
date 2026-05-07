@@ -586,6 +586,19 @@ h1 {
     font-weight: 400;
     font-size: 16px;
     color: #2A3647;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+
+    &::before {
+        content: attr(data-text);
+        font-weight: var(--font-weight-bold);
+        height: 0;
+        visibility: hidden;
+        overflow: hidden;
+        pointer-events: none;
+        user-select: none;
+    }
 }
 
 .btd-edit-form {
@@ -768,6 +781,12 @@ h1 {
     gap: 8px;
     overflow-x: auto;
     padding: 2px 0;
+}
+
+.btd-assignee-avatar--overflow {
+    background: #2a3647 !important;
+    color: #ffffff;
+    font-weight: var(--font-weight-bold);
 }
 
 .btd-edit-form__assigned-select {
