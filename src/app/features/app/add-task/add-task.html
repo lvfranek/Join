@@ -159,13 +159,18 @@
           </div>
           @if (selectedAssignedContacts.length) {
             <div class="assigned-selected">
-              @for (contact of selectedAssignedContacts; track contact.id) {
+              @for (contact of selectedAssignedContacts.slice(0, 4); track contact.id) {
                 <span
                   class="assigned-selected__avatar"
                   [style.background-color]="contact.color"
                   [title]="contact.name"
                 >
                   {{ contact.initials }}
+                </span>
+              }
+              @if (selectedAssignedContacts.length > 4) {
+                <span class="assigned-selected__avatar assigned-selected__avatar--overflow">
+                  +{{ selectedAssignedContacts.length - 4 }}
                 </span>
               }
             </div>

@@ -3,6 +3,7 @@ import {
   Component,
   OnDestroy,
   OnInit,
+  ViewChild,
   computed,
   inject,
   signal,
@@ -53,6 +54,7 @@ type BoardEditRequiredField = 'title' | 'dueDate';
 export class BoardWorkspaceView implements OnDestroy, OnInit {
   private readonly taskService = inject(TaskService);
   private readonly contactService = inject(ContactService);
+  @ViewChild(AddTask) private addTaskComponent: AddTask | undefined;
   private readonly dialogAnimationDuration = 400;
   private readonly taskUpdatedFeedbackDuration = 900;
   private readonly maxDragTiltDeg = 8;
@@ -222,6 +224,20 @@ export class BoardWorkspaceView implements OnDestroy, OnInit {
 
   closeAddTaskDialog(): void {
     this.isAddTaskDialogOpen.set(false);
+  }
+
+  onAddTaskBackdropClick(event: MouseEvent): void {
+    if (event.target !== event.currentTarget) {
+      return;
+    }
+
+    const addTask = this.addTaskComponent;
+    if (addTask?.isAssignedDropdownOpen || addTask?.isCategoryDropdownOpen) {
+      addTask.closeDropdowns();
+      return;
+    }
+
+    this.closeAddTaskDialog();
   }
 
   openTaskDetailPanel(task: TaskRecord): void {
