@@ -7,6 +7,31 @@
   box-sizing: border-box;
 }
 
+* {
+  scrollbar-color: #a8a8a8 #ffffff;
+  scrollbar-width: thin;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #ffffff;
+}
+
+*::-webkit-scrollbar-thumb {
+  min-height: 53px;
+  border: 2px solid #ffffff;
+  border-radius: 999px;
+  background-color: #a8a8a8;
+}
+
+*::-webkit-scrollbar-corner {
+  background: #ffffff;
+}
+
 html,
 body {
   margin: 0;

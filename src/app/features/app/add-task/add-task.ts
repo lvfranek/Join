@@ -43,7 +43,7 @@ export class AddTask implements OnDestroy, OnInit {
   assignedToSearch = '';
   selectedAssignedContactIds: string[] = [];
   subtasks: string[] = [];
-  selectedPriority: Priority | null = null;
+  selectedPriority: Priority = 'medium';
   editingSubtaskIndex: number | null = null;
   editingSubtaskValue = '';
   isAssignedDropdownOpen = false;
@@ -180,7 +180,7 @@ export class AddTask implements OnDestroy, OnInit {
     this.assignedToSearch = '';
     this.selectedAssignedContactIds = [];
     this.subtasks = [];
-    this.selectedPriority = null;
+    this.selectedPriority = 'medium';
     this.editingSubtaskIndex = null;
     this.editingSubtaskValue = '';
     this.isAssignedDropdownOpen = false;

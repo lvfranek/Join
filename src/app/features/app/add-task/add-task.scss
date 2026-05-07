@@ -84,7 +84,7 @@ textarea.form-control--valid:focus {
     display: block;
     margin-top: 4px;
     color: #ff3d00;
-    font-size: 12px;
+    font-size: 16px;
     line-height: 1.2;
 }
 
@@ -141,6 +141,7 @@ h1 {
     display: flex;
     justify-content: space-between;
     width: 100%;
+    margin-top: 10px;
 }
 
 .required-text {
@@ -378,6 +379,29 @@ h1 {
     border-radius: 10px;
     background: #ffffff;
     box-shadow: 0 0 14px 0 rgba(0, 0, 0, 0.12);
+    scrollbar-gutter: stable;
+    scrollbar-color: #a8a8a8 #ffffff;
+    scrollbar-width: thin;
+}
+
+.assigned-select__menu::-webkit-scrollbar {
+    width: 8px;
+}
+
+.assigned-select__menu::-webkit-scrollbar-track {
+    background: #ffffff;
+    border-radius: 999px;
+}
+
+.assigned-select__menu::-webkit-scrollbar-thumb {
+    min-height: 53px;
+    border: 2px solid #ffffff;
+    border-radius: 999px;
+    background-color: #a8a8a8;
+}
+
+.assigned-select__menu::-webkit-scrollbar-corner {
+    background: #ffffff;
 }
 
 .assigned-select__option {
@@ -599,6 +623,27 @@ h1 {
     list-style: none;
     max-height: 140px;
     overflow-y: auto;
+    max-height: 180px;
+    overflow-y: scroll;
+    padding-right: 4px;
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    scrollbar-color: #a8a8a8 #ffffff;
+
+    &::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: #ffffff;
+        border-radius: 999px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        border: 2px solid #ffffff;
+        background: #a8a8a8;
+        border-radius: 999px;
+    }
 }
 
 .subtask-list__item {
