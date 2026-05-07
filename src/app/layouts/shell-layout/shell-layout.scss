@@ -110,11 +110,11 @@
 }
 
 .content--light-scrollbar {
-  scrollbar-color: #a8a8a8 var(--color-bg-surface);
+  scrollbar-color: #a8a8a8 #ffffff;
 }
 
 .content--light-scrollbar::-webkit-scrollbar-track {
-  background: var(--color-bg-surface);
+  background: #ffffff;
 }
 
 .content--light-scrollbar::-webkit-scrollbar-thumb {
