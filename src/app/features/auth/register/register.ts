@@ -3,6 +3,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router, RouterLink } from '@angular/router';
 import { TuiButton } from '@taiga-ui/core';
 
+import { AuthService } from '../../../core/services/auth.service';
 import { SupabaseService } from '../../../core/services/supabase.service';
 
 @Component({
@@ -15,6 +16,7 @@ import { SupabaseService } from '../../../core/services/supabase.service';
 export class Register {
   private readonly router = inject(Router);
   private readonly supabase = inject(SupabaseService);
+  private readonly auth = inject(AuthService);
 
   protected readonly isSubmitting = signal(false);
   protected readonly submitError = signal('');
@@ -92,6 +94,12 @@ export class Register {
         email,
         full_name: fullName,
         role: 'user',
+      });
+
+      this.auth.setCurrentUser({
+        id: data.user.id,
+        email,
+        name: fullName,
       });
     }
 

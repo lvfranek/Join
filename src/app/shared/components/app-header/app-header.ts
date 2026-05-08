@@ -1,12 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  HostListener,
-  ViewChild,
-  computed,
-  inject,
-  signal,
-} from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild, computed, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 
 import { AuthService } from '../../../core/services/auth.service';
@@ -26,7 +18,7 @@ export class AppHeader {
   private readonly supabase = inject(SupabaseService);
 
   protected readonly isAuthenticated = this.authService.isAuthenticated;
-  private readonly displayName = signal<string>('');
+  private readonly displayName = computed(() => this.authService.currentUser()?.name ?? '');
 
   protected readonly initials = computed(() => {
     const name = this.displayName().trim();
@@ -40,27 +32,23 @@ export class AppHeader {
   isProfileMenuOpen = false;
 
   constructor() {
-    void this.loadUser();
+    // Keep AuthService.currentUser in sync with the underlying Supabase session.
     this.supabase.client.auth.onAuthStateChange((_event, session) => {
-      this.applyUser(session?.user ?? null);
+      const user = session?.user ?? null;
+      if (!user) {
+        // Don't clear here on plain SIGNED_OUT events — logout flow handles it.
+        return;
+      }
+      const fullName =
+        (user.user_metadata?.['full_name'] as string | undefined) ||
+        (user.email ? user.email.split('@')[0] : '');
+      this.authService.setCurrentUser({
+        id: user.id,
+        email: user.email ?? '',
+        name: fullName,
+        phone: (user.user_metadata?.['phone'] as string | undefined) ?? '',
+      });
     });
-  }
-
-  private async loadUser(): Promise<void> {
-    const { data } = await this.supabase.client.auth.getUser();
-    this.applyUser(data.user ?? null);
-  }
-
-  private applyUser(
-    user: { user_metadata?: Record<string, unknown>; email?: string | null } | null,
-  ): void {
-    if (!user) {
-      this.displayName.set('');
-      return;
-    }
-    const fullName = (user.user_metadata?.['full_name'] as string | undefined) ?? '';
-    const fallback = user.email ? user.email.split('@')[0] : '';
-    this.displayName.set(fullName || fallback);
   }
 
   @HostListener('document:click')
@@ -79,7 +67,14 @@ export class AppHeader {
   }
 
   async logout(): Promise<void> {
-    await this.supabase.client.auth.signOut();
+    // Try Supabase sign-out first (no-op for guest sessions).
+    try {
+      await this.supabase.client.auth.signOut();
+    } catch (err) {
+      console.warn('Supabase sign-out failed', err);
+    }
+    // Central logout: clears guest flag, JWT token, current user, and notifies
+    // listeners (TaskService, ContactService) to invalidate their caches.
     this.authService.logout();
     this.focusProfileButtonIfMenuHadFocus();
     this.isProfileMenuOpen = false;

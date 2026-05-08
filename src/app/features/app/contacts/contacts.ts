@@ -13,6 +13,7 @@ type Contact = {
   email: string;
   phone: string;
   colorClass: string;
+  isSelf?: boolean;
 };
 
 type ContactGroup = {
@@ -105,6 +106,7 @@ export class Contacts implements OnInit {
       email: record.email,
       phone: record.phone,
       colorClass: this.getColorClassFor(record.id),
+      isSelf: record.isSelf,
     };
   }
 
@@ -371,6 +373,12 @@ export class Contacts implements OnInit {
   async deleteSelectedContact(): Promise<void> {
     const id = this.selectedContactId();
     if (!id) {
+      return;
+    }
+
+    if (this.selectedContact()?.isSelf) {
+      // The own profile cannot be removed via the contacts list.
+      this.isMobileActionsOpen.set(false);
       return;
     }
 

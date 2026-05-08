@@ -196,6 +196,10 @@ export class TaskService {
   readonly tasks = this.tasksState.asReadonly();
   readonly isLoaded = computed(() => this.loadedState());
 
+  constructor() {
+    this.auth.onLogout(() => this.invalidate());
+  }
+
   async list(forceReload = false): Promise<TaskRecord[]> {
     if (this.auth.isGuest() || !this.auth.isAuthenticated()) {
       if (!this.loadedState()) {
@@ -224,7 +228,14 @@ export class TaskService {
           throw error;
         }
 
-        const records = ((data ?? []) as TaskRow[]).map((row) => this.fromRow(row));
+        let records = ((data ?? []) as TaskRow[]).map((row) => this.fromRow(row));
+
+        // Seed initial demo tasks on first login so registered users
+        // see the same starter data as guests do.
+        if (records.length === 0) {
+          records = await this.seedInitialTasks();
+        }
+
         this.tasksState.set(records);
         this.loadedState.set(true);
         return records;
@@ -539,5 +550,38 @@ export class TaskService {
 
   private generateLocalId(): string {
     return `local-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  }
+
+  private async seedInitialTasks(): Promise<TaskRecord[]> {
+    try {
+      const { data: userResult } = await this.supabase.client.auth.getUser();
+      const userId = userResult.user?.id ?? null;
+
+      const payload = GUEST_TASKS.map((task) => ({
+        title: task.title,
+        description: task.description,
+        status: this.toDbStatus(task.status),
+        priority: this.toDbPriority(task.priority),
+        due_date: this.toDbDate(task.dueDate),
+        category: task.category,
+        assignees: task.assignees,
+        subtasks: task.subtasks,
+        assigned_to: task.assignees[0]?.id ?? null,
+        created_by: userId,
+      }));
+
+      const { data, error } = await this.supabase.client
+        .from(this.table)
+        .insert(payload)
+        .select('*');
+
+      if (error) throw error;
+      return ((data ?? []) as TaskRow[]).map((row) => this.fromRow(row));
+    } catch (err) {
+      console.warn('Could not seed initial tasks; falling back to in-memory demo data', err);
+      // Fallback: at least show the demo data in-memory so the user does not
+      // see an empty board on first login.
+      return GUEST_TASKS.map((task) => ({ ...task, id: this.generateLocalId() }));
+    }
   }
 }

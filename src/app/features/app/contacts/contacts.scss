@@ -189,6 +189,21 @@
   text-overflow: ellipsis;
 }
 
+.contact-card__you-badge {
+  margin-left: var(--space-2);
+  color: var(--color-text-link);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.contact-detail__you-badge {
+  margin-left: var(--space-3);
+  color: var(--color-text-link);
+  font-size: 0.6em;
+  font-weight: var(--font-weight-medium);
+  vertical-align: middle;
+}
+
 .contact-detail {
   overflow: hidden;
   flex: 1;
