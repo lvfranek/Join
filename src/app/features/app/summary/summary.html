@@ -10,7 +10,7 @@
     <div class="lower-container">
         <div class="left-elements">
             <div class="todo-and-done">
-                <div class="to-do-container">
+                <div class="to-do-container" routerLink="/board">
                     <div class="icon-circle-1">
                         <img class="edit" src="./icons/summary/edit.svg" alt="pen-icon">
                         <img class="editdark" src="./icons/summary/edit dark.svg" alt="pen-icon dark">
@@ -21,7 +21,7 @@
                     </div>
                 </div>
 
-                <div class="check-container">
+                <div class="check-container" routerLink="/board">
                     <div class="icon-circle-1">
                         <img class="check" src="./icons/summary/check.svg" alt="check-icon">
                         <img class="check-dark" src="./icons/summary/check-dark.svg" alt="check-dark">
@@ -33,7 +33,7 @@
                 </div>
             </div>
 
-            <div class="urgent-container">
+            <div class="urgent-container" routerLink="/board">
                 <div class="urgent-container-left">
                     <div class="urgent-circle-1">
                         <img class="urgent" src="./icons/summary/urgent-summary.svg" alt="urgent">
@@ -51,21 +51,21 @@
             </div>
 
             <div class="tasks-counters-bottom">
-                <div class="tasks-container">
+                <div class="tasks-container" routerLink="/board">
                     <div class="right-element">
                         <h1>{{ totalCount() }}</h1>
                         <span class="container-text">Tasks In<br>Board</span>
                     </div>
                 </div>
 
-                <div class="tasks-container">
+                <div class="tasks-container" routerLink="/board">
                     <div class="right-element">
                         <h1>{{ inProgressCount() }}</h1>
                         <span class="container-text">Tasks In<br>Progress</span>
                     </div>
                 </div>
 
-                <div class="tasks-container">
+                <div class="tasks-container" routerLink="/board">
                     <div class="right-element">
                         <h1>{{ feedbackCount() }}</h1>
                         <span class="container-text">Awaiting<br>Feedback</span>
