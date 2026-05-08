@@ -1,10 +1,11 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
 import { UserGreetingService } from '../../../core/services/user-greeting.service';
 import { TaskService } from '../../../core/services/task.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-summary',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './summary.html',
   styleUrl: './summary.scss',
 })
