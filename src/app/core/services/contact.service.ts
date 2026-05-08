@@ -9,6 +9,7 @@ export interface ContactRecord {
   last_name: string | null;
   email: string;
   phone: string;
+  isSelf?: boolean;
 }
 
 export interface ContactInput {
@@ -88,8 +89,34 @@ export class ContactService {
   private readonly loadedState = signal(false);
   private inflight: Promise<ContactRecord[]> | null = null;
 
-  readonly contacts = this.contactsState.asReadonly();
+  /** Synthetic contact representing the currently authenticated user. */
+  private readonly selfContact = computed<ContactRecord | null>(() => {
+    const user = this.auth.currentUser();
+    if (!user) return null;
+    const parts = (user.name || user.email).trim().split(/\s+/).filter(Boolean);
+    const [first, ...rest] = parts;
+    return {
+      id: `self:${user.id}`,
+      first_name: first || user.email,
+      last_name: rest.length ? rest.join(' ') : null,
+      email: user.email,
+      phone: user.phone ?? '',
+      isSelf: true,
+    };
+  });
+
+  /** Combined list: persisted contacts + self-contact (sorted alphabetically). */
+  readonly contacts = computed<ContactRecord[]>(() => {
+    const list = this.contactsState();
+    const self = this.selfContact();
+    const combined = self ? [self, ...list] : list;
+    return [...combined].sort((a, b) => a.first_name.localeCompare(b.first_name));
+  });
   readonly isLoaded = computed(() => this.loadedState());
+
+  constructor() {
+    this.auth.onLogout(() => this.invalidate());
+  }
 
   async list(forceReload = false): Promise<ContactRecord[]> {
     if (this.auth.isGuest()) {
@@ -97,15 +124,16 @@ export class ContactService {
         this.contactsState.set([...GUEST_SEED]);
         this.loadedState.set(true);
       }
-      return this.contactsState();
+      return this.contacts();
     }
 
     if (!forceReload && this.loadedState()) {
-      return this.contactsState();
+      return this.contacts();
     }
 
     if (this.inflight) {
-      return this.inflight;
+      await this.inflight;
+      return this.contacts();
     }
 
     this.inflight = (async () => {
@@ -116,7 +144,14 @@ export class ContactService {
           .order('first_name', { ascending: true });
 
         if (error) throw error;
-        const records = (data ?? []) as ContactRecord[];
+        let records = (data ?? []) as ContactRecord[];
+
+        // Seed initial demo contacts on first login so registered users
+        // see the same starter data as guests do.
+        if (records.length === 0) {
+          records = await this.seedInitialContacts();
+        }
+
         this.contactsState.set(records);
         this.loadedState.set(true);
         return records;
@@ -125,7 +160,8 @@ export class ContactService {
       }
     })();
 
-    return this.inflight;
+    await this.inflight;
+    return this.contacts();
   }
 
   async create(contact: ContactInput): Promise<ContactRecord> {
@@ -155,16 +191,18 @@ export class ContactService {
   }
 
   async update(id: string, patch: Partial<ContactInput>): Promise<ContactRecord> {
+    if (id.startsWith('self:')) {
+      return this.updateSelf(patch);
+    }
+
     if (this.auth.isGuest()) {
       let updated: ContactRecord | null = null;
       this.contactsState.update((list) =>
-        list
-          .map((entry) => {
-            if (entry.id !== id) return entry;
-            updated = { ...entry, ...patch };
-            return updated;
-          })
-          .sort((a, b) => a.first_name.localeCompare(b.first_name)),
+        list.map((entry) => {
+          if (entry.id !== id) return entry;
+          updated = { ...entry, ...patch };
+          return updated;
+        }),
       );
       if (!updated) throw new Error('Contact not found');
       return updated;
@@ -179,15 +217,15 @@ export class ContactService {
 
     if (error) throw error;
     const record = data as ContactRecord;
-    this.contactsState.update((list) =>
-      list
-        .map((entry) => (entry.id === id ? record : entry))
-        .sort((a, b) => a.first_name.localeCompare(b.first_name)),
-    );
+    this.contactsState.update((list) => list.map((entry) => (entry.id === id ? record : entry)));
     return record;
   }
 
   async remove(id: string): Promise<void> {
+    if (id.startsWith('self:')) {
+      throw new Error('You cannot delete your own account from the contacts list.');
+    }
+
     if (this.auth.isGuest()) {
       this.contactsState.update((list) => list.filter((entry) => entry.id !== id));
       return;
@@ -211,6 +249,65 @@ export class ContactService {
   invalidate(): void {
     this.loadedState.set(false);
     this.contactsState.set([]);
+  }
+
+  private async updateSelf(patch: Partial<ContactInput>): Promise<ContactRecord> {
+    const current = this.auth.currentUser();
+    if (!current) {
+      throw new Error('No authenticated user');
+    }
+
+    const newFirst = patch.first_name ?? '';
+    const newLast = patch.last_name ?? null;
+    const fullName =
+      [newFirst, newLast].filter(Boolean).join(' ').trim() || patch.first_name || current.name;
+
+    this.auth.updateCurrentUser({
+      name: fullName,
+      email: patch.email ?? current.email,
+      phone: patch.phone ?? current.phone,
+    });
+
+    if (!this.auth.isGuest()) {
+      // Best-effort persistence: update Supabase auth metadata + users table.
+      try {
+        await this.supabase.client.auth.updateUser({
+          data: { full_name: fullName, phone: patch.phone ?? current.phone },
+          ...(patch.email && patch.email !== current.email ? { email: patch.email } : {}),
+        });
+        await this.supabase.client
+          .from('users')
+          .update({
+            full_name: fullName,
+            email: patch.email ?? current.email,
+          })
+          .eq('id', current.id);
+      } catch (err) {
+        console.warn('Profile update could not be persisted', err);
+      }
+    }
+
+    return this.selfContact()!;
+  }
+
+  private async seedInitialContacts(): Promise<ContactRecord[]> {
+    try {
+      const { data: userResult } = await this.supabase.client.auth.getUser();
+      const createdBy = userResult.user?.id ?? null;
+      const seedPayload = GUEST_SEED.map(({ id: _omit, ...rest }) => ({
+        ...rest,
+        created_by: createdBy,
+      }));
+      const { data, error } = await this.supabase.client
+        .from(this.table)
+        .insert(seedPayload)
+        .select(this.columns);
+      if (error) throw error;
+      return (data ?? []) as ContactRecord[];
+    } catch (err) {
+      console.warn('Could not seed initial contacts', err);
+      return [...GUEST_SEED];
+    }
   }
 
   private generateLocalId(): string {

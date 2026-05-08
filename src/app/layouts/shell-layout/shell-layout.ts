@@ -139,7 +139,22 @@ export class ShellLayout implements OnDestroy {
 
   private async syncAuthState(): Promise<void> {
     const { data } = await this.supabase.client.auth.getSession();
-    this.auth.syncFromSession(!!data.session);
+    const hasSession = !!data.session;
+    this.auth.syncFromSession(hasSession);
+
+    if (hasSession && data.session?.user) {
+      const user = data.session.user;
+      const fullName =
+        (user.user_metadata?.['full_name'] as string | undefined) ||
+        (user.email ? user.email.split('@')[0] : '');
+      this.auth.setCurrentUser({
+        id: user.id,
+        email: user.email ?? '',
+        name: fullName,
+        phone: (user.user_metadata?.['phone'] as string | undefined) ?? '',
+      });
+    }
+
     this.isAuthResolved.set(true);
   }
 

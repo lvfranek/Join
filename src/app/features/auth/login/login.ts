@@ -106,7 +106,7 @@ export class Login {
     this.submitSuccess.set('');
 
     const { email, password } = this.loginForm.getRawValue();
-    const { error } = await this.supabase.client.auth.signInWithPassword({ email, password });
+    const { data, error } = await this.supabase.client.auth.signInWithPassword({ email, password });
 
     if (error) {
       this.submitError.set('Check your email and password. Please try again.');
@@ -115,13 +115,23 @@ export class Login {
     }
 
     this.auth.setAuthenticated(true);
+    if (data.user) {
+      const fullName =
+        (data.user.user_metadata?.['full_name'] as string | undefined) ||
+        (data.user.email ? data.user.email.split('@')[0] : '');
+      this.auth.setCurrentUser({
+        id: data.user.id,
+        email: data.user.email ?? email,
+        name: fullName,
+        phone: (data.user.user_metadata?.['phone'] as string | undefined) ?? '',
+      });
+    }
     this.isSubmitting.set(false);
     await this.router.navigateByUrl(this.resolvePostLoginRoute());
   }
 
   protected continueAsGuest(): void {
     this.auth.loginAsGuest();
-    void this.router.navigateByUrl('/summary');
     this.auth.setGuestAuthenticated();
     void this.router.navigateByUrl(this.resolvePostLoginRoute());
   }

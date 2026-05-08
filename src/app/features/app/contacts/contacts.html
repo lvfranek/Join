@@ -24,7 +24,12 @@
               </span>
 
               <span class="contact-card__info">
-                <span class="contact-card__name">{{ contact.name }}</span>
+                <span class="contact-card__name">
+                  {{ contact.name }}
+                  @if (contact.isSelf) {
+                    <span class="contact-card__you-badge">(You)</span>
+                  }
+                </span>
                 <span class="contact-card__email">{{ contact.email }}</span>
               </span>
             </button>
@@ -57,7 +62,12 @@
           </div>
 
           <div class="contact-detail__main-info">
-            <h2>{{ contact.name }}</h2>
+            <h2>
+              {{ contact.name }}
+              @if (contact.isSelf) {
+                <span class="contact-detail__you-badge">(You)</span>
+              }
+            </h2>
 
             <div class="contact-detail__actions">
               <button class="contact-action" type="button" (click)="openEditDialog()">
@@ -65,10 +75,12 @@
                 <span>Edit</span>
               </button>
 
-              <button class="contact-action" type="button" (click)="deleteSelectedContact()">
-                <span class="contact-action__icon contact-action__icon--delete"></span>
-                <span>Delete</span>
-              </button>
+              @if (!contact.isSelf) {
+                <button class="contact-action" type="button" (click)="deleteSelectedContact()">
+                  <span class="contact-action__icon contact-action__icon--delete"></span>
+                  <span>Delete</span>
+                </button>
+              }
             </div>
           </div>
         </section>
@@ -106,10 +118,12 @@
             <span>Edit</span>
           </button>
 
-          <button class="contact-action" type="button" (click)="deleteSelectedContact()">
-            <span class="contact-action__icon contact-action__icon--delete"></span>
-            <span>Delete</span>
-          </button>
+          @if (!contact.isSelf) {
+            <button class="contact-action" type="button" (click)="deleteSelectedContact()">
+              <span class="contact-action__icon contact-action__icon--delete"></span>
+              <span>Delete</span>
+            </button>
+          }
         </div>
 
         <button
